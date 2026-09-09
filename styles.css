@@ -132,13 +132,23 @@ align-items: center;
   margin-top: 5rem;
   margin-left: 15rem;
   margin-right: 15rem;
+  margin-bottom: 5rem;
 }
 
 .produto {
   display: flex;
+  gap: 2rem;
 }
 
 .preco {
   display: block;
 
+}
+
+.img-produto {
+  max-width: 15rem;
+}
+
+.nome_produto {
+  
 }
