@@ -125,6 +125,19 @@ align-items: center;
   background: var(--color-cream);
 }
 
+.navbar__menu a:focus-visible {
+  color: var(--color-rose-light);
+  outline: 2px solid var(--color-rose-light);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.btn:focus-visible {
+  background: var(--color-cream);
+  outline: 3px solid var(--color-rose-light);
+  outline-offset: 3px;
+}
+
 .lista-produtos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
