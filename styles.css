@@ -37,6 +37,11 @@ a {
   color: inherit;
 }
 
+.subtitulo {
+  color: var(--color-rose);
+  margin-top: 0.3rem;
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -118,4 +123,22 @@ align-items: center;
 
 .btn:hover {
   background: var(--color-cream);
+}
+
+.lista-produtos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 5rem;
+  margin-left: 15rem;
+  margin-right: 15rem;
+}
+
+.produto {
+  display: flex;
+}
+
+.preco {
+  display: block;
+
 }
