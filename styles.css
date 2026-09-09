@@ -74,3 +74,8 @@ align-items: center;
 .navbar__menu a:hover {
     color: var(--color-rose-light);
 }
+
+.main-div {
+  margin-top: 3rem;
+  text-align: center;
+}
