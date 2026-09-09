@@ -197,6 +197,51 @@ align-items: center;
   font-size: 0.9rem;
 }
 
+.site-footer {
+  background: var(--color-wine-deep);
+  color: var(--color-cream);
+  text-align: center;
+  padding: 2rem 1.5rem;
+  margin-top: 3rem;
+}
+
+.site-footer__links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  list-style: none;
+}
+
+.site-footer__pessoa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.site-footer__nome {
+  font-weight: 700;
+  color: var(--color-rose-light);
+}
+
+.site-footer__pessoa a {
+  color: var(--color-cream);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.site-footer__pessoa a:hover {
+  color: var(--color-rose-light);
+}
+
+.site-footer__pessoa a:focus-visible {
+  outline: 2px solid var(--color-rose-light);
+  outline-offset: 3px;
+  border-radius: 3px;
+  color: var(--color-rose-light);
+}
+
 @media (max-width: 700px) {
   .lista-produtos {
     grid-template-columns: 1fr;
