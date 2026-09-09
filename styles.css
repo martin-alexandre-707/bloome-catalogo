@@ -11,8 +11,9 @@
     --color-tan: #967156;
 
     --font-script: 'Playball', cursive;
-    --font-display: 'Poppins', sans-serif;
-    --font-body: 'Poppins', sans-serif;
+    --font-display: 'Playfair Display', serif;
+    --font-product: 'Cerebri Sans', sans-serif;
+    --font-body: 'Lato', sans-serif;
 }
 * {
   box-sizing: border-box;
