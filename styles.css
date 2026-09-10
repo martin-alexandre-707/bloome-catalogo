@@ -54,7 +54,7 @@ a {
   top: 0;
 }
 
-.subtitulo {
+.subtitle {
   color: var(--color-rose-deep);
   margin-top: 0.3rem;
 }
@@ -156,7 +156,7 @@ align-items: center;
   box-shadow: 0 0 0 6px var(--color-cream);
 }
 
-.lista-produtos {
+.products {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
@@ -164,7 +164,7 @@ align-items: center;
   margin: 4rem auto 5rem;
 }
 
-.produto {
+.product {
   display: flex;
   gap: 1.5rem;
   align-items: center;
@@ -174,34 +174,45 @@ align-items: center;
   box-shadow: 0 4px 14px rgba(119, 46, 63, 0.12);
 }
 
-.produto:hover {
+.product:hover {
   box-shadow: 0 8px 22px rgba(119, 46, 63, 0.2);
 }
 
-.img_produto {
+.product__image {
+  width: 100%;
   max-width: 10rem;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
   align-self: center;
   flex-shrink: 0;
+  border-radius: 0.5 rem;
 }
 
-.info_produto {
+.product__info {
   flex: 1;
   text-align: left;
 }
 
-.nome_produto {
+.product__name {
   color: var(--color-wine);
   font-size: 1.2rem;
   font-weight: 700;
 }
 
-.descricao_produto {
+.product__description {
   margin-top: 0.5rem;
   font-size: 0.9rem;
-  color: var(--color-taupe);
+  color: var(--color-rose);
+  font-weight: 600;
+}
+.product__divider {
+  border: none;
+  border-top: 1px solid var(--color-rose-light);
+  width: 80%;
+  margin: 0.8rem 0;
 }
 
-.preco {
+.product__price {
   display: block;
   margin-top: 0.75rem;
   font-size: 1.1rem;
@@ -209,7 +220,7 @@ align-items: center;
   color: var(--color-wine);
 }
 
-.produto .btn {
+.product .btn {
   margin-top: 0.9rem;
   padding: 0.55rem 1.4rem;
   font-size: 0.9rem;
@@ -230,29 +241,29 @@ align-items: center;
   list-style: none;
 }
 
-.site-footer__pessoa {
+.site-footer__member {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
 }
 
-.site-footer__nome {
+.site-footer__name {
   font-weight: 700;
   color: var(--color-rose-light);
 }
 
-.site-footer__pessoa a {
+.site-footer__member a {
   color: var(--color-cream);
   font-weight: 600;
   font-size: 0.9rem;
 }
 
-.site-footer__pessoa a:hover {
+.site-footer__member a:hover {
   color: var(--color-rose-light);
 }
 
-.site-footer__pessoa a:focus-visible {
+.site-footer__member a:focus-visible {
   outline: 2px solid var(--color-rose-light);
   outline-offset: 3px;
   border-radius: 3px;
@@ -260,18 +271,18 @@ align-items: center;
 }
 
 @media (max-width: 700px) {
-  .lista-produtos {
+  .products {
     grid-template-columns: 1fr;
     margin: 3rem 1rem;
     gap: 1.5rem;
   }
 
-  .produto {
+  .product {
     flex-direction: column;
     text-align: center;
   }
 
-  .info_produto {
+  .product__info {
     text-align: center;
   }
 }
