@@ -283,6 +283,14 @@ align-items: center;
   .product__info {
     text-align: center;
   }
+<<<<<<< HEAD
+
+  .product__divider {
+    width: 80%; 
+    margin: 0.8rem auto; 
+  }
+}
+=======
 }
    
         .skip-link {
@@ -401,3 +409,4 @@ align-items: center;
             text-align: center;
             margin-top: 12px;
         }
+>>>>>>> b4ef2120c01538191e391079aa784c7ac8c7e5aa
