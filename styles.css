@@ -283,9 +283,92 @@ align-items: center;
   .product__info {
     text-align: center;
   }
+<<<<<<< HEAD
 
   .product__divider {
     width: 80%; 
     margin: 0.8rem auto; 
   }
 }
+=======
+}
+  .h1,
+        .subtitulo {
+            text-align: center;
+        }
+
+        .carrinho-container {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 40px 20px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .lista-carrinho {
+            flex: 1 1 480px;
+            min-width: 280px;
+        }
+
+        .item-carrinho {
+            border: 1px solid #e8e4de;
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .item-carrinho .nome_produto {
+            margin: 0;
+        }
+
+        .item-carrinho .preco {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .resumo-pedido {
+            border: 1px solid #e8e4de;
+            border-radius: 10px;
+            background-color: #fff;
+            padding: 20px;
+            flex: 1 1 280px;
+            min-width: 260px;
+            align-self: flex-start;
+        }
+
+        .resumo_titulo {
+            margin-top: 0;
+        }
+
+        .linha_resumo {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0ede8;
+        }
+
+        .linha_resumo--total {
+            border-bottom: none;
+            font-size: 1.1em;
+        }
+
+        .btn_finalizar {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .btn_continuar {
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+        }
+>>>>>>> b4ef2120c01538191e391079aa784c7ac8c7e5aa
