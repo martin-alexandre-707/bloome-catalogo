@@ -47,7 +47,6 @@ O projeto foi construído seguindo as boas práticas do [WCAG 2.1](https://www.w
 - **Hierarquia de títulos**: um único `h1` por página e `h2` para o nome de cada produto.
 - **Texto alternativo**: todas as imagens possuem `alt` descritivo (ex.: `alt="Cordão Olho Grego"`).
 - **Navegação por teclado**: foco visível via `:focus-visible` com `outline` em links de menu, botões e links do rodapé.
-- **Skip link**: "Pular para o conteúdo" para pular a navegação e ir direto ao conteúdo principal.
 - **Contraste de cores**: parâmetros de cor com contraste validado de pelo menos 4,5:1 entre texto e fundo.
 - **Responsivo**: `meta viewport` e media queries — abaixo de 700px a grade de produtos vira coluna única.
 - **Tipografia fluida**: `clamp()` nos títulos da página inicial para se adaptarem ao tamanho da tela.
