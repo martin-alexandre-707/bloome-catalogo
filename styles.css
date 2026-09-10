@@ -4,10 +4,11 @@
     --color-wine: #772e3f;
     --color-wine-deep: #722739;
     --color-rose: #b98e98;
-    --color-rose-light: #cb9398;
-    --color-mauve: #8d6569;
+    --color-rose-light: #e0aeb6;
+    --color-rose-deep: #7d4351;
+    --color-mauve: #6f4c52;
     --color-cream: #e8dedc;
-    --color-taupe: #938270;
+    --color-taupe: #7a6a59;
     --color-tan: #967156;
 
     --font-script: 'Playball', cursive;
@@ -37,8 +38,24 @@ a {
   color: inherit;
 }
 
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  background: var(--color-cream);
+  color: var(--color-wine);
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 .subtitle {
-  color: var(--color-rose);
+  color: var(--color-rose-deep);
   margin-top: 0.3rem;
 }
 
@@ -84,6 +101,7 @@ align-items: center;
 .main-div {
   margin-top: 3rem;
   text-align: center;
+  margin-bottom: 3rem
 }
 
 .hero{
@@ -134,8 +152,8 @@ align-items: center;
 
 .btn:focus-visible {
   background: var(--color-cream);
-  outline: 3px solid var(--color-rose-light);
-  outline-offset: 3px;
+  outline: 3px solid var(--color-wine);
+  box-shadow: 0 0 0 6px var(--color-cream);
 }
 
 .products {
@@ -213,7 +231,6 @@ align-items: center;
   color: var(--color-cream);
   text-align: center;
   padding: 2rem 1.5rem;
-  margin-top: 3rem;
 }
 
 .site-footer__links {
