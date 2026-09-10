@@ -284,7 +284,35 @@ align-items: center;
     text-align: center;
   }
 }
-  .h1,
+   
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            background-color: #fff;
+            color: #333;
+            padding: 10px 16px;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            left: 12px;
+            top: 12px;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid #8a6f4e;
+            outline-offset: 2px;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 2px solid #8a6f4e;
+            outline-offset: 2px;
+        }
+
+        .h1,
         .subtitulo {
             text-align: center;
         }
@@ -302,6 +330,9 @@ align-items: center;
         .lista-carrinho {
             flex: 1 1 480px;
             min-width: 280px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
         .item-carrinho {
@@ -322,7 +353,6 @@ align-items: center;
         }
 
         .item-carrinho .preco {
-            white-space: nowrap;
             font-weight: 600;
         }
 
@@ -350,6 +380,14 @@ align-items: center;
         .linha_resumo--total {
             border-bottom: none;
             font-size: 1.1em;
+        }
+
+        /* Botão (não link) precisa destes ajustes para herdar o visual do .btn */
+        button.btn {
+            font: inherit;
+            cursor: pointer;
+            border: none;
+            width: 100%;
         }
 
         .btn_finalizar {

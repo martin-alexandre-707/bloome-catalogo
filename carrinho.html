@@ -4,63 +4,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Carrinho de compras da Bloome — confira os itens escolhidos e finalize seu pedido.">
     <title>Bloome - Carrinho</title>
     <link rel="stylesheet" href="styles.css">
-</head>
-
 <body>
     <header class="site-header">
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Navegação principal">
             <a href="index.html" class="navbar__logo">Bloome</a>
             <ul class="navbar__menu">
                 <li><a href="index.html">Início</a></li>
                 <li><a href="produtos.html">Produtos</a></li>
                 <li><a href="sobre.html">Sobre</a></li>
-                <li><a href="carrinho.html">Carrinho</a></li>
+                <li><a href="carrinho.html" aria-current="page">Carrinho</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
+    <main id="conteudo">
         <h1 class="h1">Carrinho</h1>
         <p class="subtitulo">Confira os itens escolhidos e finalize seu pedido!</p>
 
         <div class="carrinho-container">
 
-            <section class="lista-carrinho">
+            <ul class="lista-carrinho">
 
-                <div class="item-carrinho">
+                <li class="item-carrinho">
                     <h2 class="nome_produto">Cordão de Amarração</h2>
                     <span class="preco">R$ 99,90</span>
-                </div>
+                </li>
 
-                <div class="item-carrinho">
+                <li class="item-carrinho">
                     <h2 class="nome_produto">Cordão Coração</h2>
                     <span class="preco">R$ 119,90</span>
-                </div>
+                </li>
 
-                <div class="item-carrinho">
+                <li class="item-carrinho">
                     <h2 class="nome_produto">Cordão Gota</h2>
                     <span class="preco">R$ 89,90</span>
-                </div>
+                </li>
 
-            </section>
+            </ul>
 
-            <aside class="resumo-pedido">
-                <h2 class="resumo_titulo">Resumo do pedido</h2>
+            <aside class="resumo-pedido" aria-labelledby="resumo-titulo">
+                <h2 class="resumo_titulo" id="resumo-titulo">Resumo do pedido</h2>
+
                 <div class="linha_resumo">
                     <span>Subtotal</span>
                     <strong>R$ 309,70</strong>
                 </div>
+
                 <div class="linha_resumo">
                     <span>Frete</span>
                     <strong>A calcular</strong>
                 </div>
+
                 <div class="linha_resumo linha_resumo--total">
                     <span>Total</span>
                     <strong>R$ 309,70</strong>
                 </div>
-                <a href="#" class="btn btn_finalizar">Finalizar compra</a>
+
+                <button type="button" class="btn btn_finalizar">Finalizar compra</button>
                 <a href="produtos.html" class="btn_continuar">Continuar comprando</a>
             </aside>
 
@@ -72,18 +75,18 @@
         <ul class="site-footer__links">
             <li class="site-footer__member">
                 <span class="site-footer__name">Victor Xavier</span>
-                <a href="https://github.com/victorxavier01" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.linkedin.com/in/victor-xavier-89a339378/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://github.com/victorxavier01" target="_blank" rel="noopener" aria-label="GitHub do Victor Xavier (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/victor-xavier-89a339378/" target="_blank" rel="noopener" aria-label="LinkedIn do Victor Xavier (abre em nova aba)">LinkedIn</a>
             </li>
             <li class="site-footer__member">
                 <span class="site-footer__name">Martin Alexandre</span>
-                <a href="https://github.com/martin-alexandre-707" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.linkedin.com/in/martin-alexandre-724451409/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://github.com/martin-alexandre-707" target="_blank" rel="noopener" aria-label="GitHub do Martin Alexandre (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/martin-alexandre-724451409/" target="_blank" rel="noopener" aria-label="LinkedIn do Martin Alexandre (abre em nova aba)">LinkedIn</a>
             </li>
             <li class="site-footer__member">
                 <span class="site-footer__name">Anthonio Fon</span>
-                <a href="https://github.com/TonysXD" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.linkedin.com/in/anthonio-pontes-fon-4a25a6319/" target="_blank" rel="noopener">LinkedIn</a>
+                <a href="https://github.com/TonysXD" target="_blank" rel="noopener" aria-label="GitHub do Anthonio Fon (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/anthonio-pontes-fon-4a25a6319/" target="_blank" rel="noopener" aria-label="LinkedIn do Anthonio Fon (abre em nova aba)">LinkedIn</a>
             </li>
         </ul>
     </footer>
