@@ -31,6 +31,7 @@ body {
   color: var(--color-mauve);
   background: var(--color-cream);
   line-height: 1.5;
+  display: flex;
 }
 
 a {
@@ -284,5 +285,10 @@ align-items: center;
 
   .product__info {
     text-align: center;
+  }
+
+  .product__divider {
+    width: 80%; 
+    margin: 0.8rem auto; 
   }
 }
