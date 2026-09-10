@@ -31,7 +31,6 @@ body {
   color: var(--color-mauve);
   background: var(--color-cream);
   line-height: 1.5;
-  display: flex;
 }
 
 a {
