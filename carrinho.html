@@ -20,50 +20,50 @@
         </nav>
     </header>
 
-<main id="conteudo" class="main-div">
-    <h1 class="h1">Carrinho</h1>
-    <p class="subtitulo">Confira os itens escolhidos e finalize seu pedido!</p>
-        <div class="carrinho-container">
+<main id="conteudo" class="page-content">
+    <h1>Carrinho</h1>
+    <p class="subtitle">Confira os itens escolhidos e finalize seu pedido!</p>
+        <div class="cart">
 
-            <ul class="lista-carrinho">
+            <ul class="cart__list">
 
-                <li class="item-carrinho">
-                    <h2 class="nome_produto">Cordão de Amarração</h2>
-                    <span class="preco">R$ 99,90</span>
+                <li class="cart__item">
+                    <h2 class="cart__item-name">Cordão de Amarração</h2>
+                    <span class="cart__item-price">R$ 99,90</span>
                 </li>
 
-                <li class="item-carrinho">
-                    <h2 class="nome_produto">Cordão Coração</h2>
-                    <span class="preco">R$ 119,90</span>
+                <li class="cart__item">
+                    <h2 class="cart__item-name">Cordão Coração</h2>
+                    <span class="cart__item-price">R$ 119,90</span>
                 </li>
 
-                <li class="item-carrinho">
-                    <h2 class="nome_produto">Cordão Gota</h2>
-                    <span class="preco">R$ 89,90</span>
+                <li class="cart__item">
+                    <h2 class="cart__item-name">Cordão Gota</h2>
+                    <span class="cart__item-price">R$ 89,90</span>
                 </li>
 
             </ul>
 
-            <aside class="resumo-pedido" aria-labelledby="resumo-titulo">
-                <h2 class="resumo_titulo" id="resumo-titulo">Resumo do pedido</h2>
+            <aside class="cart__summary" aria-labelledby="resumo-titulo">
+                <h2 class="cart__summary-title" id="resumo-titulo">Resumo do pedido</h2>
 
-                <div class="linha_resumo">
+                <div class="cart__summary-row">
                     <span>Subtotal</span>
                     <strong>R$ 309,70</strong>
                 </div>
 
-                <div class="linha_resumo">
+                <div class="cart__summary-row">
                     <span>Frete</span>
                     <strong>A calcular</strong>
                 </div>
 
-                <div class="linha_resumo linha_resumo--total">
+                <div class="cart__summary-row cart__summary-row--total">
                     <span>Total</span>
                     <strong>R$ 309,70</strong>
                 </div>
 
-                <button type="button" class="btn btn_finalizar">Finalizar compra</button>
-                <a href="produtos.html" class="btn_continuar">Continuar comprando</a>
+                <button type="button" class="btn cart__btn-checkout">Finalizar compra</button>
+                <a href="produtos.html" class="cart__btn-continue">Continuar comprando</a>
             </aside>
 
         </div>
