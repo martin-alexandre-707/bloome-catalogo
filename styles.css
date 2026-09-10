@@ -38,22 +38,6 @@ a {
   color: inherit;
 }
 
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 1rem;
-  z-index: 100;
-  background: var(--color-cream);
-  color: var(--color-wine);
-  font-weight: 700;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0 0 0.5rem 0.5rem;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
 .subtitle {
   color: var(--color-rose-deep);
   margin-top: 0.3rem;
