@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playball&family=Poppins:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playball&family=Playfair+Display:wght@700&family=Poppins:wght@400;600;700&display=swap');
 
 :root {
   --color-wine: #772e3f;
@@ -346,7 +346,52 @@ img {
   background: var(--color-wine-deep);
   color: var(--color-cream);
   text-align: center;
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.5rem 2rem;
+}
+
+.site-footer__social {
+  margin-bottom: 2rem;
+  font-size: 1.15rem;
+  color: var(--color-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.site-footer__social strong {
+  font-family: var(--font-script);
+  font-size: 1.6rem;
+  color: var(--color-rose-light);
+  font-weight: normal;
+}
+
+.site-footer__social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-wine);
+  background: var(--color-rose-light);
+  padding: 0.4rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.site-footer__social a:hover {
+  background: var(--color-cream);
+  color: var(--color-wine-deep);
+  transform: translateY(-1px);
+}
+
+.site-footer__social a:focus-visible {
+  outline: 2px solid var(--color-cream);
+  outline-offset: 3px;
+  background: var(--color-cream);
+  color: var(--color-wine-deep);
 }
 
 .site-footer__links {
@@ -355,28 +400,34 @@ img {
   flex-wrap: wrap;
   gap: 1.5rem 3rem;
   list-style: none;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(232, 222, 220, 0.15);
 }
 
 .site-footer__member {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
 }
 
 .site-footer__name {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.9rem;
   color: var(--color-cream); 
+  opacity: 0.9;
 }
 
 .site-footer__member a {
-  color: var(--color-cream); 
-  font-weight: 600;
-  font-size: 0.9rem;
+  color: var(--color-rose); 
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
 }
 
 .site-footer__member a:hover {
   color: var(--color-rose-light);
+  text-decoration: underline;
 }
 
 .site-footer__member a:focus-visible {
@@ -384,6 +435,48 @@ img {
   outline-offset: 3px;
   border-radius: 3px;
   color: var(--color-cream);
+}
+
+/* ===== Sobre (sobre.html) ===== */
+.about-container {
+  max-width: 800px;
+  margin: 3rem auto 5rem;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  text-align: left;
+}
+
+.about-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 14px rgba(119, 46, 63, 0.10);
+}
+
+.about-card h2 {
+  color: var(--color-wine);
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.about-card p {
+  color: var(--color-mauve);
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+}
+
+.about-card p:last-child {
+  margin-bottom: 0;
+}
+
+.about-card--highlight {
+  text-align: center;
+}
+
+.about-card--highlight .btn {
+  margin-top: 1.5rem;
 }
 
 
