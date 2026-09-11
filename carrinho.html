@@ -45,6 +45,73 @@
 
             </ul>
 
+            <form id="form-checkout" class="cart__form" aria-label="Informações de entrega e pagamento">
+                <section class="form-section" aria-labelledby="titulo-dados">
+                    <h2 class="form-section__title" id="titulo-dados">1. Seus Dados</h2>
+                    <div class="form-field">
+                        <label for="cliente-nome">Nome completo:</label>
+                        <input type="text" id="cliente-nome" name="nome" placeholder="Digite seu nome" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="cliente-whats">WhatsApp com DDD:</label>
+                        <input type="tel" id="cliente-whats" name="whatsapp" placeholder="(82) 99999-9999" required>
+                    </div>
+                </section>
+
+                <section class="form-section" aria-labelledby="titulo-entrega">
+                    <h2 class="form-section__title" id="titulo-entrega">2. Forma de Entrega / Retirada</h2>
+                    <div class="form-options">
+                        <label class="radio-option">
+                            <input type="radio" name="entrega" value="unima" checked>
+                            <span class="radio-option__label">
+                                <strong>Retirada gratuita:</strong> UNIMA - Cruz das Almas
+                            </span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="entrega" value="ponta-verde">
+                            <span class="radio-option__label">
+                                <strong>Retirada gratuita:</strong> Ponta Verde
+                            </span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="entrega" value="uber-flash">
+                            <span class="radio-option__label">
+                                <strong>Entrega rápida:</strong> Uber Flash (frete a combinar)
+                            </span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="entrega" value="correios">
+                            <span class="radio-option__label">
+                                <strong>Envio:</strong> Correios (frete a calcular)
+                            </span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="form-section" aria-labelledby="titulo-pagamento">
+                    <h2 class="form-section__title" id="titulo-pagamento">3. Forma de Pagamento</h2>
+                    <div class="form-options form-options--inline">
+                        <label class="radio-option">
+                            <input type="radio" name="pagamento" value="pix" checked>
+                            <span class="radio-option__label">Pix</span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="pagamento" value="debito">
+                            <span class="radio-option__label">Cartão de Débito</span>
+                        </label>
+
+                        <label class="radio-option">
+                            <input type="radio" name="pagamento" value="credito">
+                            <span class="radio-option__label">Cartão de Crédito</span>
+                        </label>
+                    </div>
+                </section>
+            </form>
+
             <aside class="cart__summary" aria-labelledby="resumo-titulo">
                 <h2 class="cart__summary-title" id="resumo-titulo">Resumo do pedido</h2>
 
@@ -63,7 +130,7 @@
                     <strong>R$ 120,00</strong>
                 </div>
 
-                <button type="button" class="btn cart__btn-checkout">Finalizar compra</button>
+                <button type="submit" form="form-checkout" class="btn cart__btn-checkout">Finalizar compra</button>
                 <a href="produtos.html" class="cart__btn-continue">Continuar comprando</a>
             </aside>
 
@@ -73,7 +140,7 @@
 
     <footer class="site-footer">
         <p class="site-footer__social">
-            <span>Acompanhe a <strong>Bloome</strong>:</span>
+            <span>Acompanhe a <strong>Bloome</strong></span>
             <a href="https://linktr.ee/bloomeacessorios" target="_blank" rel="noopener" aria-label="Acessar o Linktree da Bloome com redes sociais e contatos (abre em nova aba)">
                 linktr.ee/bloomeacessorios &nearr;
             </a>
