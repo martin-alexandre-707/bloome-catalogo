@@ -17,40 +17,42 @@ python -m http.server
 | ------ | ------- | ------ |
 | Início | `index.html` | Concluída |
 | Produtos | `produtos.html` | Concluída |
-| Sobre | `sobre.html` | Em desenvolvimento |
-| Carrinho | `carrinho.html` | Em desenvolvimento |
+| Sobre | `sobre.html` | Concluída |
+| Carrinho | `carrinho.html` | Concluída |
 
 ## Tecnologias
 
 - HTML5 semântico
-- CSS3 (variáveis, Grid, media queries, `clamp()`)
+- CSS3 (variáveis, Grid, Flexbox, media queries, `clamp()`)
 - Sem frameworks e sem JavaScript
 
 ## Estrutura
 
 ```
 bloome-catalogo/
-├── index.html      # Página inicial (hero)
-├── produtos.html   # Lista de produtos
-├── sobre.html      # Página institucional
-├── carrinho.html   # Carrinho de compras
-├── styles.css      # Estilos globais
-└── imgs/           # Imagens dos produtos
+├── index.html      # Página inicial (hero e apresentação)
+├── produtos.html   # Catálogo completo de joias com cards acessíveis
+├── sobre.html      # Página institucional e proposta de valor
+├── carrinho.html   # Carrinho de compras e questionário de checkout
+├── styles.css      # Estilos globais e regras de responsividade
+└── imgs/           # Fotos das peças e acessórios
 ```
 
 ## Acessibilidade
 
-O projeto foi construído seguindo as boas práticas da [WCAG 2.1](https://www.w3.org/WAI/WCAG21/understanding/wcag/):
+O projeto foi construído seguindo as diretrizes e boas práticas da [WCAG 2.1](https://www.w3.org/WAI/WCAG21/understanding/wcag/) (nível AA):
 
-- **Idioma declarado**: `lang="pt-BR"` no `<html>` para leitores de tela.
-- **HTML semântico**: uso de `header`, `nav`, `main`, `section` e `footer`.
-- **Hierarquia de títulos**: um único `h1` por página e `h2` para o nome de cada produto.
-- **Texto alternativo**: todas as imagens possuem `alt` descritivo (por exemplo: `alt="Cordão Olho Grego"`).
-- **Navegação por teclado**: foco visível via `:focus-visible` com `outline` em links de menu, botões e links do rodapé.
-- **Contraste de cores**: parâmetros de cor com contraste validado de pelo menos 4,5:1 entre texto e fundo.
-- **Responsivo**: `meta viewport` e media queries — abaixo de 700px a grade de produtos vira coluna única.
-- **Tipografia fluida**: `clamp()` nos títulos da página inicial para se adaptarem ao tamanho da tela.
-- **Links seguros**: `rel="noopener"` em links externos abertos em nova aba.
+- **Idioma declarado**: `lang="pt-BR"` na tag `<html>` de todas as páginas para correta pronúncia em leitores de tela.
+- **HTML semântico**: estruturação com `header`, `nav`, `main`, `section`, `article`, `aside` e `footer`.
+- **Hierarquia de títulos**: fluxo lógico de cabeçalhos (`h1` principal e `h2` para produtos e etapas).
+- **Página ativa**: indicação programática da página atual no menu de navegação através de `aria-current="page"`.
+- **Formulário acessível de checkout**: campos com `<label for="...">` associados, agrupamento semântico com `aria-labelledby`, inputs de rádio estilizados e integrados ao botão de finalização via atributo `form`.
+- **Texto alternativo**: todas as imagens possuem atributo `alt` descritivo e objetivo.
+- **Navegação por teclado**: indicador visual de foco em todos os elementos interativos via `:focus-visible` com espaçamento (`outline-offset`).
+- **Contraste de cores**: taxas de contraste verificadas e superiores a 4,5:1 (incluindo rodapé e botões com foco).
+- **Identificação consistente (WCAG SC 3.2.4)**: padronização de descrições e `aria-label` para links com o mesmo destino em todas as páginas.
+- **Links seguros e acessíveis**: `target="_blank" rel="noopener"` com aviso sonoro/textual nos links externos que abrem em nova aba.
+- **Design responsivo e tipografia fluida**: layout flexível e adaptável para desktop, tablets e smartphones usando CSS Grid, Flexbox e `clamp()`.
 
 ## Equipe
 
