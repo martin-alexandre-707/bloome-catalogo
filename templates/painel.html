@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Meu painel{% endblock %}
+
+{% block description %}Painel do cliente da Bloome — acompanhe seus pedidos e gerencie seus dados.{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <h1>Olá, Lucas</h1>
+    <p class="subtitle">Acompanhe seus pedidos e gerencie seus dados.</p>
+
+    <div class="painel">
+
+        <aside class="painel__perfil" aria-label="Meus dados">
+
+            <div class="painel__perfil-card" id="cartao-dados">
+                <h2 class="painel__titulo">Meus dados</h2>
+                <div class="painel__avatar" aria-hidden="true">LL</div>
+                <ul class="painel__info">
+                    <li>
+                        <span class="painel__info-label">Nome</span>
+                        <span class="painel__info-value">Lucas Lima</span>
+                    </li>
+                    <li>
+                        <span class="painel__info-label">E-mail</span>
+                        <span class="painel__info-value">lucas@email.com</span>
+                    </li>
+                    <li>
+                        <span class="painel__info-label">WhatsApp</span>
+                        <span class="painel__info-value">(82) 99999-9999</span>
+                    </li>
+                </ul>
+                <button type="button" class="btn painel__btn-editar" id="botao-editar">Editar dados</button>
+            </div>
+
+            <form class="painel__editar" id="form-editar" aria-label="Editar dados da conta" hidden>
+                <h2 class="painel__titulo">Editar dados</h2>
+                <div class="form-field">
+                    <label for="editar-nome">Nome completo:</label>
+                    <input type="text" id="editar-nome" name="nome" value="Lucas Lima" required autocomplete="name">
+                </div>
+                <div class="form-field">
+                    <label for="editar-email">E-mail:</label>
+                    <input type="email" id="editar-email" name="email" value="lucas@email.com" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label for="editar-whats">WhatsApp com DDD:</label>
+                    <input type="tel" id="editar-whats" name="whatsapp" value="(82) 99999-9999" required autocomplete="tel">
+                </div>
+                <div class="form-field">
+                    <label for="editar-senha">Nova senha:</label>
+                    <input type="password" id="editar-senha" name="nova-senha" placeholder="Deixe em branco para manter" minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-field">
+                    <label for="editar-senha2">Confirmar nova senha:</label>
+                    <input type="password" id="editar-senha2" name="confirmar-senha" placeholder="Repita a nova senha" minlength="6" autocomplete="new-password">
+                </div>
+                <div class="painel__editar-acoes">
+                    <button type="submit" class="btn painel__btn-salvar">Salvar alterações</button>
+                    <button type="button" class="painel__btn-cancelar" id="botao-cancelar">Cancelar</button>
+                </div>
+            </form>
+
+            <a href="{{ url_for('conta') }}" class="painel__btn-sair">Sair</a>
+        </aside>
+
+        <section class="painel__pedidos" aria-labelledby="titulo-pedidos">
+            <h2 class="painel__titulo" id="titulo-pedidos">Meus pedidos</h2>
+
+            <ul class="painel__lista-pedidos">
+
+                <li class="pedido">
+                    <header class="pedido__header">
+                        <div class="pedido__identificacao">
+                            <span class="pedido__numero">#BLO-0042</span>
+                            <time class="pedido__data" datetime="2026-10-10">10/10/2026</time>
+                        </div>
+                        <span class="pedido__status pedido__status--pronto">Pronto para retirada</span>
+                    </header>
+                    <ul class="pedido__itens">
+                        <li class="pedido__item">
+                            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="" class="pedido__item-img">
+                            <span class="pedido__item-nome">Cordão Coração</span>
+                            <span class="pedido__item-preco">R$ 45,00</span>
+                        </li>
+                        <li class="pedido__item">
+                            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="" class="pedido__item-img">
+                            <span class="pedido__item-nome">Colar São Bento</span>
+                            <span class="pedido__item-preco">R$ 30,00</span>
+                        </li>
+                    </ul>
+                    <footer class="pedido__footer">
+                        <span class="pedido__entrega">Retirada — UNIMA, Cruz das Almas</span>
+                        <span class="pedido__total">Total: <strong>R$ 75,00</strong></span>
+                    </footer>
+                </li>
+
+                <li class="pedido">
+                    <header class="pedido__header">
+                        <div class="pedido__identificacao">
+                            <span class="pedido__numero">#BLO-0037</span>
+                            <time class="pedido__data" datetime="2026-10-02">02/10/2026</time>
+                        </div>
+                        <span class="pedido__status pedido__status--entregue">Entregue</span>
+                    </header>
+                    <ul class="pedido__itens">
+                        <li class="pedido__item">
+                            <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="" class="pedido__item-img">
+                            <span class="pedido__item-nome">Cordão Olho Grego</span>
+                            <span class="pedido__item-preco">R$ 30,00</span>
+                        </li>
+                    </ul>
+                    <footer class="pedido__footer">
+                        <span class="pedido__entrega">Retirada — Ponta Verde</span>
+                        <span class="pedido__total">Total: <strong>R$ 30,00</strong></span>
+                    </footer>
+                </li>
+
+                <li class="pedido">
+                    <header class="pedido__header">
+                        <div class="pedido__identificacao">
+                            <span class="pedido__numero">#BLO-0031</span>
+                            <time class="pedido__data" datetime="2026-09-18">18/09/2026</time>
+                        </div>
+                        <span class="pedido__status pedido__status--aguardando">Aguardando pagamento</span>
+                    </header>
+                    <ul class="pedido__itens">
+                        <li class="pedido__item">
+                            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="" class="pedido__item-img">
+                            <span class="pedido__item-nome">Cordão de Amarração</span>
+                            <span class="pedido__item-preco">R$ 30,00</span>
+                        </li>
+                    </ul>
+                    <footer class="pedido__footer">
+                        <span class="pedido__entrega">Envio — Correios</span>
+                        <span class="pedido__total">Total: <strong>R$ 30,00</strong></span>
+                    </footer>
+                </li>
+
+            </ul>
+        </section>
+
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const cartaoDados = document.getElementById('cartao-dados');
+    const formEditar = document.getElementById('form-editar');
+    const botaoEditar = document.getElementById('botao-editar');
+    const botaoCancelar = document.getElementById('botao-cancelar');
+
+    function mostrarFormulario() {
+        cartaoDados.hidden = true;
+        formEditar.hidden = false;
+    }
+
+    function mostrarCartao() {
+        formEditar.hidden = true;
+        cartaoDados.hidden = false;
+    }
+
+    botaoEditar.addEventListener('click', mostrarFormulario);
+    botaoCancelar.addEventListener('click', mostrarCartao);
+
+    formEditar.addEventListener('submit', (evento) => {
+        evento.preventDefault();
+        mostrarCartao();
+    });
+</script>
+{% endblock %}
