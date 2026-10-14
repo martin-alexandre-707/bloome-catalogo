@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre{% endblock %}
+
+{% block description %}Conheça a história da Bloome e como criamos acessórios e joias artesanais personalizadas.{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <h1>Sobre a Bloome</h1>
+    <p class="subtitle">Acessórios artesanais feitos para celebrar a sua essência.</p>
+    <div class="about-container">
+        <section class="about-card">
+            <h2>Bloome Your Style ✨</h2>
+            <p>A <strong>Bloome</strong> nasceu para celebrar a sua essência através de peças únicas. Nossa missão é trazer coleções de joias e acessórios feitos 100% à mão, combinando delicadeza, estilo e muito cuidado em cada detalhe.</p>
+        </section>
+
+        <section class="about-card">
+            <h2>Acessórios com a sua cara</h2>
+            <p>A gente sabe que os melhores acessórios são aqueles que combinam com o seu jeito de ser. Por isso, você pode personalizar o seu colar do jeitinho que preferir!</p>
+            <p>E a personalização vai muito além da inicial: se você amou um modelo do nosso catálogo, mas o imaginou com um cordão de outra cor ou textura, nós fazemos acontecer. Você escolhe o modelo, altera a composição e criamos uma peça exclusiva para você.</p>
+        </section>
+
+        <section class="about-card about-card--highlight">
+            <h2>Pronta para escolher suas novas peças? </h2>
+            <p>Confira todos os modelos disponíveis no nosso catálogo ou entre em contato para tirar sua ideia do papel e criar algo totalmente seu!</p>
+            <a href="{{ url_for('produtos') }}" class="btn">Ver produtos</a>
+        </section>
+    </div>
+</main>
+{% endblock %}

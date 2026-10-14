@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Minha conta{% endblock %}
+
+{% block description %}Área da conta da Bloome — entre ou crie sua conta para acompanhar seus pedidos.{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <h1>Minha conta</h1>
+    <p class="subtitle">Entre ou crie sua conta para acompanhar seus pedidos.</p>
+
+    <section class="auth" aria-label="Entrar ou criar conta">
+        <div class="auth__tabs" role="tablist" aria-label="Alternar entre entrar e criar conta">
+            <button type="button" class="auth__tab" id="aba-entrar" role="tab" aria-selected="true" aria-controls="painel-entrar">Entrar</button>
+            <button type="button" class="auth__tab" id="aba-criar" role="tab" aria-selected="false" aria-controls="painel-criar">Criar conta</button>
+        </div>
+
+        <section class="auth__panel" id="painel-entrar" role="tabpanel" aria-labelledby="aba-entrar">
+            <form class="auth__form" aria-label="Entrar na conta">
+                <div class="form-field">
+                    <label for="login-email">E-mail:</label>
+                    <input type="email" id="login-email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label for="login-senha">Senha:</label>
+                    <input type="password" id="login-senha" name="senha" placeholder="Sua senha" required minlength="6" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn auth__btn">Entrar</button>
+            </form>
+        </section>
+
+        <section class="auth__panel" id="painel-criar" role="tabpanel" aria-labelledby="aba-criar" hidden>
+            <form class="auth__form" aria-label="Criar conta">
+                <div class="form-field">
+                    <label for="conta-nome">Nome completo:</label>
+                    <input type="text" id="conta-nome" name="nome" placeholder="Digite seu nome" required autocomplete="name">
+                </div>
+                <div class="form-field">
+                    <label for="conta-email">E-mail:</label>
+                    <input type="email" id="conta-email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                <div class="form-field">
+                    <label for="conta-whats">WhatsApp com DDD:</label>
+                    <input type="tel" id="conta-whats" name="whatsapp" placeholder="(82) 99999-9999" required autocomplete="tel">
+                </div>
+                <div class="form-field">
+                    <label for="conta-senha">Senha:</label>
+                    <input type="password" id="conta-senha" name="senha" placeholder="Crie uma senha" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-field">
+                    <label for="conta-senha2">Confirmar senha:</label>
+                    <input type="password" id="conta-senha2" name="confirmar-senha" placeholder="Repita a senha" required minlength="6" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn auth__btn">Criar conta</button>
+            </form>
+        </section>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const abas = document.querySelectorAll('.auth__tab');
+    const paineis = document.querySelectorAll('.auth__panel');
+
+    abas.forEach((aba) => {
+        aba.addEventListener('click', () => {
+            abas.forEach((a) => a.setAttribute('aria-selected', 'false'));
+            aba.setAttribute('aria-selected', 'true');
+            paineis.forEach((p) => { p.hidden = p.id !== aba.getAttribute('aria-controls'); });
+        });
+    });
+</script>
+{% endblock %}

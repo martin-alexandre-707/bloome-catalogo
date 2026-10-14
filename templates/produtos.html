@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Produtos{% endblock %}
+
+{% block description %}Confira o catálogo de joias e acessórios artesanais da Bloome.{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <h1>Produtos</h1>
+    <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
+
+    <section class="products" aria-label="Lista de produtos">
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão de Amarração</h2>
+                <p class="product__description">Camurça</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 30,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="Colar São Bento" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Colar São Bento</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 30,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Coração</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 45,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_espinha_p.png') }}" alt="Cordão Espinha Pequena" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Espinha Pequena</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 45,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="Cordão Olho Grego" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Olho Grego</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 30,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Gota</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                <span class="product__price">R$ 45,00</span>
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+    </section>
+
+</main>
+{% endblock %}

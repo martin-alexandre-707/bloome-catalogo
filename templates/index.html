@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Início{% endblock %}
+
+{% block description %}Bloome — joias e acessórios artesanais, feitos para combinar com você.{% endblock %}
+
+{% block content %}
+<main>
+    <section class="hero">
+        <p class="hero__script">Catálogo</p>
+        <h1 class="hero__title">BLOOME</h1>
+        <p class="hero__subtitle">Joias e acessórios artesanais, feitos para combinar com você.</p>
+        <a href="{{ url_for('produtos') }}" class="btn">Ver catálogo completo</a>
+    </section>
+</main>
+{% endblock %}
