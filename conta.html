@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Área da conta da Bloome — entre ou crie sua conta para acompanhar seus pedidos.">
+    <title>Bloome - Minha conta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Navegação principal">
+            <a href="index.html" class="navbar__logo">Bloome</a>
+            <ul class="navbar__menu">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="produtos.html">Produtos</a></li>
+                <li><a href="sobre.html">Sobre</a></li>
+                <li><a href="conta.html" aria-current="page">Minha conta</a></li>
+                <li><a href="carrinho.html">Carrinho</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <h1>Minha conta</h1>
+        <p class="subtitle">Entre ou crie sua conta para acompanhar seus pedidos.</p>
+
+        <section class="auth" aria-label="Entrar ou criar conta">
+            <div class="auth__tabs" role="tablist" aria-label="Alternar entre entrar e criar conta">
+                <button type="button" class="auth__tab" id="aba-entrar" role="tab" aria-selected="true" aria-controls="painel-entrar">Entrar</button>
+                <button type="button" class="auth__tab" id="aba-criar" role="tab" aria-selected="false" aria-controls="painel-criar">Criar conta</button>
+            </div>
+
+            <section class="auth__panel" id="painel-entrar" role="tabpanel" aria-labelledby="aba-entrar">
+                <form class="auth__form" aria-label="Entrar na conta">
+                    <div class="form-field">
+                        <label for="login-email">E-mail:</label>
+                        <input type="email" id="login-email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                    </div>
+                    <div class="form-field">
+                        <label for="login-senha">Senha:</label>
+                        <input type="password" id="login-senha" name="senha" placeholder="Sua senha" required minlength="6" autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn auth__btn">Entrar</button>
+                </form>
+            </section>
+
+            <section class="auth__panel" id="painel-criar" role="tabpanel" aria-labelledby="aba-criar" hidden>
+                <form class="auth__form" aria-label="Criar conta">
+                    <div class="form-field">
+                        <label for="conta-nome">Nome completo:</label>
+                        <input type="text" id="conta-nome" name="nome" placeholder="Digite seu nome" required autocomplete="name">
+                    </div>
+                    <div class="form-field">
+                        <label for="conta-email">E-mail:</label>
+                        <input type="email" id="conta-email" name="email" placeholder="seu@email.com" required autocomplete="email">
+                    </div>
+                    <div class="form-field">
+                        <label for="conta-whats">WhatsApp com DDD:</label>
+                        <input type="tel" id="conta-whats" name="whatsapp" placeholder="(82) 99999-9999" required autocomplete="tel">
+                    </div>
+                    <div class="form-field">
+                        <label for="conta-senha">Senha:</label>
+                        <input type="password" id="conta-senha" name="senha" placeholder="Crie uma senha" required minlength="6" autocomplete="new-password">
+                    </div>
+                    <div class="form-field">
+                        <label for="conta-senha2">Confirmar senha:</label>
+                        <input type="password" id="conta-senha2" name="confirmar-senha" placeholder="Repita a senha" required minlength="6" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn auth__btn">Criar conta</button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p class="site-footer__social">
+            <span>Acompanhe a <strong>Bloome</strong></span>
+            <a href="https://linktr.ee/bloomeacessorios" target="_blank" rel="noopener" aria-label="Acessar o Linktree da Bloome com redes sociais e contatos (abre em nova aba)">
+                linktr.ee/bloomeacessorios &nearr;
+            </a>
+        </p>
+        <ul class="site-footer__links">
+            <li class="site-footer__member">
+                <span class="site-footer__name">Victor Xavier</span>
+                <a href="https://github.com/victorxavier01" target="_blank" rel="noopener" aria-label="GitHub do Victor Xavier (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/victor-xavier-89a339378/" target="_blank" rel="noopener" aria-label="LinkedIn do Victor Xavier (abre em nova aba)">LinkedIn</a>
+            </li>
+            <li class="site-footer__member">
+                <span class="site-footer__name">Martin Alexandre</span>
+                <a href="https://github.com/martin-alexandre-707" target="_blank" rel="noopener" aria-label="GitHub do Martin Alexandre (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/martin-alexandre-724451409/" target="_blank" rel="noopener" aria-label="LinkedIn do Martin Alexandre (abre em nova aba)">LinkedIn</a>
+            </li>
+            <li class="site-footer__member">
+                <span class="site-footer__name">Anthonio Fon</span>
+                <a href="https://github.com/TonysXD" target="_blank" rel="noopener" aria-label="GitHub do Anthonio Fon (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/anthonio-pontes-fon-4a25a6319/" target="_blank" rel="noopener" aria-label="LinkedIn do Anthonio Fon (abre em nova aba)">LinkedIn</a>
+            </li>
+        </ul>
+    </footer>
+
+    <script>
+        const abas = document.querySelectorAll('.auth__tab');
+        const paineis = document.querySelectorAll('.auth__panel');
+
+        abas.forEach((aba) => {
+            aba.addEventListener('click', () => {
+                abas.forEach((a) => a.setAttribute('aria-selected', 'false'));
+                aba.setAttribute('aria-selected', 'true');
+                paineis.forEach((p) => { p.hidden = p.id !== aba.getAttribute('aria-controls'); });
+            });
+        });
+    </script>
+</body>
+
+</html>
