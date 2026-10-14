@@ -16,7 +16,7 @@
         </div>
 
         <section class="auth__panel" id="painel-entrar" role="tabpanel" aria-labelledby="aba-entrar">
-            <form class="auth__form" aria-label="Entrar na conta">
+            <form class="auth__form" aria-label="Entrar na conta" action="{{ url_for('painel') }}">
                 <div class="form-field">
                     <label for="login-email">E-mail:</label>
                     <input type="email" id="login-email" name="email" placeholder="seu@email.com" required autocomplete="email">
@@ -30,7 +30,7 @@
         </section>
 
         <section class="auth__panel" id="painel-criar" role="tabpanel" aria-labelledby="aba-criar" hidden>
-            <form class="auth__form" aria-label="Criar conta">
+            <form class="auth__form" aria-label="Criar conta" action="{{ url_for('painel') }}">
                 <div class="form-field">
                     <label for="conta-nome">Nome completo:</label>
                     <input type="text" id="conta-nome" name="nome" placeholder="Digite seu nome" required autocomplete="name">
