@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <title>Bloome - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+{% set nav_items = [
+    ("index", "Início"),
+    ("produtos", "Produtos"),
+    ("sobre", "Sobre"),
+    ("conta", "Minha conta"),
+    ("carrinho", "Carrinho")
+] %}
+
+<body>
+    <header class="site-header">
+        <nav class="navbar" aria-label="Navegação principal">
+            <a href="{{ url_for('index') }}" class="navbar__logo">Bloome</a>
+            <ul class="navbar__menu">
+                {% for name, label in nav_items %}
+                <li><a href="{{ url_for(name) }}"{% if current == name %} aria-current="page"{% endif %}>{{ label }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer class="site-footer">
+        <p class="site-footer__social">
+            <span>Acompanhe a <strong>Bloome</strong></span>
+            <a href="https://linktr.ee/bloomeacessorios" target="_blank" rel="noopener" aria-label="Acessar o Linktree da Bloome com redes sociais e contatos (abre em nova aba)">
+                linktr.ee/bloomeacessorios &nearr;
+            </a>
+        </p>
+        <ul class="site-footer__links">
+            <li class="site-footer__member">
+                <span class="site-footer__name">Victor Xavier</span>
+                <a href="https://github.com/victorxavier01" target="_blank" rel="noopener" aria-label="GitHub do Victor Xavier (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/victor-xavier-89a339378/" target="_blank" rel="noopener" aria-label="LinkedIn do Victor Xavier (abre em nova aba)">LinkedIn</a>
+            </li>
+            <li class="site-footer__member">
+                <span class="site-footer__name">Martin Alexandre</span>
+                <a href="https://github.com/martin-alexandre-707" target="_blank" rel="noopener" aria-label="GitHub do Martin Alexandre (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/martin-alexandre-724451409/" target="_blank" rel="noopener" aria-label="LinkedIn do Martin Alexandre (abre em nova aba)">LinkedIn</a>
+            </li>
+            <li class="site-footer__member">
+                <span class="site-footer__name">Anthonio Fon</span>
+                <a href="https://github.com/TonysXD" target="_blank" rel="noopener" aria-label="GitHub do Anthonio Fon (abre em nova aba)">GitHub</a>
+                <a href="https://www.linkedin.com/in/anthonio-pontes-fon-4a25a6319/" target="_blank" rel="noopener" aria-label="LinkedIn do Anthonio Fon (abre em nova aba)">LinkedIn</a>
+            </li>
+        </ul>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
