@@ -21,11 +21,19 @@
     <header class="site-header">
         <nav class="navbar" aria-label="Navegação principal">
             <a href="{{ url_for('index') }}" class="navbar__logo">Bloome</a>
-            <ul class="navbar__menu">
-                {% for name, label in nav_items %}
-                <li><a href="{{ url_for(name) }}"{% if current == name %} aria-current="page"{% endif %}>{{ label }}</a></li>
-                {% endfor %}
-            </ul>
+            <div class="navbar__right">
+                <ul class="navbar__menu">
+                    {% for name, label in nav_items %}
+                    <li><a href="{{ url_for(name) }}"{% if current == name or (current == "painel" and name == "conta") %} aria-current="page"{% endif %}>{{ label }}</a></li>
+                    {% endfor %}
+                </ul>
+                {% if current == "painel" %}
+                <div class="navbar__user-box">
+                    <span class="navbar__user" title="Logado como Lucas Lima">Lucas</span>
+                    <a href="{{ url_for('conta') }}" class="navbar__logout">Sair</a>
+                </div>
+                {% endif %}
+            </div>
         </nav>
     </header>
 
