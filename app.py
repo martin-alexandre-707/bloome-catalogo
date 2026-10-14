@@ -28,5 +28,10 @@ def conta():
     return render_template("conta.html", current="conta")
 
 
+@app.route("/painel")
+def painel():
+    return render_template("painel.html", current="painel")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
