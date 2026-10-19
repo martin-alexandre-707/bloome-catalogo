@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Favoritos{% endblock %}
+
+{% block description %}Veja os itens que você favoritou no catálogo da Bloome.{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <h1>Favoritos</h1>
+    <p class="subtitle">Os itens que você salvou para não perder de vista!</p>
+
+    <section class="products" aria-label="Lista de favoritos">
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Coração</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                R$ 45,00
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão Gota</h2>
+                <p class="product__description">Courinho</p>
+                <hr class="product__divider">
+                R$ 45,00
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+        <article class="product">
+            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
+            <div class="product__info">
+                <h2 class="product__name">Cordão de Amarração</h2>
+                <p class="product__description">Camurça</p>
+                <hr class="product__divider">
+                R$ 30,00
+                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            </div>
+        </article>
+
+    </section>
+
+</main>
+{% endblock %}
