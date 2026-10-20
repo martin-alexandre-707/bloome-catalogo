@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, abort, render_template
+
+from catalogo import PRODUTOS
 
 app = Flask(__name__)
 
@@ -9,6 +11,23 @@ def index():
 @app.route("/produtos")
 def produtos():
     return render_template("produtos.html", current="produtos")
+
+@app.route("/produtos/<int:produto>")
+def produto(produto):
+    item = PRODUTOS.get(produto)
+    if item is None:
+        abort(404)
+    relacionados = [
+        {"id": chave, **dados}
+        for chave, dados in PRODUTOS.items()
+        if chave != produto
+    ][:3]
+    return render_template(
+        "produto.html",
+        current="produtos",
+        produto={"id": produto, **item},
+        relacionados=relacionados,
+    )
 
 @app.route("/favoritos")
 def favoritos():
