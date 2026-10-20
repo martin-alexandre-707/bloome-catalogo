@@ -1,0 +1,44 @@
+"""Catálogo estático de produtos da Bloome.
+
+Cada item é chaveado por um slug (usado na URL /produtos/<slug>).
+Os textos e preços são de exemplo — edite livremente aqui.
+"""
+
+PRODUTOS = {
+    "cordao-amarracao": {
+        "nome": "Cordão de Amarração",
+        "preco": "R$ 30,00",
+        "imagem": "cordao_amarracao.png",
+        "descricao": "Camurça soft com amarração delicada, feita para trazer leveza ao seu dia a dia. Uma peça simples e confortável, ideal para quem ama um visual minimalista e cheio de significado.",
+    },
+    "colar-sao-bento": {
+        "nome": "Colar São Bento",
+        "preco": "R$ 30,00",
+        "imagem": "cordao_bento.png",
+        "descricao": "Pingente de São Bento em couro, para acompanhar você na fé e na rotina. Uma peça artesanal que protege o coração e combina com qualquer produção.",
+    },
+    "cordao-coracao": {
+        "nome": "Cordão Coração",
+        "preco": "R$ 45,00",
+        "imagem": "cordao_coracao.png",
+        "descricao": "Um pingente de coração em couro que une simplicidade e afeto. Feito à mão para quem gosta de detalhes que falam de dentro pra fora.",
+    },
+    "cordao-espinha-pequena": {
+        "nome": "Cordão Espinha Pequena",
+        "preco": "R$ 45,00",
+        "imagem": "cordao_espinha_p.png",
+        "descricao": "Pingente de espinha pequena em couro, com um toque de ousadia que equilibra produções discretas. Delicada de ver, forte de presença.",
+    },
+    "cordao-olho-grego": {
+        "nome": "Cordão Olho Grego",
+        "preco": "R$ 30,00",
+        "imagem": "cordao_olho_grego.png",
+        "descricao": "O clássico olho grego em couro, para afastar energias ruins e atrair boas vibrações. Proteção com estilo, todos os dias.",
+    },
+    "cordao-gota": {
+        "nome": "Cordão Gota",
+        "preco": "R$ 45,00",
+        "imagem": "cordao_gota.png",
+        "descricao": "Pingente em formato de gota, com linhas suaves e acabamento elegante. Uma peça versátil que brilha sozinha ou em composições com outros acessórios.",
+    },
+}
