@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ produto.nome }}{% endblock %}
+
+{% block description %}{{ produto.descricao | truncate(150) }}{% endblock %}
+
+{% block content %}
+<main class="page-content">
+    <a href="{{ url_for('produtos') }}" class="back-link">← Voltar para o catálogo</a>
+
+    <article class="product-detail">
+        <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-detail__image">
+        <div class="product-detail__info">
+            <h1 class="product-detail__name">{{ produto.nome }}</h1>
+            <span class="product-detail__price">{{ produto.preco }}</span>
+            <p class="product-detail__description">{{ produto.descricao }}</p>
+            <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+        </div>
+    </article>
+
+    <section class="product-detail__related" aria-label="Produtos relacionados">
+        <h2 class="product-detail__related-title">Você também vai amar</h2>
+        <div class="favorites">
+            {% for item in relacionados %}
+            <a href="{{ url_for('produto', produto=item.id) }}" class="favorite">
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="{{ item.nome }}" class="favorite__image">
+                <div class="favorite__info">
+                    <h3 class="favorite__name">{{ item.nome }}</h3>
+                    <span class="favorite__price">{{ item.preco }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+{% endblock %}
