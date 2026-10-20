@@ -335,6 +335,37 @@ img {
 }
 
 
+.product__link,
+.favorite__link {
+  display: block;
+}
+
+.product__image,
+.favorite__image {
+  transition: transform 0.2s ease;
+}
+
+.product__link:hover .product__image,
+.favorite__link:hover .favorite__image {
+  transform: scale(1.02);
+}
+
+.product__name a:hover,
+.favorite__name a:hover {
+  color: var(--color-rose-deep);
+  text-decoration: underline;
+}
+
+.product__link:focus-visible,
+.favorite__link:focus-visible,
+.product__name a:focus-visible,
+.favorite__name a:focus-visible {
+  outline: 2px solid var(--color-wine);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+
 .cart {
   display: flex;
   gap: 2rem;

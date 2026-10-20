@@ -12,9 +12,11 @@
     <section class="products" aria-label="Lista de produtos">
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
+            <a href="{{ url_for('produto', produto=1) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Cordão de Amarração</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=1) }}">Cordão de Amarração</a></h2>
                 <p class="product__description">Camurça</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 30,00</span>
@@ -23,9 +25,11 @@
         </article>
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="Colar São Bento" class="product__image">
+            <a href="{{ url_for('produto', produto=2) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="Colar São Bento" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Colar São Bento</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=2) }}">Colar São Bento</a></h2>
                 <p class="product__description">Courinho</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 30,00</span>
@@ -34,9 +38,11 @@
         </article>
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
+            <a href="{{ url_for('produto', produto=3) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Cordão Coração</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=3) }}">Cordão Coração</a></h2>
                 <p class="product__description">Courinho</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 45,00</span>
@@ -45,9 +51,11 @@
         </article>
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_espinha_p.png') }}" alt="Cordão Espinha Pequena" class="product__image">
+            <a href="{{ url_for('produto', produto=4) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_espinha_p.png') }}" alt="Cordão Espinha Pequena" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Cordão Espinha Pequena</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=4) }}">Cordão Espinha Pequena</a></h2>
                 <p class="product__description">Courinho</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 45,00</span>
@@ -56,9 +64,11 @@
         </article>
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="Cordão Olho Grego" class="product__image">
+            <a href="{{ url_for('produto', produto=5) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="Cordão Olho Grego" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Cordão Olho Grego</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=5) }}">Cordão Olho Grego</a></h2>
                 <p class="product__description">Courinho</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 30,00</span>
@@ -67,9 +77,11 @@
         </article>
 
         <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
+            <a href="{{ url_for('produto', produto=6) }}" class="product__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
+            </a>
             <div class="product__info">
-                <h2 class="product__name">Cordão Gota</h2>
+                <h2 class="product__name"><a href="{{ url_for('produto', produto=6) }}">Cordão Gota</a></h2>
                 <p class="product__description">Courinho</p>
                 <hr class="product__divider">
                 <span class="product__price">R$ 45,00</span>

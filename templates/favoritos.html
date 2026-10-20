@@ -13,9 +13,11 @@
 
         <article class="favorite">
             <span class="favorite__heart" aria-hidden="true">&#9829;</span>
-            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="favorite__image">
+            <a href="{{ url_for('produto', produto=3) }}" class="favorite__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="favorite__image">
+            </a>
             <div class="favorite__info">
-                <h2 class="favorite__name">Cordão Coração</h2>
+                <h2 class="favorite__name"><a href="{{ url_for('produto', produto=3) }}">Cordão Coração</a></h2>
                 <p class="favorite__description">Courinho</p>
                 <hr class="favorite__divider">
                 <span class="favorite__price">R$ 45,00</span>
@@ -26,9 +28,11 @@
 
         <article class="favorite">
             <span class="favorite__heart" aria-hidden="true">&#9829;</span>
-            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="favorite__image">
+            <a href="{{ url_for('produto', produto=6) }}" class="favorite__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="favorite__image">
+            </a>
             <div class="favorite__info">
-                <h2 class="favorite__name">Cordão Gota</h2>
+                <h2 class="favorite__name"><a href="{{ url_for('produto', produto=6) }}">Cordão Gota</a></h2>
                 <p class="favorite__description">Courinho</p>
                 <hr class="favorite__divider">
                 <span class="favorite__price">R$ 45,00</span>
@@ -39,9 +43,11 @@
 
         <article class="favorite">
             <span class="favorite__heart" aria-hidden="true">&#9829;</span>
-            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="favorite__image">
+            <a href="{{ url_for('produto', produto=1) }}" class="favorite__link">
+                <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="favorite__image">
+            </a>
             <div class="favorite__info">
-                <h2 class="favorite__name">Cordão de Amarração</h2>
+                <h2 class="favorite__name"><a href="{{ url_for('produto', produto=1) }}">Cordão de Amarração</a></h2>
                 <p class="favorite__description">Camurça</p>
                 <hr class="favorite__divider">
                 <span class="favorite__price">R$ 30,00</span>
