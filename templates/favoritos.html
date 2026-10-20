@@ -9,38 +9,44 @@
     <h1>Favoritos</h1>
     <p class="subtitle">Os itens que você salvou para não perder de vista!</p>
 
-    <section class="products" aria-label="Lista de favoritos">
+    <section class="favorites" aria-label="Lista de favoritos">
 
-        <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
-            <div class="product__info">
-                <h2 class="product__name">Cordão Coração</h2>
-                <p class="product__description">Courinho</p>
-                <hr class="product__divider">
-                R$ 45,00
+        <article class="favorite">
+            <span class="favorite__heart" aria-hidden="true">&#9829;</span>
+            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="favorite__image">
+            <div class="favorite__info">
+                <h2 class="favorite__name">Cordão Coração</h2>
+                <p class="favorite__description">Courinho</p>
+                <hr class="favorite__divider">
+                <span class="favorite__price">R$ 45,00</span>
                 <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+                <a href="{{ url_for('favoritos') }}" class="favorite__remove">Remover dos favoritos</a>
             </div>
         </article>
 
-        <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
-            <div class="product__info">
-                <h2 class="product__name">Cordão Gota</h2>
-                <p class="product__description">Courinho</p>
-                <hr class="product__divider">
-                R$ 45,00
+        <article class="favorite">
+            <span class="favorite__heart" aria-hidden="true">&#9829;</span>
+            <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="favorite__image">
+            <div class="favorite__info">
+                <h2 class="favorite__name">Cordão Gota</h2>
+                <p class="favorite__description">Courinho</p>
+                <hr class="favorite__divider">
+                <span class="favorite__price">R$ 45,00</span>
                 <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+                <a href="{{ url_for('favoritos') }}" class="favorite__remove">Remover dos favoritos</a>
             </div>
         </article>
 
-        <article class="product">
-            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
-            <div class="product__info">
-                <h2 class="product__name">Cordão de Amarração</h2>
-                <p class="product__description">Camurça</p>
-                <hr class="product__divider">
-                R$ 30,00
+        <article class="favorite">
+            <span class="favorite__heart" aria-hidden="true">&#9829;</span>
+            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="favorite__image">
+            <div class="favorite__info">
+                <h2 class="favorite__name">Cordão de Amarração</h2>
+                <p class="favorite__description">Camurça</p>
+                <hr class="favorite__divider">
+                <span class="favorite__price">R$ 30,00</span>
                 <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+                <a href="{{ url_for('favoritos') }}" class="favorite__remove">Remover dos favoritos</a>
             </div>
         </article>
 

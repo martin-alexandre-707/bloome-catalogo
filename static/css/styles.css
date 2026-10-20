@@ -237,6 +237,104 @@ img {
 }
 
 
+.favorites {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 4rem auto 5rem;
+}
+
+.favorite {
+  position: relative;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 3px 10px rgba(119, 46, 63, 0.1);
+}
+
+.favorite:hover {
+  box-shadow: 0 6px 16px rgba(119, 46, 63, 0.16);
+}
+
+.favorite__heart {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-rose-light);
+  color: var(--color-wine);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.favorite__image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.favorite__info {
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.favorite__name {
+  color: var(--color-wine);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.favorite__description {
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-taupe);
+  font-weight: 600;
+}
+
+.favorite__divider {
+  border: none;
+  border-top: 1px solid var(--color-rose-light);
+  width: 40%;
+  margin: 0.7rem auto;
+}
+
+.favorite__price {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-wine);
+}
+
+.favorite .btn {
+  margin-top: 0.8rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+}
+
+.favorite__remove {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-rose-deep);
+}
+
+.favorite__remove:hover {
+  text-decoration: underline;
+}
+
+.favorite__remove:focus-visible {
+  outline: 2px solid var(--color-rose-deep);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+
 .cart {
   display: flex;
   gap: 2rem;
@@ -969,6 +1067,10 @@ img {
     grid-template-columns: 1fr;
   }
 
+  .favorites {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .cart {
     flex-direction: column;
   }
@@ -991,6 +1093,12 @@ img {
   }
 
   .products {
+    grid-template-columns: 1fr;
+    margin: 3rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .favorites {
     grid-template-columns: 1fr;
     margin: 3rem 1rem;
     gap: 1.5rem;
