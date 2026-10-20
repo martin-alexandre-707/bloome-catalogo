@@ -15,13 +15,14 @@ def produtos():
 @app.route("/produtos/<int:produto>")
 def produto(produto):
     item = PRODUTOS.get(produto)
+
     if item is None:
         abort(404)
-    relacionados = [
-        {"id": chave, **dados}
-        for chave, dados in PRODUTOS.items()
-        if chave != produto
-    ][:3]
+
+    relacionados = [{"id": chave, **dados} for chave, dados in PRODUTOS.items() if chave != produto][:3]
+
+    print(relacionados)
+
     return render_template(
         "produto.html",
         current="produtos",
