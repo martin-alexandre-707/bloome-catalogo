@@ -1,9 +1,3 @@
-"""Catálogo estático de produtos da Bloome.
-
-Cada item é identificado por um id numérico (usado na URL /produtos/<id>).
-Os textos e preços são de exemplo — edite livremente aqui.
-"""
-
 PRODUTOS = {
     1: {
         "nome": "Cordão de Amarração",
