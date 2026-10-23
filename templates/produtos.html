@@ -5,7 +5,7 @@
 {% block description %}Confira o catálogo de joias e acessórios artesanais da Bloome.{% endblock %}
 
 {% block content %}
-<main class="page-content">
+<main id="conteudo" tabindex="-1" class="page-content">
     <h1>Produtos</h1>
     <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
 
@@ -13,7 +13,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=1) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="Cordão de Amarração" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=1) }}">Cordão de Amarração</a></h2>
@@ -26,7 +26,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=2) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="Colar São Bento" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="Colar São Bento" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=2) }}">Colar São Bento</a></h2>
@@ -39,7 +39,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=3) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="Cordão Coração" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=3) }}">Cordão Coração</a></h2>
@@ -52,7 +52,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=4) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_espinha_p.png') }}" alt="Cordão Espinha Pequena" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_espinha_p.png') }}" alt="Cordão Espinha Pequena" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=4) }}">Cordão Espinha Pequena</a></h2>
@@ -65,7 +65,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=5) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="Cordão Olho Grego" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="Cordão Olho Grego" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=5) }}">Cordão Olho Grego</a></h2>
@@ -78,7 +78,7 @@
 
         <article class="product">
             <a href="{{ url_for('produto', produto=6) }}" class="product__link">
-                <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image">
+                <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="Cordão Gota" class="product__image" loading="lazy" decoding="async">
             </a>
             <div class="product__info">
                 <h2 class="product__name"><a href="{{ url_for('produto', produto=6) }}">Cordão Gota</a></h2>

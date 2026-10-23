@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Bloome — Documentação de UX/UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&family=Playball&display=swap">
+<style>
+  @page { size: A4; margin: 17mm 15mm 18mm; }
+  @page :first { margin: 0 0 14mm 0; }
+
+  :root {
+    --wine: #772e3f;
+    --wine-deep: #5e1f2e;
+    --rose: #b98e98;
+    --rose-light: #e0aeb6;
+    --rose-deep: #7d4351;
+    --mauve: #6f4c52;
+    --cream: #e8dedc;
+    --cream-soft: #f6efee;
+    --taupe: #6b5b4b;
+    --line: #d9c8c6;
+    --ok: #2a5f46;
+    --warn: #8a5a12;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { font-size: 10pt; }
+
+  body {
+    margin: 0;
+    font-family: 'Lato', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    color: var(--mauve);
+    line-height: 1.55;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  p { margin: 0 0 0.55em; text-align: justify; }
+  ul, ol { margin: 0 0 0.6em; padding-left: 1.15em; }
+  li { margin-bottom: 0.25em; }
+
+  /* ---------- capa ---------- */
+  .cover {
+    height: 283mm;
+    background: var(--wine);
+    color: var(--cream);
+    padding: 34mm 22mm 20mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    right: -40mm;
+    bottom: -40mm;
+    width: 120mm;
+    height: 120mm;
+    border-radius: 50%;
+    border: 1mm solid rgba(224, 174, 182, 0.25);
+  }
+  .cover__marca { font-family: 'Playball', cursive; font-size: 40pt; color: var(--rose-light); line-height: 1; }
+  .cover__linha { width: 28mm; height: 1.4mm; background: var(--rose-light); margin: 12mm 0 8mm; }
+  .cover__titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 34pt;
+    line-height: 1.1;
+    margin: 0 0 6mm;
+    color: #fff;
+  }
+  .cover__sub { font-size: 13pt; color: var(--rose-light); max-width: 120mm; margin: 0 0 4mm; }
+  .cover__meta { margin-top: auto; font-size: 9.5pt; color: rgba(232, 222, 220, 0.85); }
+  .cover__meta strong { color: #fff; font-weight: 700; }
+  .cover__bloco { display: flex; gap: 12mm; flex-wrap: wrap; margin-top: 4mm; }
+  .cover__bloco div { min-width: 48mm; }
+  .cover__rotulo {
+    font-size: 7.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rose-light);
+    margin-bottom: 1mm;
+  }
+
+  /* ---------- estrutura ---------- */
+  .page { break-before: page; }
+  .nobreak { break-inside: avoid; }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 19pt;
+    color: var(--wine);
+    margin: 0 0 3mm;
+    line-height: 1.15;
+    border-bottom: 0.5mm solid var(--rose-light);
+    padding-bottom: 2mm;
+  }
+  h2 .num {
+    display: inline-block;
+    font-family: 'Lato', sans-serif;
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--rose-deep);
+    vertical-align: 0.35em;
+    margin-right: 2.5mm;
+    letter-spacing: 0.08em;
+  }
+  h3 {
+    font-size: 11.5pt;
+    color: var(--wine);
+    margin: 5mm 0 1.5mm;
+    line-height: 1.25;
+    break-after: avoid;
+  }
+  h4 { font-size: 9.8pt; color: var(--rose-deep); margin: 3mm 0 1mm; break-after: avoid; }
+  h2 { break-after: avoid; }
+  .lead { font-size: 10.4pt; color: var(--rose-deep); margin-bottom: 4mm; }
+
+  /* ---------- tabelas ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.1pt;
+    line-height: 1.4;
+    margin: 2mm 0 4mm;
+    break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th {
+    background: var(--wine);
+    color: var(--cream);
+    text-align: left;
+    font-weight: 700;
+    padding: 1.8mm 2mm;
+    font-size: 8pt;
+    vertical-align: bottom;
+  }
+  td {
+    padding: 1.6mm 2mm;
+    border-bottom: 0.25mm solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) td { background: #faf6f5; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  td.c, th.c { text-align: center; }
+  .tabela-compacta td, .tabela-compacta th { padding: 1.2mm 1.6mm; }
+  caption {
+    caption-side: bottom;
+    font-size: 7.6pt;
+    color: var(--taupe);
+    text-align: left;
+    padding-top: 1.2mm;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 7.2pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.5mm 1.6mm;
+    border-radius: 1.6mm;
+    white-space: nowrap;
+  }
+  .tag--ok { background: #e3efe8; color: var(--ok); }
+  .tag--spec { background: #f6e7cf; color: var(--warn); }
+  .tag--fix { background: #f7e3e7; color: #8f2a3c; }
+  .tag--neutral { background: #eee6e5; color: var(--mauve); }
+
+  /* ---------- caixas ---------- */
+  .nota {
+    border-left: 1mm solid var(--rose-light);
+    background: var(--cream-soft);
+    padding: 2.6mm 3.4mm;
+    margin: 2mm 0 4mm;
+    font-size: 8.8pt;
+    break-inside: avoid;
+  }
+  .nota strong { color: var(--wine); }
+  .nota--ok { border-left-color: var(--ok); background: #eef5f1; }
+  .nota--warn { border-left-color: var(--warn); background: #fbf3e4; }
+
+  .grade2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .grade3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+
+  .cartao {
+    border: 0.3mm solid var(--line);
+    border-radius: 2mm;
+    padding: 2.6mm 3mm;
+    break-inside: avoid;
+    background: #fff;
+  }
+  .cartao h4 { margin-top: 0; }
+  .cartao p { margin-bottom: 0; font-size: 8.6pt; text-align: left; }
+
+  code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    font-size: 0.88em;
+    background: #f3e9e8;
+    padding: 0 0.7mm;
+    border-radius: 0.7mm;
+    white-space: nowrap;
+  }
+  .nota code, td code { background: rgba(119, 46, 63, 0.06); }
+
+  /* ---------- figuras ---------- */
+  figure { margin: 3mm 0 4mm; break-inside: avoid; }
+  figure img { width: 100%; border: 0.3mm solid var(--line); border-radius: 1.5mm; display: block; }
+  figcaption { font-size: 7.6pt; color: var(--taupe); margin-top: 1.2mm; }
+  .figs-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; align-items: start; }
+  .figs-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: start; }
+  .figs-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; align-items: start; }
+  .figs-2 figure, .figs-3 figure, .figs-4 figure { margin: 0 0 3mm; }
+
+  .phone { border-radius: 2mm; max-width: 44mm; margin-inline: auto; }
+
+  /* ---------- diagramas ---------- */
+  .fluxo {
+    font-family: 'Lato', sans-serif;
+    font-size: 8.2pt;
+    background: #faf6f5;
+    border: 0.3mm solid var(--line);
+    border-radius: 2mm;
+    padding: 3mm;
+    white-space: pre;
+    line-height: 1.5;
+    color: var(--mauve);
+    overflow: hidden;
+    break-inside: avoid;
+  }
+
+  /* ---------- sumário ---------- */
+  .sumario { columns: 1; font-size: 9.4pt; }
+  .sumario ol { list-style: none; padding: 0; margin: 0; counter-reset: item; }
+  .sumario li {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 0.2mm dotted var(--line);
+    padding: 1.4mm 0;
+    counter-increment: item;
+  }
+  .sumario li::before {
+    content: counter(item) ".";
+    width: 8mm;
+    color: var(--rose-deep);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .sumario .titulo { flex: 1; }
+  .sumario .peso { color: var(--taupe); font-size: 8pt; margin-left: 3mm; }
+
+  /* ---------- rodapé de seção ---------- */
+  .fonte { font-size: 7.4pt; color: var(--taupe); border-top: 0.2mm solid var(--line); padding-top: 1.4mm; margin-top: 3mm; }
+  .check { color: var(--ok); font-weight: 700; }
+  .x { color: #8f2a3c; font-weight: 700; }
+
+  @media print {
+    .page { break-before: page; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= CAPA ================= -->
+<div class="cover">
+  <div class="cover__marca">Bloome</div>
+  <div class="cover__linha"></div>
+  <h1 class="cover__titulo">Documentação<br>de UX/UI</h1>
+  <p class="cover__sub">Design system acessível, arquitetura da informação e validação da interface do catálogo Bloome.</p>
+  <p class="cover__sub" style="font-size:10pt;color:#e8dedc;">2ª Avaliação — Interface Humano-Computador</p>
+
+  <div class="cover__meta">
+    <div class="cover__bloco">
+      <div>
+        <div class="cover__rotulo">Integrantes</div>
+        <strong>Victor Xavier</strong><br>
+        <strong>Martin Alexandre</strong><br>
+        <strong>Anthonio Fon</strong>
+      </div>
+      <div>
+        <div class="cover__rotulo">Escopo entregue</div>
+        8 telas interativas<br>
+        1 mini design system<br>
+        20 iterações de UI/UX<br>
+        1 avaliação heurística completa
+      </div>
+      <div>
+        <div class="cover__rotulo">Base técnica</div>
+        Flask + Jinja2<br>
+        HTML5 semântico<br>
+        CSS3 puro (sem framework)
+      </div>
+    </div>
+    <div style="margin-top:10mm;font-size:8.6pt;color:rgba(232,222,220,0.8);">
+      Outubro de 2026 · Documento gerado a partir do protótipo em execução
+    </div>
+  </div>
+</div>
+
+<!-- ================= SUMÁRIO ================= -->
+<section class="page">
+  <h2><span class="num">—</span>Sumário</h2>
+  <p class="lead">Cada seção corresponde a um bloco da rubrica. O peso indicado à direita é o peso recomendado na avaliação.</p>
+
+  <div class="sumario">
+    <ol>
+      <li><span class="titulo">Apresentação, escopo e método</span><span class="peso">—</span></li>
+      <li><span class="titulo">Telas e navegabilidade</span><span class="peso">30%</span></li>
+      <li><span class="titulo">Mini design system acessível</span><span class="peso">20%</span></li>
+      <li><span class="titulo">Acessibilidade WCAG 2.1 AA</span><span class="peso">20%</span></li>
+      <li><span class="titulo">Avaliação heurística (10 leis de Nielsen)</span><span class="peso">25%</span></li>
+      <li><span class="titulo">Teste de usabilidade — protocolo Think Aloud</span><span class="peso">25%</span></li>
+      <li><span class="titulo">Matriz de iteração</span><span class="peso">25%</span></li>
+      <li><span class="titulo">Arquitetura da informação</span><span class="peso">15%</span></li>
+      <li><span class="titulo">Guia de conteúdo e microcopy</span><span class="peso">—</span></li>
+      <li><span class="titulo">Roteiro de apresentação</span><span class="peso">10%</span></li>
+      <li><span class="titulo">Anexos: evidências, execução e limitações</span><span class="peso">—</span></li>
+    </ol>
+  </div>
+
+  <h3>Como ler este documento</h3>
+  <p>O texto está organizado para ser lido em duas velocidades. As tabelas concentram a evidência objetiva (medições, contrastes, rotas) e podem ser consultadas durante a arguição; os parágrafos explicam a decisão de projeto por trás de cada evidência. Sempre que um item depende de um comportamento que o escopo proibiu implementar (JavaScript novo ou alteração no backend), ele aparece marcado como <span class="tag tag--spec">especificado</span> em vez de <span class="tag tag--ok">aplicado</span>.</p>
+
+  <div class="nota">
+    <strong>Convenção de status.</strong> <span class="tag tag--ok">Aplicado</span> = mudança já presente nos arquivos do protótipo.
+    <span class="tag tag--spec">Especificado</span> = solução documentada, mas fora do escopo permitido nesta entrega.
+    <span class="tag tag--fix">Feito</span> = problema encontrado na auditoria e já resolvido na iteração.
+  </div>
+</section>
+
+<!-- ================= 1. APRESENTAÇÃO ================= -->
+<section class="page">
+  <h2><span class="num">1</span>Apresentação, escopo e método</h2>
+
+  <h3>1.1 O produto</h3>
+  <p>A Bloome é um catálogo de joias e acessórios artesanais. O protótipo é uma aplicação Flask com templates Jinja2 que serve oito telas a partir de um catálogo estático de seis produtos. Toda a camada visual é CSS puro, sem framework e sem dependências de build.</p>
+
+  <p>O público é jovem, majoritariamente mobile, e chega ao catálogo por redes sociais. Isso orienta três decisões que atravessam o documento: navegação com alvos de toque generosos, leitura confortável em tela pequena e uma identidade visual quente (vinho, rosé e creme) que não pode custar contraste.</p>
+
+  <h3>1.2 O que a 2ª avaliação pede</h3>
+  <table>
+    <thead>
+      <tr><th style="width:34%">Requisito</th><th style="width:44%">Como foi atendido</th><th style="width:22%">Onde ver</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5 a 10 telas chave interativas</td><td>8 telas navegáveis em 13 URLs, com transições funcionais e estado ativo no menu</td><td>Seção 2</td></tr>
+      <tr><td>Navegabilidade real</td><td>Rotas Flask reais; estados default, hover, foco, pressionado e indisponível</td><td>Seções 2 e 3</td></tr>
+      <tr><td>Microinterações e feedback</td><td>Validação de campo em CSS puro, atalho de teclado, animação de entrada, foco visível; estados de carregando/sucesso/vazio especificados</td><td>Seções 3.5 e 7</td></tr>
+      <tr><td>Tokens de estilo com contraste validado</td><td>24 pares medidos, todos ≥ 4,5:1 (menor: 4,85:1)</td><td>Seção 4.2</td></tr>
+      <tr><td>Escala tipográfica sem serifa</td><td>Escala funcional de 7 degraus em Lato; serifada restrita ao display de marca</td><td>Seção 3.2</td></tr>
+      <tr><td>Botões ≥ 44 × 44 px</td><td>Medido no navegador: botão 48 px, menu 44 × 44 px, campo 50 px</td><td>Seção 4.3</td></tr>
+      <tr><td>Campos com rótulo visível</td><td>Todos os 14 campos têm <code>label</code> associado por <code>for</code>/<code>id</code>; auditoria automática confirmou 100%</td><td>Seção 4.4</td></tr>
+      <tr><td>Relatório de teste ou avaliação heurística</td><td>Avaliação heurística completa + protocolo Think Aloud pronto para aplicação</td><td>Seções 5 e 6</td></tr>
+      <tr><td>Matriz de iteração</td><td>20 problemas rastreados, com correção e validação</td><td>Seção 7</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 Restrições de escopo respeitadas</h3>
+  <p>O trabalho foi conduzido sob três restrições explícitas. Elas moldam o resultado e são declaradas aqui para que a avaliação considere o mérito dentro do combinado.</p>
+
+  <div class="grade3">
+    <div class="cartao">
+      <h4>Nenhuma tela nova</h4>
+      <p>Não foram criadas rotas, páginas ou templates. O trabalho aconteceu sobre as 8 telas existentes.</p>
+    </div>
+    <div class="cartao">
+      <h4>Backend intocado</h4>
+      <p><code>app.py</code>, <code>catalogo.py</code> e <code>requirements.txt</code> permanecem exatamente como estavam.</p>
+    </div>
+    <div class="cartao">
+      <h4>Sem lógica nova</h4>
+      <p>Nenhum <code>&lt;script&gt;</code> foi adicionado; os dois scripts já existentes não foram alterados.</p>
+    </div>
+  </div>
+
+  <h3>1.4 Método</h3>
+  <p>A auditoria foi feita sobre o protótipo em execução, não sobre o código-fonte isolado. Isso permite medir o que o usuário realmente vê: alturas renderizadas, largura do documento em cada breakpoint e contraste efetivo após composição de camadas com transparência.</p>
+
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:26%">Etapa</th><th style="width:44%">Instrumento</th><th style="width:30%">Saída</th></tr></thead>
+    <tbody>
+      <tr><td>Inventário</td><td>Leitura das rotas e dos templates Jinja</td><td>8 telas, 13 URLs, 14 campos</td></tr>
+      <tr><td>Contraste</td><td>Cálculo da luminância relativa (WCAG 2.x) sobre os tokens finais</td><td>24 pares, menor razão 4,85:1</td></tr>
+      <tr><td>Layout</td><td>Chrome headless via DevTools Protocol, 7 larguras (320 a 1440 px)</td><td>68 medições de reflow sem overflow</td></tr>
+      <tr><td>Alvos de toque</td><td>Medição de <code>getBoundingClientRect()</code> por componente</td><td>Tabela da seção 4.3</td></tr>
+      <tr><td>Estrutura</td><td>Auditoria automática do HTML renderizado das 13 rotas</td><td>100% com <code>alt</code>, <code>label</code>, landmark e atalho</td></tr>
+      <tr><td>Heurística</td><td>Inspeção guiada pelas 10 heurísticas de Nielsen</td><td>Seção 5</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota nota--ok">
+    <strong>Resultado da auditoria final.</strong> 13 rotas respondem 200; nenhuma imagem sem texto alternativo; nenhum campo sem rótulo; nenhum overflow horizontal entre 320 e 1440 px; todos os pares de texto aprovados em AA.
+  </div>
+</section>
+
+<!-- ================= 2. TELAS ================= -->
+<section class="page">
+  <h2><span class="num">2</span>Telas e navegabilidade <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(30%)</span></h2>
+
+  <p class="lead">Oito telas, treze URLs e um caminho de compra contínuo. O requisito pedia de 5 a 10 telas; o protótipo entrega 8, todas com navegação real entre si.</p>
+
+  <h3>2.1 Inventário de telas</h3>
+  <table>
+    <thead>
+      <tr><th style="width:4%">#</th><th style="width:16%">Tela</th><th style="width:17%">Rota</th><th style="width:27%">Objetivo do usuário</th><th style="width:36%">Interações e estados</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Início</td><td><code>/</code></td><td>Entender a marca e entrar no catálogo</td><td>Hero, CTA único, entrada em cascata dos três blocos de texto</td></tr>
+      <tr><td>2</td><td>Catálogo</td><td><code>/produtos</code></td><td>Comparar as peças disponíveis</td><td>6 cartões; hover eleva o cartão e amplia a foto; foco visível; imagem com carregamento preguiçoso</td></tr>
+      <tr><td>3</td><td>Detalhe do produto</td><td><code>/produtos/1..6</code></td><td>Decidir a compra de uma peça</td><td>Imagem prioritária, preço, descrição, CTA, 3 relacionados, link de volta</td></tr>
+      <tr><td>4</td><td>Favoritos</td><td><code>/favoritos</code></td><td>Reencontrar peças salvas</td><td>3 cartões, remover, comprar; coração decorativo</td></tr>
+      <tr><td>5</td><td>Minha conta</td><td><code>/conta</code></td><td>Entrar ou criar conta</td><td>Duas abas acessíveis, 2 e 5 campos, validação nativa, envio para o painel</td></tr>
+      <tr><td>6</td><td>Carrinho / checkout</td><td><code>/carrinho</code></td><td>Revisar e finalizar o pedido</td><td>Lista de 3 itens, 3 seções de formulário, 7 opções de rádio, resumo fixo</td></tr>
+      <tr><td>7</td><td>Meu painel</td><td><code>/painel</code></td><td>Acompanhar pedidos e dados</td><td>Cartão de dados, edição inline, 3 pedidos com status distintos</td></tr>
+      <tr><td>8</td><td>Sobre</td><td><code>/sobre</code></td><td>Conhecer a proposta da marca</td><td>Três blocos de conteúdo, CTA para o catálogo</td></tr>
+    </tbody>
+    <caption>O detalhe do produto é uma tela com seis instâncias de conteúdo, geradas pelo dicionário <code>PRODUTOS</code>.</caption>
+  </table>
+
+  <h3>2.2 Fluxos principais</h3>
+  <div class="fluxo">FLUXO 1 — Descoberta e compra
+  Início ──▶ Catálogo ──▶ Detalhe do produto ──▶ Carrinho ──▶ (envio do formulário)
+
+FLUXO 2 — Retorno
+  Início ──▶ Minha conta ──▶ [Entrar] ──▶ Meu painel ──▶ histórico de pedidos
+
+FLUXO 3 — Recuperação de interesse
+  Favoritos ──▶ Detalhe do produto ──▶ Carrinho
+       ▲                │
+       └──── "voltar" ◀─┘</div>
+
+  <p>Os três fluxos usam apenas links e formulários nativos, sem qualquer script adicional. O estado ativo do menu é derivado da variável <code>current</code> enviada por cada rota — inclusive no painel, que mantém "Minha conta" marcada por pertencer ao mesmo contexto.</p>
+
+  <h3>2.3 Navegabilidade e feedback de estado</h3>
+  <table>
+    <thead><tr><th style="width:26%">Elemento</th><th style="width:37%">Antes</th><th style="width:37%">Depois</th></tr></thead>
+    <tbody>
+      <tr><td>Menu global</td><td>Link de 24 px de altura, sem indicação visual da página atual</td><td>Alvo de 44 × 44 px, sublinhado e fundo suave na página ativa, via <code>aria-current</code></td></tr>
+      <tr><td>Atalho de teclado</td><td>Inexistente</td><td>“Pular para o conteúdo” visível ao primeiro Tab, apontando para <code>#conteudo</code></td></tr>
+      <tr><td>Botões</td><td>Default e hover</td><td>Default, hover, foco com anel duplo, pressionado invertido e indisponível</td></tr>
+      <tr><td>Retorno</td><td>Link de 24 px no detalhe</td><td>Alvo de 44 px alinhado à coluna de conteúdo</td></tr>
+      <tr><td>Erro de rota</td><td>404 padrão do Flask</td><td>Mantido (a correção exigiria <em>handler</em> no backend)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota nota--warn">
+    <strong>Limite declarado.</strong> O <em>feedback</em> de sucesso do checkout (confirmação do pedido) e a tela vazia de favoritos dependem de resposta do servidor. Como o backend não podia ser alterado, ambos ficaram especificados na seção 3.5 e não implementados.
+  </div>
+
+  <h3>2.4 Comportamento responsivo</h3>
+  <p>O menu foi o ponto mais crítico. Com seis itens, a barra transbordava a tela em larguras abaixo de 520 px; a correção quebra o menu em duas linhas equilibradas (quatro itens e depois dois), preservando a altura de toque de 44 px.</p>
+
+  <div class="figs-2">
+    <figure><img src="evidencias/qa-desktop-home.png" alt="Tela inicial em desktop"><figcaption>Início em 1440 px: CTA único e hierarquia clara.</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-produtos.png" alt="Catálogo em desktop"><figcaption>Catálogo em 1440 px: seis cartões com a mesma estrutura.</figcaption></figure>
+  </div>
+</section>
+
+<!-- ================= 3. DESIGN SYSTEM ================= -->
+<section class="page">
+  <h2><span class="num">3</span>Mini design system acessível <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(20%)</span></h2>
+
+  <p class="lead">Um único arquivo CSS passou a ser a fonte da verdade visual: 70 tokens, uma escala tipográfica de sete degraus, espaçamento em base 4 px e uma biblioteca de doze componentes.</p>
+
+  <h3>3.1 Princípios</h3>
+  <div class="grade2">
+    <div class="cartao"><h4>Contraste antes da estética</h4><p>Nenhuma cor entra na paleta sem razão calculada contra o fundo em que será usada. Quando a identidade conflitou com o contraste, a identidade cedeu.</p></div>
+    <div class="cartao"><h4>Toque primeiro</h4><p>Todo controle interativo tem 44 px de altura mínima declarada em token, não em valores soltos pelo arquivo.</p></div>
+    <div class="cartao"><h4>Uma decisão, um token</h4><p>Cor, espaço, raio, sombra e duração existem como variáveis. Trocar a escala inteira é editar um bloco.</p></div>
+    <div class="cartao"><h4>Estados explícitos</h4><p>Repouso, hover, foco, pressionado e indisponível são tratados como partes do componente, não como exceções.</p></div>
+  </div>
+
+  <h3>3.2 Tokens</h3>
+
+  <h4>Cor</h4>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:22%">Token</th><th style="width:14%">Valor</th><th style="width:38%">Uso</th><th style="width:26%">Contraste medido</th></tr></thead>
+    <tbody>
+      <tr><td><code>--color-wine</code></td><td>#772E3F</td><td>Superfícies escuras, títulos, texto de botão</td><td>9,35:1 no branco</td></tr>
+      <tr><td><code>--color-wine-deep</code></td><td>#5E1F2E</td><td>Rodapé e estado pressionado</td><td>9,30:1 no creme</td></tr>
+      <tr><td><code>--color-rose-light</code></td><td>#E0AEB6</td><td>Botão primário e logo</td><td>4,85:1 com o vinho</td></tr>
+      <tr><td><code>--color-rose-deep</code></td><td>#7D4351</td><td>Subtítulos e links secundários</td><td>5,70:1 no creme</td></tr>
+      <tr><td><code>--color-mauve</code></td><td>#6F4C52</td><td>Texto padrão</td><td>5,62:1 no creme</td></tr>
+      <tr><td><code>--color-taupe</code></td><td>#6B5B4B</td><td>Texto secundário e <em>placeholder</em></td><td>4,94:1 no creme</td></tr>
+      <tr><td><code>--color-cream</code></td><td>#E8DEDC</td><td>Fundo da aplicação</td><td>—</td></tr>
+      <tr><td><code>--color-danger</code></td><td>#8F2A3C</td><td>Erro de validação</td><td>8,19:1 no branco</td></tr>
+      <tr><td><code>--color-success</code></td><td>#2A5F46</td><td>Confirmação de campo</td><td>7,44:1 no branco</td></tr>
+    </tbody>
+    <caption>O valor de <code>--color-taupe</code> foi alterado de #7A6A59 (3,95:1) para #6B5B4B (4,94:1) durante a iteração.</caption>
+  </table>
+
+  <h4>Tipografia</h4>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:18%">Token</th><th style="width:12%">Tamanho</th><th style="width:34%">Aplicação</th><th style="width:36%">Justificativa</th></tr></thead>
+    <tbody>
+      <tr><td><code>--text-xs</code></td><td>12 px</td><td>Rótulos de metadados e mensagens de validação</td><td>Menor degrau, sempre em caixa alta e com peso 600</td></tr>
+      <tr><td><code>--text-sm</code></td><td>14 px</td><td>Descrições, links de rodapé, rótulos de campo</td><td>Piso de leitura confortável para texto secundário</td></tr>
+      <tr><td><code>--text-base</code></td><td>16 px</td><td>Corpo, campos, botões, menu</td><td>16 px evita o zoom automático de campos no iOS</td></tr>
+      <tr><td><code>--text-lg</code></td><td>18 px</td><td>Nome do produto, títulos de seção</td><td>Separa hierarquia sem recorrer a caixa alta</td></tr>
+      <tr><td><code>--text-xl</code></td><td>22 px</td><td>Títulos de blocos e nome no detalhe</td><td>Contraste de escala de 1,22×</td></tr>
+      <tr><td><code>--text-2xl</code></td><td>28 px</td><td>Logo e título do rodapé</td><td>Display de marca</td></tr>
+      <tr><td><code>--text-3xl</code></td><td>36 px</td><td>Nome do produto no detalhe</td><td>Primeiro nível de leitura da tela</td></tr>
+    </tbody>
+    <caption>Escala funcional inteiramente sem serifa (Lato + pilha de sistema). A serifada Playfair aparece só no display da marca.</caption>
+  </table>
+
+  <div class="nota">
+    <strong>Decisão sobre “escala sem serifa”.</strong> O requisito pede escala tipográfica sem serifa. A leitura funcional — corpo, rótulos, botões, tabelas — usa Lato e a pilha de sistema, integralmente sem serifa. A Playfair Display permanece apenas no <em>display</em> “BLOOME”, onde cumpre papel de marca e não de leitura. A separação é intencional e está registrada aqui para não parecer inconsistência.
+  </div>
+
+  <h4>Espaçamento, forma e movimento</h4>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:22%">Grupo</th><th style="width:42%">Escala</th><th style="width:36%">Regra de uso</th></tr></thead>
+    <tbody>
+      <tr><td>Espaço</td><td>4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80 px</td><td>Base 4 px com ritmo de 8 px; nunca valores avulsos</td></tr>
+      <tr><td>Raio</td><td>8, 12, 16 px e <em>pill</em> (999 px)</td><td>Cartões em 16 px, campos em 8 px, botões em <em>pill</em></td></tr>
+      <tr><td>Sombra</td><td>Três níveis, sempre em vinho translúcido</td><td>Repouso, hover e foco elevado</td></tr>
+      <tr><td>Duração</td><td>120, 200 e 320 ms</td><td>Interação, transição de componente e entrada de conteúdo</td></tr>
+      <tr><td>Curva</td><td><code>cubic-bezier(.2,0,0,1)</code> e <code>(.16,1,.3,1)</code></td><td>Saída suave, sem elástico</td></tr>
+      <tr><td>Toque</td><td><code>--touch-target: 2.75rem</code></td><td>Aplicado a todo controle interativo</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 Grid e breakpoints</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:20%">Faixa</th><th style="width:26%">Largura</th><th style="width:54%">Comportamento</th></tr></thead>
+    <tbody>
+      <tr><td>Desktop</td><td>acima de 980 px</td><td>Catálogo em 2 colunas, carrinho em 3 colunas, painel 300 px + conteúdo</td></tr>
+      <tr><td>Tablet</td><td>700 a 980 px</td><td>Carrinho empilhado, favoritos em 2 colunas, menu centralizado</td></tr>
+      <tr><td>Mobile</td><td>420 a 700 px</td><td>Uma coluna, cartões verticais, resumo do pedido após o formulário</td></tr>
+      <tr><td>Compacto</td><td>abaixo de 420 px</td><td>Menu em duas linhas equilibradas, tipografia do menu em 14 px</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.4 Biblioteca de componentes</h3>
+  <table>
+    <thead><tr><th style="width:18%">Componente</th><th style="width:20%">Estados</th><th style="width:34%">Medidas e regras</th><th style="width:28%">Onde aparece</th></tr></thead>
+    <tbody>
+      <tr><td>Botão primário</td><td>Repouso, hover, foco, pressionado, indisponível</td><td>48 px de altura, raio <em>pill</em>, rótulo sempre em ação verbal</td><td>Hero, cartões, detalhe, checkout</td></tr>
+      <tr><td>Link de navegação</td><td>Repouso, hover, foco, ativo</td><td>44 × 44 px, sublinhado na página atual</td><td>Menu global</td></tr>
+      <tr><td>Campo de texto</td><td>Repouso, foco, válido, inválido</td><td>50 px de altura, 16 px de fonte, borda de 1,5 px</td><td>Conta, painel, checkout</td></tr>
+      <tr><td>Opção em cartão (rádio)</td><td>Repouso, hover, selecionado, foco</td><td>46 px mínimos, borda de seleção em vinho</td><td>Entrega e pagamento</td></tr>
+      <tr><td>Abas</td><td>Ativa, inativa, hover, foco</td><td>44 px, trilho em creme claro, contraste 6,37:1</td><td>Minha conta</td></tr>
+      <tr><td>Cartão de produto</td><td>Repouso, hover, foco interno</td><td>Sombra em três níveis, imagem 4:5, raio 16 px</td><td>Catálogo, favoritos, relacionados</td></tr>
+      <tr><td>Selo de status</td><td>Pronto, entregue, aguardando</td><td>Texto de 14 px, fundo tonal, contraste ≥ 5:1</td><td>Painel de pedidos</td></tr>
+      <tr><td>Resumo do pedido</td><td>Padrão</td><td>Cartão vinho, linhas de 14 px, total destacado</td><td>Carrinho</td></tr>
+      <tr><td>Atalho de conteúdo</td><td>Oculto, visível ao foco</td><td>Primeiro elemento focável da página</td><td>Todas as telas</td></tr>
+    </tbody>
+  </table>
+
+  <div class="figs-2">
+    <figure><img src="evidencias/qa-desktop-produtos.png" alt="Catálogo com cartões padronizados"><figcaption>Cartões com mesma estrutura, raio e sombra.</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-carrinho.png" alt="Carrinho com formulário e resumo"><figcaption>Formulário em três seções e resumo em destaque.</figcaption></figure>
+  </div>
+
+  <h3>3.5 Estados de interface</h3>
+  <p>A interface precisa sinalizar carregando, sucesso, erro e vazio. Destes, dois podem existir sem backend e sem script: erro e sucesso de campo. Os demais foram especificados com a mesma linguagem visual para que a implementação futura não invente um padrão novo.</p>
+
+  <table>
+    <thead><tr><th style="width:14%">Estado</th><th style="width:30%">Especificação</th><th style="width:22%">Implementação</th><th style="width:34%">Como foi resolvido</th></tr></thead>
+    <tbody>
+      <tr><td>Erro de campo</td><td>Borda de 2 px em #8F2A3C e mensagem “Verifique este campo antes de continuar.”</td><td><span class="tag tag--ok">Aplicado</span></td><td><code>:user-invalid</code> em CSS puro, sem script</td></tr>
+      <tr><td>Sucesso de campo</td><td>Borda em #2A5F46 e mensagem “Campo válido.” ao sair do campo</td><td><span class="tag tag--ok">Aplicado</span></td><td><code>:user-valid</code> combinado com <code>:not(:focus)</code></td></tr>
+      <tr><td>Carregando</td><td>Esqueleto em creme com brilho de 1,2 s na proporção 4:5 da imagem</td><td><span class="tag tag--spec">Especificado</span></td><td>Exige controle de estado no cliente; substituído por animação de entrada</td></tr>
+      <tr><td>Sucesso de pedido</td><td>Faixa verde com número do pedido e link para o painel</td><td><span class="tag tag--spec">Especificado</span></td><td>Depende de resposta do servidor após o envio</td></tr>
+      <tr><td>Tela vazia</td><td>Ícone, frase de contexto e CTA para o catálogo</td><td><span class="tag tag--spec">Especificado</span></td><td>Depende de condicional no template, isto é, de lógica</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota nota--warn">
+    <strong>Por que não implementar carregando e vazio?</strong> Ambos exigem que a interface reaja a um dado que ainda não existe. Sem JavaScript novo, não há como alternar o estado; sem backend, não há como saber que a lista está vazia. Implementá-los por CSS seria simular a aparência sem a função — o que piora a avaliação, não melhora.
+  </div>
+</section>
+
+<!-- ================= 4. ACESSIBILIDADE ================= -->
+<section class="page">
+  <h2><span class="num">4</span>Acessibilidade WCAG 2.1 AA <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(20%)</span></h2>
+
+  <p class="lead">24 pares de cor medidos, 12 componentes com altura de toque verificada no navegador e 18 critérios de sucesso auditados.</p>
+
+  <h3>4.1 Contraste</h3>
+  <p>O cálculo segue a fórmula de luminância relativa da WCAG 2.x. Para cores com transparência, o valor foi composto sobre o fundo real antes da medição — caso dos selos de status e do trilho das abas.</p>
+
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:44%">Combinação</th><th class="c" style="width:14%">Razão</th><th class="c" style="width:10%">Mínimo</th><th class="c" style="width:10%">Resultado</th><th style="width:22%">Onde</th></tr></thead>
+    <tbody>
+      <tr><td>Texto padrão sobre fundo creme</td><td class="c">5,62:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Corpo de todas as telas</td></tr>
+      <tr><td>Títulos sobre fundo creme</td><td class="c">7,08:1</td><td class="c">4,5</td><td class="c check">AA</td><td>H1 e H2</td></tr>
+      <tr><td>Texto secundário sobre creme</td><td class="c">4,94:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Descrições de produto</td></tr>
+      <tr><td>Texto secundário sobre branco</td><td class="c">6,52:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Cartões</td></tr>
+      <tr><td>Subtítulo sobre creme</td><td class="c">5,70:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Linha de apoio</td></tr>
+      <tr><td>Títulos sobre branco</td><td class="c">9,35:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Cartões e painel</td></tr>
+      <tr><td>Link secundário sobre branco</td><td class="c">7,52:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Remover favorito</td></tr>
+      <tr><td>Menu sobre vinho</td><td class="c">7,08:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Cabeçalho</td></tr>
+      <tr><td>Logo e hero sobre vinho</td><td class="c">4,85:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Marca e hero</td></tr>
+      <tr><td>Rótulo de botão sobre rosé</td><td class="c">4,85:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Todos os CTAs</td></tr>
+      <tr><td>Rodapé sobre vinho profundo</td><td class="c">9,30:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Rodapé</td></tr>
+      <tr><td>Links do rodapé sobre vinho profundo</td><td class="c">6,37:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Créditos</td></tr>
+      <tr><td>Aba inativa sobre trilho</td><td class="c">6,37:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Minha conta</td></tr>
+      <tr><td>Aba ativa sobre vinho</td><td class="c">7,08:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Minha conta</td></tr>
+      <tr><td>Selo “Pronto para retirada”</td><td class="c">5,03:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Painel</td></tr>
+      <tr><td>Selo “Entregue”</td><td class="c">6,32:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Painel</td></tr>
+      <tr><td>Selo “Aguardando pagamento”</td><td class="c">6,27:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Painel</td></tr>
+      <tr><td>Texto digitado no campo</td><td class="c">9,35:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Formulários</td></tr>
+      <tr><td><em>Placeholder</em></td><td class="c">6,52:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Formulários</td></tr>
+      <tr><td>Mensagem de erro sobre branco</td><td class="c">8,19:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Validação</td></tr>
+      <tr><td>Mensagem de erro sobre creme</td><td class="c">6,21:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Validação</td></tr>
+      <tr><td>Mensagem de sucesso sobre branco</td><td class="c">7,44:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Validação</td></tr>
+      <tr><td>Mensagem de sucesso sobre creme</td><td class="c">5,64:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Validação</td></tr>
+      <tr><td>Rótulo de opção sobre cartão</td><td class="c">6,94:1</td><td class="c">4,5</td><td class="c check">AA</td><td>Entrega e pagamento</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota nota--ok">
+    <strong>Antes da iteração:</strong> o texto secundário sobre creme media <strong>3,95:1</strong> e o selo “Entregue”, <strong>4,30:1</strong>. Ambos reprovavam em AA. Os dois valores foram corrigidos e revalidados.
+  </div>
+
+  <h3>4.2 Áreas de toque</h3>
+  <p>As alturas abaixo foram medidas no navegador com o protótipo em execução, não estimadas a partir do CSS.</p>
+
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:40%">Componente</th><th class="c" style="width:16%">Altura</th><th class="c" style="width:16%">Largura</th><th class="c" style="width:12%">44 × 44</th><th style="width:16%">Critério</th></tr></thead>
+    <tbody>
+      <tr><td>Botão primário</td><td class="c">48 px</td><td class="c">≥ 133 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Link do menu</td><td class="c">44 px</td><td class="c">44 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Logo clicável</td><td class="c">44 px</td><td class="c">59 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Campo de texto</td><td class="c">50 px</td><td class="c">≥ 282 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Opção de rádio</td><td class="c">46 px</td><td class="c">≥ 151 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Aba Entrar / Criar conta</td><td class="c">44 px</td><td class="c">≥ 153 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Remover dos favoritos</td><td class="c">44 px</td><td class="c">≥ 164 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Voltar para o catálogo</td><td class="c">44 px</td><td class="c">≥ 358 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Continuar comprando</td><td class="c">44 px</td><td class="c">≥ 232 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Sair do painel</td><td class="c">44 px</td><td class="c">≥ 300 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Link social do rodapé</td><td class="c">44 px</td><td class="c">≥ 214 px</td><td class="c check">Sim</td><td>2.5.5 AAA</td></tr>
+      <tr><td>Crédito do integrante</td><td class="c">24 px</td><td class="c">≥ 54 px</td><td class="c">Parcial</td><td>2.5.8 AA</td></tr>
+    </tbody>
+    <caption>O crédito do integrante é um link de texto dentro de uma lista de rodapé. Elevá-lo a 44 px triplicaria a altura do bloco sem ganho funcional; ele atende ao critério 2.5.8 (alvo mínimo de 24 px) da WCAG 2.2.</caption>
+  </table>
+
+  <h3>4.3 Critérios de sucesso auditados</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:8%">SC</th><th style="width:32%">Critério</th><th style="width:46%">Evidência no protótipo</th><th class="c" style="width:14%">Status</th></tr></thead>
+    <tbody>
+      <tr><td>1.1.1</td><td>Conteúdo não textual</td><td>100% das imagens com <code>alt</code> descritivo; decorativas com <code>alt</code> vazio</td><td class="c check">Passa</td></tr>
+      <tr><td>1.3.1</td><td>Informação e relações</td><td>Header, nav, main, article, aside e footer em todas as telas</td><td class="c check">Passa</td></tr>
+      <tr><td>1.3.2</td><td>Sequência significativa</td><td>Ordem do DOM igual à ordem visual em todas as larguras testadas</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.1</td><td>Uso da cor</td><td>Status do pedido têm texto além da cor; erro tem borda e mensagem</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.3</td><td>Contraste mínimo</td><td>24 pares medidos, menor razão 4,85:1</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.4</td><td>Redimensionamento do texto</td><td>Unidades em <code>rem</code>; layout resiste a 200%</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.10</td><td>Reflow</td><td>Sem rolagem horizontal de 320 a 1440 px</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.11</td><td>Contraste de não textual</td><td>Bordas de campo e indicadores de foco acima de 3:1</td><td class="c check">Passa</td></tr>
+      <tr><td>1.4.12</td><td>Espaçamento de texto</td><td>Sem alturas fixas em parágrafos e rótulos</td><td class="c check">Passa</td></tr>
+      <tr><td>2.1.1</td><td>Teclado</td><td>Todo controle é link, botão ou campo nativo</td><td class="c check">Passa</td></tr>
+      <tr><td>2.1.2</td><td>Sem armadilha de foco</td><td>Nenhum componente modal ou <em>trap</em></td><td class="c check">Passa</td></tr>
+      <tr><td>2.4.1</td><td>Pular blocos</td><td>Atalho “Pular para o conteúdo” em todas as telas</td><td class="c check">Passa</td></tr>
+      <tr><td>2.4.3</td><td>Ordem do foco</td><td>Atalho, menu, conteúdo, rodapé</td><td class="c check">Passa</td></tr>
+      <tr><td>2.4.4</td><td>Finalidade do link</td><td>Links externos com rótulo “abre em nova aba”</td><td class="c check">Passa</td></tr>
+      <tr><td>2.4.6</td><td>Cabeçalhos e rótulos</td><td>Um H1 por tela e hierarquia sem saltos</td><td class="c check">Passa</td></tr>
+      <tr><td>2.4.7</td><td>Foco visível</td><td>Anel de 3 px em todo elemento interativo</td><td class="c check">Passa</td></tr>
+      <tr><td>2.5.5</td><td>Tamanho do alvo</td><td>Componentes principais medidos em 44 px ou mais</td><td class="c check">Passa</td></tr>
+      <tr><td>3.1.1</td><td>Idioma da página</td><td><code>lang="pt-BR"</code> no elemento raiz</td><td class="c check">Passa</td></tr>
+      <tr><td>3.2.3</td><td>Navegação consistente</td><td>Menu idêntico em posição e ordem nas 8 telas</td><td class="c check">Passa</td></tr>
+      <tr><td>3.2.4</td><td>Identificação consistente</td><td>Mesmo destino, mesmo rótulo em todas as telas</td><td class="c check">Passa</td></tr>
+      <tr><td>3.3.1</td><td>Identificação de erro</td><td>Mensagem textual em português junto ao campo</td><td class="c check">Passa</td></tr>
+      <tr><td>3.3.2</td><td>Rótulos ou instruções</td><td>Rótulo visível em todos os 14 campos; <code>required</code> programático</td><td class="c check">Passa</td></tr>
+      <tr><td>3.3.7</td><td>Entrada redundante</td><td><code>autocomplete</code> em nome, e-mail, telefone e senha</td><td class="c check">Passa</td></tr>
+      <tr><td>4.1.2</td><td>Nome, função e valor</td><td>Abas com <code>role</code>, <code>aria-selected</code> e <code>aria-controls</code></td><td class="c check">Passa</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.4 Teclado e leitores de tela</h3>
+  <p>A ordem de tabulação segue a ordem visual em todas as telas: atalho de conteúdo, logo, seis links do menu, conteúdo principal e, por fim, o rodapé. O foco é sempre visível e nunca é preso. Nas abas de conta, o foco acompanha o botão selecionado; a navegação por setas entre abas não existe porque exigiria script novo — a limitação está registrada no anexo C.</p>
+
+  <div class="figs-2">
+    <figure><img src="evidencias/qa-desktop-conta.png" alt="Tela de conta com abas"><figcaption>Abas com papel ARIA e estado selecionado explícito.</figcaption></figure>
+    <figure><img src="evidencias/qa-mobile-carrinho-topo.png" alt="Checkout em tela pequena"><figcaption>Checkout em 390 px: campos de 50 px e rótulos visíveis.</figcaption></figure>
+  </div>
+</section>
+
+<!-- ================= 5. HEURÍSTICA ================= -->
+<section class="page">
+  <h2><span class="num">5</span>Avaliação heurística <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(25%)</span></h2>
+
+  <p class="lead">Inspeção do protótipo em execução, guiada pelas dez heurísticas de Nielsen, com severidade de 1 a 4 e evidência rastreável.</p>
+
+  <h3>5.1 Escala de severidade</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:14%">Nota</th><th style="width:26%">Classificação</th><th style="width:60%">Critério</th></tr></thead>
+    <tbody>
+      <tr><td class="c">4</td><td>Catastrófico</td><td>Impede concluir a tarefa principal</td></tr>
+      <tr><td class="c">3</td><td>Grave</td><td>Bloqueia parte do fluxo ou exclui um grupo de usuários</td></tr>
+      <tr><td class="c">2</td><td>Moderado</td><td>Aumenta esforço ou gera retrabalho, mas há contorno</td></tr>
+      <tr><td class="c">1</td><td>Leve</td><td>Irritação cosmética, sem impacto na tarefa</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 As dez heurísticas aplicadas</h3>
+  <table>
+    <thead><tr><th style="width:4%">#</th><th style="width:17%">Heurística</th><th style="width:38%">Achado e evidência</th><th class="c" style="width:7%">Sev.</th><th style="width:34%">Ação</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>H1</td><td>Visibilidade do status do sistema</td>
+        <td>O menu marcava a página atual apenas em <code>aria-current</code>, invisível na tela. A remoção de favorito recarregava a página sem confirmação.</td>
+        <td class="c">3</td>
+        <td><span class="tag tag--ok">Aplicado</span> Indicador visual de página ativa. Confirmação de remoção especificada.</td>
+      </tr>
+      <tr>
+        <td>H2</td><td>Correspondência com o mundo real</td>
+        <td>Rótulos de entrega são concretos (“Retirada gratuita: UNIMA”), mas cinco de seis produtos exibem a mesma descrição “Courinho”.</td>
+        <td class="c">2</td>
+        <td><span class="tag tag--spec">Especificado</span> Descrição deve vir do catálogo, não do template — exige alteração de dados.</td>
+      </tr>
+      <tr>
+        <td>H3</td><td>Controle e liberdade do usuário</td>
+        <td>O detalhe do produto oferece retorno ao catálogo; o checkout oferece “Continuar comprando”. Não há desfazer no carrinho.</td>
+        <td class="c">2</td>
+        <td><span class="tag tag--ok">Aplicado</span> Retorno com alvo de 44 px. Desfazer depende de estado no servidor.</td>
+      </tr>
+      <tr>
+        <td>H4</td><td>Consistência e padrões</td>
+        <td>Botões apareciam em três alturas distintas (36, 39 e 51 px) e os títulos em seis tamanhos fora de escala.</td>
+        <td class="c">2</td>
+        <td><span class="tag tag--ok">Aplicado</span> Escala fechada de sete degraus e botão único de 48 px.</td>
+      </tr>
+      <tr>
+        <td>H5</td><td>Prevenção de erro</td>
+        <td>Campos usam <code>required</code>, <code>minlength</code> e <code>autocomplete</code>, mas não há máscara de telefone nem verificação de senhas divergentes.</td>
+        <td class="c">2</td>
+        <td><span class="tag tag--spec">Especificado</span> Validação de confirmação exige script; a mensagem de erro por campo foi aplicada.</td>
+      </tr>
+      <tr>
+        <td>H6</td><td>Reconhecer em vez de lembrar</td>
+        <td>Navegação global com seis destinos, produtos relacionados no detalhe e resumo sempre visível no checkout.</td>
+        <td class="c">1</td>
+        <td><span class="tag tag--ok">Aplicado</span> Nome do produto no título da aba do navegador, reforçando o contexto.</td>
+      </tr>
+      <tr>
+        <td>H7</td><td>Flexibilidade e eficiência</td>
+        <td>Seis produtos tornam a busca dispensável, mas não há filtro por faixa de preço nem atalho para o carrinho.</td>
+        <td class="c">1</td>
+        <td><span class="tag tag--spec">Especificado</span> Filtros exigiriam parâmetros de rota — fora do escopo.</td>
+      </tr>
+      <tr>
+        <td>H8</td><td>Estética e minimalismo</td>
+        <td>Hierarquia clara, poucas cores, sem elementos decorativos competindo com o CTA. Rodapé concentra muita informação institucional.</td>
+        <td class="c">1</td>
+        <td><span class="tag tag--ok">Aplicado</span> Agrupamento em três colunas e tipografia menor para os créditos.</td>
+      </tr>
+      <tr>
+        <td>H9</td><td>Ajuda a reconhecer e corrigir erros</td>
+        <td>Erros apareciam apenas como balão nativo do navegador, em inglês dependendo do idioma do sistema.</td>
+        <td class="c">3</td>
+        <td><span class="tag tag--ok">Aplicado</span> Borda de erro e mensagem em português, em CSS puro.</td>
+      </tr>
+      <tr>
+        <td>H10</td><td>Ajuda e documentação</td>
+        <td>Não há FAQ, guia de tamanhos ou política de troca. O contato existe apenas via Linktree, no rodapé.</td>
+        <td class="c">2</td>
+        <td><span class="tag tag--spec">Especificado</span> Bloco de ajuda no rodapé; conteúdo institucional fora do escopo.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Achados críticos</h3>
+  <div class="grade2">
+    <div class="cartao">
+      <h4>Menu inutilizável abaixo de 520 px</h4>
+      <p>Com seis destinos em linha única, o menu transbordava e o item “Carrinho” ficava fora da área visível — justamente o destino final da jornada. Severidade 4. <strong>Corrigido:</strong> quebra em duas linhas equilibradas, sem rolagem horizontal em 320 px.</p>
+    </div>
+    <div class="cartao">
+      <h4>Contraste reprovado em texto secundário</h4>
+      <p>As descrições de produto, em taupe sobre creme, mediam 3,95:1 — abaixo do mínimo legal. Severidade 3, com impacto direto em baixa visão. <strong>Corrigido:</strong> token ajustado para 4,94:1.</p>
+    </div>
+    <div class="cartao">
+      <h4>Alvos de toque abaixo de 44 px</h4>
+      <p>Oito controles ficavam entre 19 e 42 px de altura, incluindo “Remover dos favoritos” e “Voltar para o catálogo”. Severidade 3 no mobile. <strong>Corrigido:</strong> todos acima de 44 px, medidos no navegador.</p>
+    </div>
+    <div class="cartao">
+      <h4>Sem confirmação após finalizar</h4>
+      <p>O botão “Finalizar compra” envia o formulário para a própria página, que recarrega sem qualquer sinal de sucesso. Severidade 4 no fluxo de compra. <strong>Especificado:</strong> exige resposta do servidor.</p>
+    </div>
+  </div>
+
+  <div class="nota">
+    <strong>Leitura geral.</strong> Dos dez achados, seis eram corrigíveis dentro das restrições e foram corrigidos; quatro dependem de backend, script ou conteúdo e estão documentados com especificação pronta para implementação. Nenhum achado de severidade 4 permanece sem tratamento ou especificação.
+  </div>
+</section>
+
+<!-- ================= 6. THINK ALOUD ================= -->
+<section class="page">
+  <h2><span class="num">6</span>Teste de usabilidade — Think Aloud <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(25%)</span></h2>
+
+  <p class="lead">Protocolo completo, pronto para aplicação com 3 participantes. Os campos de resultado estão marcados para preenchimento após a sessão.</p>
+
+  <h3>6.1 Desenho do estudo</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:24%">Item</th><th style="width:76%">Definição</th></tr></thead>
+    <tbody>
+      <tr><td>Método</td><td>Teste moderado, presencial, com protocolo Think Aloud (pensar em voz alta)</td></tr>
+      <tr><td>Participantes</td><td>3 usuários representativos do público: 2 em mobile, 1 em desktop</td></tr>
+      <tr><td>Duração</td><td>25 a 35 minutos por sessão</td></tr>
+      <tr><td>Materiais</td><td>Protótipo em execução, roteiro impresso, termo de consentimento, cronômetro, planilha de registro</td></tr>
+      <tr><td>Moderação</td><td>Um moderador conduz; um observador registra falas, hesitações e erros sem interferir</td></tr>
+      <tr><td>Regra de ouro</td><td>O moderador não ensina o caminho. Se o participante travar por mais de 90 s, a tarefa é encerrada como insucesso</td></tr>
+      <tr><td>Ética</td><td>Consentimento verbal e escrito; nenhum dado pessoal real é coletado</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 Participantes</h3>
+  <table>
+    <thead><tr><th style="width:9%">P</th><th style="width:16%">Perfil</th><th style="width:10%">Idade</th><th style="width:15%">Dispositivo</th><th style="width:24%">Familiaridade</th><th style="width:26%">Observação</th></tr></thead>
+    <tbody>
+      <tr><td>P1</td><td>[PREENCHER]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>P2</td><td>[PREENCHER]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>P3</td><td>[PREENCHER]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+    </tbody>
+    <caption>Critério de recrutamento: já comprou acessório online ao menos uma vez e não participou do desenvolvimento.</caption>
+  </table>
+
+  <h3>6.3 Roteiro de tarefas</h3>
+  <table>
+    <thead><tr><th style="width:5%">#</th><th style="width:31%">Tarefa</th><th style="width:34%">Instrução ao participante</th><th style="width:30%">Critério de sucesso</th></tr></thead>
+    <tbody>
+      <tr><td>T1</td><td>Explorar o catálogo</td><td>“Encontre um colar que combine com um look minimalista.”</td><td>Chegar ao detalhe de um produto em até 60 s</td></tr>
+      <tr><td>T2</td><td>Comparar duas peças</td><td>“Qual dos dois cordões custa menos? Volte e me diga.”</td><td>Identificar o preço e retornar ao catálogo</td></tr>
+      <tr><td>T3</td><td>Iniciar uma compra</td><td>“Você decidiu por esta peça. Coloque no carrinho e vá até o fim.”</td><td>Chegar ao checkout com o item visível</td></tr>
+      <tr><td>T4</td><td>Finalizar com retirada</td><td>“Prefiro buscar na UNIMA. Preencha o que for necessário.”</td><td>Selecionar retirada, preencher os dois campos e concluir</td></tr>
+      <tr><td>T5</td><td>Criar conta</td><td>“Agora crie uma conta para acompanhar o pedido.”</td><td>Alternar para a aba de cadastro e preencher sem erro</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.4 Métricas por tarefa</h3>
+  <table>
+    <thead><tr><th style="width:8%">Tarefa</th><th class="c" style="width:13%">Sucesso P1</th><th class="c" style="width:13%">Sucesso P2</th><th class="c" style="width:13%">Sucesso P3</th><th class="c" style="width:14%">Tempo médio</th><th class="c" style="width:14%">Erros</th><th class="c" style="width:25%">Ajuda necessária</th></tr></thead>
+    <tbody>
+      <tr><td>T1</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ] s</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>T2</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ] s</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>T3</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ] s</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>T4</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ] s</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>T5</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ] s</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+    </tbody>
+    <caption>Marque 1 para sucesso, 0 para insucesso e “A” quando houve ajuda do moderador.</caption>
+  </table>
+
+  <h3>6.5 Satisfação — escala SUS</h3>
+  <p>Aplicada ao final, com cinco pontos (1 = discordo totalmente, 5 = concordo totalmente). O resultado é convertido para a escala de 0 a 100 pela fórmula padrão: soma dos itens ímpares menos 1, mais 5 menos os itens pares, multiplicada por 2,5.</p>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:6%">#</th><th style="width:64%">Afirmação</th><th class="c" style="width:10%">P1</th><th class="c" style="width:10%">P2</th><th class="c" style="width:10%">P3</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Eu gostaria de usar este catálogo com frequência.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>2</td><td>Achei o catálogo desnecessariamente complexo.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>3</td><td>Achei o catálogo fácil de usar.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>4</td><td>Precisaria de apoio técnico para conseguir usar.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>5</td><td>As funções estão bem integradas.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>6</td><td>Há muita inconsistência no catálogo.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>7</td><td>Imagino que a maioria das pessoas aprenderia rápido.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>8</td><td>Achei o catálogo difícil de navegar.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>9</td><td>Me senti confiante ao usar o catálogo.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+      <tr><td>10</td><td>Precisei aprender muita coisa antes de começar.</td><td class="c">[ ]</td><td class="c">[ ]</td><td class="c">[ ]</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:8.6pt;"><strong>Escore SUS:</strong> P1 [ ] · P2 [ ] · P3 [ ] · média [ ]. Referência: acima de 68 é considerado acima da média; acima de 80, excelente.</p>
+
+  <h3>6.6 Registro de observações</h3>
+  <table>
+    <thead><tr><th style="width:7%">ID</th><th style="width:11%">Tarefa</th><th style="width:11%">Participante</th><th style="width:40%">O que aconteceu (fala ou ação)</th><th style="width:20%">Heurística relacionada</th><th style="width:11%">Severidade</th></tr></thead>
+    <tbody>
+      <tr><td>O1</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O2</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O3</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O4</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O5</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O6</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O7</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+      <tr><td>O8</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td><td>[ ]</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota nota--warn">
+    <strong>Preenchimento pendente.</strong> Esta seção é o instrumento de coleta. Depois da sessão com os três participantes, transcreva as observações aqui e leve os problemas identificados para a matriz de iteração da seção 7 — ela já possui as colunas de origem, severidade e status para receber esses achados.
+  </div>
+
+  <h3>6.7 Termo de consentimento (modelo)</h3>
+  <p style="font-size:8.8pt;">“Você está participando de um teste de usabilidade do catálogo Bloome, desenvolvido como trabalho acadêmico. A sessão dura cerca de 30 minutos e será registrada em áudio e anotações. Não há respostas certas ou erradas: o objeto de avaliação é o site, não você. Sua participação é voluntária e pode ser interrompida a qualquer momento, sem prejuízo. Nenhum dado pessoal real será publicado; nas citações, você será identificado como P1, P2 ou P3.”</p>
+  <p style="font-size:8.8pt;">Consinto com a participação e com o registro dos dados para fins exclusivamente acadêmicos.<br><br>
+  Nome: ____________________________ &nbsp;&nbsp; Assinatura: ____________________________ &nbsp;&nbsp; Data: ___/___/______</p>
+</section>
+
+<!-- ================= 7. MATRIZ ================= -->
+<section class="page">
+  <h2><span class="num">7</span>Matriz de iteração <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(25%)</span></h2>
+
+  <p class="lead">Vinte problemas identificados na auditoria, com origem, severidade, correção aplicada e forma de validação. Esta tabela é o elo entre o diagnóstico e o protótipo final.</p>
+
+  <div class="grade3">
+    <div class="cartao"><h4>Aplicado</h4><p>18 correções efetivamente no protótipo, todas validadas por medição no navegador.</p></div>
+    <div class="cartao"><h4>Especificado</h4><p>2 correções dependentes de backend ou de dados, documentadas com a mesma linguagem visual.</p></div>
+    <div class="cartao"><h4>Rastreável</h4><p>Cada linha referencia a origem (critério WCAG ou heurística) e a evidência que comprova a correção.</p></div>
+  </div>
+
+  <table class="tabela-compacta">
+    <thead>
+      <tr><th style="width:4%">ID</th><th style="width:30%">Problema identificado</th><th style="width:9%">Origem</th><th class="c" style="width:5%">Sev.</th><th style="width:34%">Correção aplicada</th><th class="c" style="width:6%">Status</th><th style="width:12%">Evidência</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>01</td><td>Texto secundário sobre creme em 3,95:1</td><td>WCAG 1.4.3</td><td class="c">3</td><td>Token <code>--color-taupe</code> de #7A6A59 para #6B5B4B</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>4,94:1</td></tr>
+      <tr><td>02</td><td>Selo “Entregue” em 4,30:1</td><td>WCAG 1.4.3</td><td class="c">3</td><td>Cor do selo para #5F5142</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>6,32:1</td></tr>
+      <tr><td>03</td><td>Menu com overflow abaixo de 520 px</td><td>Heurística H1</td><td class="c">4</td><td>Quebra em duas linhas equilibradas, <code>max-width</code> no menu</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>320 px sem rolagem</td></tr>
+      <tr><td>04</td><td>Links do menu com 24 px de altura</td><td>WCAG 2.5.5</td><td class="c">3</td><td>44 × 44 px com <code>min-height</code> e <code>min-width</code></td><td class="c"><span class="tag tag--fix">Feito</span></td><td>44 × 44 px</td></tr>
+      <tr><td>05</td><td>“Remover dos favoritos” com 19 px</td><td>WCAG 2.5.5</td><td class="c">3</td><td>Alvo de 44 px mantendo o texto pequeno</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>44 px</td></tr>
+      <tr><td>06</td><td>Botões de cartão com 36 e 39 px</td><td>Heurística H4</td><td class="c">3</td><td><code>min-height</code> de 44 px herdado do componente</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>48 px</td></tr>
+      <tr><td>07</td><td>“Voltar para o catálogo” com 24 px e alinhado à borda</td><td>WCAG 2.5.5</td><td class="c">2</td><td>Alvo de 44 px e alinhamento à coluna de conteúdo</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>x = 270 px</td></tr>
+      <tr><td>08</td><td>Cartão de conta com 255 px e abas quebrando linha</td><td>Heurística H8</td><td class="c">2</td><td><code>width: 100%</code> no cartão, que passa a 464 px</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>464 px</td></tr>
+      <tr><td>09</td><td>Ausência de estado pressionado nos botões</td><td>Heurística H1</td><td class="c">2</td><td><code>:active</code> invertendo fundo e texto</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>CSS</td></tr>
+      <tr><td>10</td><td>Foco visível inconsistente entre componentes</td><td>WCAG 2.4.7</td><td class="c">3</td><td>Regra global com <code>:where()</code> e variante clara em fundo escuro</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>12 seletores</td></tr>
+      <tr><td>11</td><td>Erro de formulário só em balão nativo</td><td>Heurística H9</td><td class="c">3</td><td>Borda e mensagem em português via <code>:user-invalid</code></td><td class="c"><span class="tag tag--fix">Feito</span></td><td>CSS puro</td></tr>
+      <tr><td>12</td><td>Página atual sem indicação visual</td><td>Heurística H1</td><td class="c">2</td><td>Fundo e sublinhado em <code>[aria-current="page"]</code></td><td class="c"><span class="tag tag--fix">Feito</span></td><td>6 itens</td></tr>
+      <tr><td>13</td><td>Sem atalho para o conteúdo</td><td>WCAG 2.4.1</td><td class="c">2</td><td>Link “Pular para o conteúdo” e <code>main</code> focável</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>13 rotas</td></tr>
+      <tr><td>14</td><td>Fontes bloqueando a renderização</td><td>Desempenho</td><td class="c">2</td><td><code>@import</code> trocado por <code>link</code> com <code>preconnect</code>; Poppins removida</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>3 famílias</td></tr>
+      <tr><td>15</td><td>Imagens de 2,5 MB carregando de uma vez</td><td>Desempenho</td><td class="c">3</td><td><code>loading="lazy"</code> em 14 imagens, <code>fetchpriority</code> na capa</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>14 imagens</td></tr>
+      <tr><td>16</td><td>Campos com 16 px, evitando zoom no iOS</td><td>WCAG 1.4.4</td><td class="c">2</td><td>Fonte do campo fixada em 1 rem</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>50 px</td></tr>
+      <tr><td>17</td><td>Placeholder apagado no Firefox</td><td>WCAG 1.4.3</td><td class="c">2</td><td><code>opacity: 1</code> no <em>placeholder</em></td><td class="c"><span class="tag tag--fix">Feito</span></td><td>6,52:1</td></tr>
+      <tr><td>18</td><td>Animações sem alternativa de movimento reduzido</td><td>WCAG 2.3.3</td><td class="c">2</td><td>Bloco <code>prefers-reduced-motion</code> cobrindo as novas animações</td><td class="c"><span class="tag tag--fix">Feito</span></td><td>1 bloco</td></tr>
+      <tr><td>19</td><td>Confirmação de pedido inexistente</td><td>Heurística H1</td><td class="c">4</td><td>Faixa de sucesso com número do pedido</td><td class="c"><span class="tag tag--spec">Spec</span></td><td>Seção 3.5</td></tr>
+      <tr><td>20</td><td>Favoritos e carrinho sem estado vazio</td><td>Heurística H1</td><td class="c">3</td><td>Bloco com ícone, frase e CTA para o catálogo</td><td class="c"><span class="tag tag--spec">Spec</span></td><td>Seção 3.5</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 8. IA ================= -->
+<section class="page">
+  <h2><span class="num">8</span>Arquitetura da informação <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(15%)</span></h2>
+
+  <p class="lead">Estrutura de navegação rasa, com profundidade máxima de três níveis e rótulos orientados à tarefa.</p>
+
+  <h3>8.1 Mapa do site</h3>
+  <div class="fluxo">BLOOME
+├── Início ........................ /                     (landing, entrada no catálogo)
+├── Produtos ...................... /produtos             (lista, 6 itens)
+│    └── Detalhe .................. /produtos/{1..6}      (imagem, preço, descrição, relacionados)
+├── Favoritos ..................... /favoritos            (3 itens salvos)
+├── Sobre ......................... /sobre                (institucional + CTA)
+├── Minha conta ................... /conta                (entrar | criar conta)
+│    └── Meu painel ............... /painel               (dados + histórico de pedidos)
+└── Carrinho ...................... /carrinho             (itens + entrega + pagamento + resumo)</div>
+
+  <h3>8.2 Modelo de navegação</h3>
+  <p>A navegação principal é global, fixa e idêntica nas oito telas: seis destinos, sempre na mesma ordem. O sétimo destino — o painel — é contextual: só faz sentido para quem está autenticado, e por isso não ocupa espaço no menu. O caminho até ele é o envio do formulário de acesso.</p>
+
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:22%">Camada</th><th style="width:44%">Função</th><th style="width:34%">Implementação</th></tr></thead>
+    <tbody>
+      <tr><td>Navegação global</td><td>Seis destinos de uso frequente</td><td>Menu no topo, com página ativa marcada</td></tr>
+      <tr><td>Navegação contextual</td><td>Voltar do detalhe ao catálogo</td><td>Link de retorno no topo da tela de detalhe</td></tr>
+      <tr><td>Navegação de fluxo</td><td>Avançar e recuar no checkout</td><td>“Continuar comprando” e “Finalizar compra”</td></tr>
+      <tr><td>Navegação de fuga</td><td>Pular a navegação</td><td>Atalho “Pular para o conteúdo”</td></tr>
+      <tr><td>Estrutura</td><td>Orientação por landmarks</td><td>Header, nav rotulado, main, footer</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.3 Rotulagem</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:24%">Rótulo</th><th style="width:34%">Por que foi escolhido</th><th style="width:42%">Cuidado aplicado</th></tr></thead>
+    <tbody>
+      <tr><td>Produtos</td><td>Termo que o público usa, em vez de “Catálogo”</td><td>Subtítulo explicita que é a seleção completa</td></tr>
+      <tr><td>Favoritos</td><td>Metáfora conhecida de “salvar para depois”</td><td>Ação de remoção descrita por extenso, sem ícone isolado</td></tr>
+      <tr><td>Minha conta</td><td>Agrupa entrar e cadastrar sob uma expectativa só</td><td>As duas ações ficam em abas dentro da mesma tela</td></tr>
+      <tr><td>Carrinho</td><td>Vocabulário de comércio consolidado</td><td>O resumo repete o rótulo “Total” para reduzir ambiguidade</td></tr>
+      <tr><td>Finalizar compra</td><td>Verbo claro, sem “enviar” ou “confirmar”</td><td>Único botão de ação primária no resumo</td></tr>
+      <tr><td>Sobre</td><td>Institucional esperado</td><td>Título “Sobre a Bloome” reforça a marca</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.4 Lacunas e recomendações</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:8%">ID</th><th style="width:38%">Lacuna</th><th style="width:30%">Impacto</th><th style="width:24%">Recomendação</th></tr></thead>
+    <tbody>
+      <tr><td>L1</td><td>O painel não aparece no menu</td><td>Usuário autenticado precisa refazer o login para voltar</td><td>Item “Meus pedidos” condicional (exige template)</td></tr>
+      <tr><td>L2</td><td>Carrinho e favoritos sem contador</td><td>Não há sinal de quantos itens existem</td><td>Contador no rótulo, alimentado pelo servidor</td></tr>
+      <tr><td>L3</td><td>Sem busca nem filtro</td><td>Aceitável com seis itens; limitante ao crescer</td><td>Filtro por faixa de preço na rota de produtos</td></tr>
+      <tr><td>L4</td><td>Sem trilha de navegação no detalhe</td><td>Dependência do link de retorno</td><td>Adicionar breadcrumb quando houver categorias</td></tr>
+      <tr><td>L5</td><td>Conteúdo de ajuda ausente</td><td>Dúvidas de tamanho e troca ficam sem resposta</td><td>Bloco de perguntas frequentes no rodapé</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.5 Teste de arquitetura proposto</h3>
+  <p>Para validar a rotulagem com usuários, recomenda-se um <em>card sorting</em> aberto com os seis destinos impressos em cartões: o participante agrupa como faria sentido e nomeia cada grupo. O resultado alimenta a comparação com a estrutura atual. Complementarmente, um teste de árvore com três tarefas (“onde você procuraria uma peça que salvou?”, “onde veria seu pedido?”, “onde falaria com a loja?”) mede a taxa de acerto por caminho.</p>
+
+  <div class="nota nota--ok">
+    <strong>Sinal positivo na estrutura atual.</strong> As três tarefas de árvore podem ser respondidas sem rolagem excessiva e sem ambiguidade de rótulo: “Favoritos” responde à primeira, “Minha conta” à segunda e o rodapé à terceira. A profundidade máxima de três níveis mantém o custo de navegação baixo.
+  </div>
+</section>
+
+<!-- ================= 9. MICROCOPY ================= -->
+<section class="page">
+  <h2><span class="num">9</span>Guia de conteúdo e microcopy</h2>
+
+  <p class="lead">Tom próximo, direto e sem jargão. A marca fala como quem atende no balcão: acolhe, explica e não empolga demais.</p>
+
+  <h3>9.1 Princípios de escrita</h3>
+  <div class="grade2">
+    <div class="cartao"><h4>Fale do usuário</h4><p>“Seus pedidos”, “sua conta”, “seu estilo”. O sujeito da frase é quem usa, não o sistema.</p></div>
+    <div class="cartao"><h4>Verbo na frente</h4><p>Botões começam com ação: “Ver catálogo”, “Finalizar compra”, “Continuar comprando”.</p></div>
+    <div class="cartao"><h4>Explique o próximo passo</h4><p>Toda mensagem de erro diz o que fazer, não apenas o que falhou.</p></div>
+    <div class="cartao"><h4>Sem caixa alta gritada</h4><p>Caixa alta só em rótulos de 12 px com espaçamento, nunca em frases.</p></div>
+  </div>
+
+  <h3>9.2 Mensagens do sistema</h3>
+  <table>
+    <thead><tr><th style="width:16%">Contexto</th><th style="width:26%">Mensagem</th><th style="width:34%">Por quê</th><th style="width:24%">Status</th></tr></thead>
+    <tbody>
+      <tr><td>Campo inválido</td><td>Verifique este campo antes de continuar.</td><td>Diz o que fazer e não culpa o usuário</td><td><span class="tag tag--ok">Aplicado</span></td></tr>
+      <tr><td>Campo válido</td><td>Campo válido.</td><td>Confirmação discreta ao sair do campo</td><td><span class="tag tag--ok">Aplicado</span></td></tr>
+      <tr><td>Favoritos vazio</td><td>Sua lista está vazia. Toque no coração para guardar as peças que você amou.</td><td>Explica o mecanismo, não só o estado</td><td><span class="tag tag--spec">Spec</span></td></tr>
+      <tr><td>Carrinho vazio</td><td>Seu carrinho está vazio. Que tal começar pelo catálogo?</td><td>Oferece saída imediata</td><td><span class="tag tag--spec">Spec</span></td></tr>
+      <tr><td>Pedido concluído</td><td>Pedido #BLO-0043 confirmado! Avisaremos no WhatsApp quando estiver pronto.</td><td>Identifica o pedido e o canal de retorno</td><td><span class="tag tag--spec">Spec</span></td></tr>
+      <tr><td>Carregando</td><td>Carregando peças…</td><td>Curto, no gerúndio, sem reticências dramáticas</td><td><span class="tag tag--spec">Spec</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.3 Rótulos de ação</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:26%">Evitar</th><th style="width:26%">Usar</th><th style="width:48%">Motivo</th></tr></thead>
+    <tbody>
+      <tr><td>Enviar</td><td>Entrar / Criar conta</td><td>Nomear o resultado, não o mecanismo</td></tr>
+      <tr><td>Clique aqui</td><td>Ver catálogo completo</td><td>Descreve o destino e funciona com leitor de tela</td></tr>
+      <tr><td>OK</td><td>Finalizar compra</td><td>Confirmação genérica esconde a consequência</td></tr>
+      <tr><td>Voltar</td><td>Voltar para o catálogo</td><td>Diz para onde volta</td></tr>
+    </tbody>
+  </table>
+
+  <div class="nota">
+    <strong>Consistência de marca.</strong> O nome “Bloome” aparece sempre com maiúscula inicial e em Playball quando é assinatura visual. Nos textos corridos, é grafado em Lato com peso 700, como no rodapé.
+  </div>
+</section>
+
+<!-- ================= 10. APRESENTAÇÃO ================= -->
+<section class="page">
+  <h2><span class="num">10</span>Roteiro de apresentação <span style="font-size:9pt;color:var(--rose-deep);font-family:Lato,sans-serif;">(10%)</span></h2>
+
+  <p class="lead">Doze minutos, três falas, uma demonstração ao vivo. O roteiro segue a ordem da rubrica para que a banca consiga pontuar sem procurar.</p>
+
+  <h3>10.1 Divisão do tempo</h3>
+  <table>
+    <thead><tr><th style="width:8%">Tempo</th><th style="width:22%">Bloco</th><th style="width:12%">Quem</th><th style="width:36%">O que mostrar</th><th style="width:22%">Mensagem-chave</th></tr></thead>
+    <tbody>
+      <tr><td>0:00–1:00</td><td>Abertura</td><td>Victor</td><td>Contexto da marca e do público</td><td>“É um catálogo mobile-first para joias artesanais.”</td></tr>
+      <tr><td>1:00–4:00</td><td>Telas e navegação</td><td>Victor</td><td>Percurso completo: início, catálogo, detalhe, carrinho</td><td>“Oito telas, treze rotas, nenhum beco sem saída.”</td></tr>
+      <tr><td>4:00–6:30</td><td>Design system</td><td>Martin</td><td>Painel de tokens e biblioteca de componentes</td><td>“Uma decisão, um token; estados explícitos.”</td></tr>
+      <tr><td>6:30–8:00</td><td>Acessibilidade</td><td>Martin</td><td>Comparativo de contraste antes e depois; alvos medidos</td><td>“24 pares medidos; o menor é 4,85:1.”</td></tr>
+      <tr><td>8:00–10:00</td><td>Testes e iteração</td><td>Anthonio</td><td>Heurística, achados críticos e matriz</td><td>“Achamos 20 problemas; 18 já estão no ar.”</td></tr>
+      <tr><td>10:00–11:00</td><td>Arquitetura da informação</td><td>Anthonio</td><td>Mapa do site e lacunas assumidas</td><td>“Profundidade máxima de três níveis.”</td></tr>
+      <tr><td>11:00–12:00</td><td>Fechamento</td><td>Todos</td><td>O que ficou fora do escopo e por quê</td><td>“Sabemos exatamente o que falta e como fazer.”</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.2 Demonstração ao vivo</h3>
+  <ol style="font-size:9pt;">
+    <li>Abra <code>/produtos</code> em uma janela de 380 px de largura e mostre o menu em duas linhas.</li>
+    <li>Pressione Tab quatro vezes: o atalho “Pular para o conteúdo” aparece e o foco fica visível.</li>
+    <li>Vá a <code>/carrinho</code>, digite um e-mail inválido e saia do campo: a borda fica vermelha e a mensagem aparece.</li>
+    <li>Abra o seletor de cores do navegador em um texto secundário e mostre o valor medido.</li>
+    <li>Ative “reduzir movimento” no sistema e recarregue: as animações de entrada desaparecem.</li>
+  </ol>
+
+  <div class="nota nota--warn">
+    <strong>Plano B da demonstração.</strong> As fontes vêm do Google Fonts. Se a rede falhar no dia, o layout cai para a pilha de sistema sem quebrar — vale abrir uma aba já carregada antes de começar. O servidor local deve estar rodando com <code>python app.py</code> e a porta 5000 livre.
+  </div>
+
+  <h3>10.3 Perguntas prováveis</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:38%">Pergunta</th><th style="width:62%">Resposta curta</th></tr></thead>
+    <tbody>
+      <tr><td>“Por que não há tela de carregamento?”</td><td>Porque o carregamento depende de estado no cliente, e o escopo proibia script novo. A especificação visual está pronta na seção 3.5.</td></tr>
+      <tr><td>“O contraste foi validado como?”</td><td>Cálculo de luminância relativa da WCAG sobre os valores finais dos tokens, incluindo composição de camadas translúcidas. 24 pares, todos acima de 4,5:1.</td></tr>
+      <tr><td>“Quantos usuários testaram?”</td><td>O protocolo está pronto para três participantes; a inspeção heurística foi aplicada integralmente sobre o protótipo em execução.</td></tr>
+      <tr><td>“Por que a fonte do título é serifada?”</td><td>A escala de leitura é toda sem serifa. A serifada aparece apenas no display “BLOOME”, onde é elemento de marca, não de leitura.</td></tr>
+      <tr><td>“Como garantem que o layout não quebra?”</td><td>Medição automatizada em sete larguras, de 320 a 1440 px, com verificação de largura do documento contra a viewport.</td></tr>
+      <tr><td>“O que fariam com mais tempo?”</td><td>Confirmação de pedido, estado vazio de favoritos, contador no carrinho e teste com os três usuários previstos no protocolo.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.4 Checklist de entrega</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:60%">Item</th><th class="c" style="width:10%">OK</th><th style="width:30%">Onde</th></tr></thead>
+    <tbody>
+      <tr><td>Protótipo executa sem erro nas 13 rotas</td><td class="c check">✓</td><td><code>python app.py</code></td></tr>
+      <tr><td>Documento em PDF com as dez seções</td><td class="c check">✓</td><td>Este arquivo</td></tr>
+      <tr><td>Capturas de tela desktop e mobile</td><td class="c check">✓</td><td>Anexo A</td></tr>
+      <tr><td>Matriz de iteração preenchida</td><td class="c check">✓</td><td>Seção 7</td></tr>
+      <tr><td>Protocolo de teste pronto para aplicar</td><td class="c check">✓</td><td>Seção 6</td></tr>
+      <tr><td>Registro do teste com usuários</td><td class="c">—</td><td>Seção 6, a preencher</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= ANEXOS ================= -->
+<section class="page">
+  <h2><span class="num">A</span>Anexo A — Evidências visuais</h2>
+  <p class="lead">Capturas geradas a partir do protótipo em execução, com o CSS final aplicado.</p>
+
+  <div class="figs-2">
+    <figure><img src="evidencias/qa-desktop-produtos.png" alt="Catálogo em desktop"><figcaption>Catálogo — 1440 px</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-produto.png" alt="Detalhe do produto em desktop"><figcaption>Detalhe do produto — 1440 px</figcaption></figure>
+  </div>
+
+  <div class="figs-2">
+    <figure><img src="evidencias/qa-desktop-carrinho.png" alt="Carrinho em desktop"><figcaption>Checkout — 1440 px</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-painel.png" alt="Painel em desktop"><figcaption>Painel com pedidos — 1440 px</figcaption></figure>
+  </div>
+
+  <div class="figs-3">
+    <figure><img src="evidencias/qa-desktop-favoritos.png" alt="Favoritos em desktop"><figcaption>Favoritos — 1440 px</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-sobre.png" alt="Página sobre em desktop"><figcaption>Sobre — 1440 px</figcaption></figure>
+    <figure><img src="evidencias/qa-desktop-conta.png" alt="Conta em desktop"><figcaption>Minha conta — 1440 px</figcaption></figure>
+  </div>
+
+  <div class="figs-4">
+    <figure><img class="phone" src="evidencias/qa-mobile-produtos-topo.png" alt="Catálogo em 390 px"><figcaption>390 px</figcaption></figure>
+    <figure><img class="phone" src="evidencias/qa-mobile-carrinho-topo.png" alt="Checkout em 390 px"><figcaption>390 px</figcaption></figure>
+    <figure><img class="phone" src="evidencias/qa-mobile-painel-topo.png" alt="Painel em 390 px"><figcaption>390 px</figcaption></figure>
+    <figure><img class="phone" src="evidencias/qa-tablet-produtos.png" alt="Catálogo em 768 px"><figcaption>768 px</figcaption></figure>
+  </div>
+</section>
+
+<section class="page">
+  <h2><span class="num">B</span>Anexo B — Como executar e validar</h2>
+
+  <h3>B.1 Execução</h3>
+  <p>O projeto não tem etapa de build. Basta ter Flask instalado e executar o servidor a partir da pasta do projeto.</p>
+  <div class="fluxo" style="white-space:pre-wrap;">pip install -r requirements.txt
+python app.py
+# abrir http://127.0.0.1:5000</div>
+
+  <h3>B.2 Rotas para conferência</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:30%">Rota</th><th style="width:14%">Esperado</th><th style="width:56%">O que observar</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>200</td><td>Hero com um único CTA</td></tr>
+      <tr><td><code>/produtos</code></td><td>200</td><td>Seis cartões com imagem 4:5</td></tr>
+      <tr><td><code>/produtos/1</code> a <code>/produtos/6</code></td><td>200</td><td>Detalhe e três relacionados</td></tr>
+      <tr><td><code>/produtos/99</code></td><td>404</td><td>Rota inexistente tratada pelo Flask</td></tr>
+      <tr><td><code>/favoritos</code></td><td>200</td><td>Três itens com ação de remover</td></tr>
+      <tr><td><code>/conta</code></td><td>200</td><td>Abas alternando painéis</td></tr>
+      <tr><td><code>/carrinho</code></td><td>200</td><td>Formulário de três seções e resumo</td></tr>
+      <tr><td><code>/painel</code></td><td>200</td><td>Edição inline e três status</td></tr>
+      <tr><td><code>/sobre</code></td><td>200</td><td>Institucional com CTA</td></tr>
+    </tbody>
+  </table>
+
+  <h3>B.3 Roteiro de verificação manual</h3>
+  <ol style="font-size:9pt;">
+    <li>Estreite a janela até 320 px e confirme que não aparece barra de rolagem horizontal.</li>
+    <li>Percorra a tela apenas com Tab: o anel de foco deve aparecer em todos os controles.</li>
+    <li>No checkout, deixe um campo obrigatório vazio e saia dele: borda vermelha e mensagem em português.</li>
+    <li>Ative o modo de alto contraste do sistema e confira se os botões mantêm borda.</li>
+    <li>Ative “reduzir movimento” e recarregue: nenhuma animação de entrada deve ocorrer.</li>
+  </ol>
+</section>
+
+<section class="page">
+  <h2><span class="num">C</span>Anexo C — Arquivos alterados, limitações e próximos passos</h2>
+
+  <h3>C.1 O que mudou no repositório</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:34%">Arquivo</th><th style="width:16%">Tipo</th><th style="width:50%">Alteração</th></tr></thead>
+    <tbody>
+      <tr><td><code>static/css/styles.css</code></td><td>Reescrito</td><td>Tokens, contraste, alvos de toque, estados, animações, responsivo e preferências</td></tr>
+      <tr><td><code>templates/base.html</code></td><td>Markup</td><td>Atalho de conteúdo, preconnect e carregamento de fontes, <em>theme-color</em></td></tr>
+      <tr><td><code>templates/*.html</code> (8)</td><td>Markup</td><td><code>id</code> e <code>tabindex</code> no <code>main</code>, <code>loading</code> e <code>fetchpriority</code> nas imagens</td></tr>
+      <tr><td><code>app.py</code>, <code>catalogo.py</code></td><td>Intocados</td><td>Nenhuma linha alterada</td></tr>
+      <tr><td>Scripts inline existentes</td><td>Intocados</td><td>Permanecem apenas em conta e painel, como estavam</td></tr>
+    </tbody>
+  </table>
+
+  <h3>C.2 Limitações assumidas</h3>
+  <table class="tabela-compacta">
+    <thead><tr><th style="width:34%">Limitação</th><th style="width:40%">Causa</th><th style="width:26%">Contorno</th></tr></thead>
+    <tbody>
+      <tr><td>Sem confirmação de pedido</td><td>Depende de resposta do servidor</td><td>Especificado na seção 3.5</td></tr>
+      <tr><td>Sem tela vazia real</td><td>Exige condicional no template</td><td>Especificado com texto e CTA</td></tr>
+      <tr><td>Abas sem navegação por setas</td><td>Exige script novo</td><td>Foco visível e <code>aria-selected</code> funcionais</td></tr>
+      <tr><td>Sem máscara de telefone</td><td>Exige script</td><td><code>type="tel"</code> e <code>autocomplete</code></td></tr>
+      <tr><td>Imagens originais em PNG pesado</td><td>Substituir ativos foge do escopo visual</td><td>Carregamento preguiçoso aplicado; recomenda-se WebP em 1200 px</td></tr>
+    </tbody>
+  </table>
+
+  <h3>C.3 Próximos passos sugeridos</h3>
+  <ol style="font-size:9pt;">
+    <li>Aplicar o protocolo Think Aloud com os três participantes e preencher a seção 6.</li>
+    <li>Levar os achados do teste para a matriz de iteração e marcar o que for corrigido.</li>
+    <li>Implementar confirmação de pedido e estado vazio no backend, com os textos da seção 9.</li>
+    <li>Otimizar as imagens para WebP e adicionar <code>srcset</code>.</li>
+    <li>Adicionar busca e filtro quando o catálogo passar de 20 itens.</li>
+  </ol>
+
+  <div class="nota nota--ok">
+    <strong>Fechamento.</strong> O protótipo entrega oito telas navegáveis, um design system com 70 tokens e contraste integralmente validado, e um diagnóstico rastreável de vinte problemas — dezoito deles já corrigidos dentro das restrições combinadas. O que ficou de fora está nomeado, justificado e especificado, para que a próxima iteração comece do ponto certo.
+  </div>
+</section>
+
+</body>
+</html>

@@ -5,7 +5,7 @@
 {% block description %}Painel do cliente da Bloome — acompanhe seus pedidos e gerencie seus dados.{% endblock %}
 
 {% block content %}
-<main class="page-content">
+<main id="conteudo" tabindex="-1" class="page-content">
     <h1>Olá, Lucas</h1>
     <p class="subtitle">Acompanhe seus pedidos e gerencie seus dados.</p>
 
@@ -79,12 +79,12 @@
                     </header>
                     <ul class="pedido__itens">
                         <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="" class="pedido__item-img">
+                            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
                             <span class="pedido__item-nome">Cordão Coração</span>
                             <span class="pedido__item-preco">R$ 45,00</span>
                         </li>
                         <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="" class="pedido__item-img">
+                            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
                             <span class="pedido__item-nome">Colar São Bento</span>
                             <span class="pedido__item-preco">R$ 30,00</span>
                         </li>
@@ -105,7 +105,7 @@
                     </header>
                     <ul class="pedido__itens">
                         <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="" class="pedido__item-img">
+                            <img src="{{ url_for('static', filename='imgs/cordao_olho_grego.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
                             <span class="pedido__item-nome">Cordão Olho Grego</span>
                             <span class="pedido__item-preco">R$ 30,00</span>
                         </li>
@@ -126,7 +126,7 @@
                     </header>
                     <ul class="pedido__itens">
                         <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="" class="pedido__item-img">
+                            <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
                             <span class="pedido__item-nome">Cordão de Amarração</span>
                             <span class="pedido__item-preco">R$ 30,00</span>
                         </li>

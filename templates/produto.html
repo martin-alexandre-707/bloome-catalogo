@@ -5,11 +5,11 @@
 {% block description %}{{ produto.descricao | truncate(150) }}{% endblock %}
 
 {% block content %}
-<main class="page-content">
+<main id="conteudo" tabindex="-1" class="page-content">
     <a href="{{ url_for('produtos') }}" class="back-link">← Voltar para o catálogo</a>
 
     <article class="product-detail">
-        <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-detail__image">
+        <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-detail__image" fetchpriority="high" decoding="async">
         <div class="product-detail__info">
             <h1 class="product-detail__name">{{ produto.nome }}</h1>
             <span class="product-detail__price">{{ produto.preco }}</span>
@@ -23,7 +23,7 @@
         <div class="favorites">
             {% for item in relacionados %}
             <a href="{{ url_for('produto', produto=item.id) }}" class="favorite">
-                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="{{ item.nome }}" class="favorite__image">
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="{{ item.nome }}" class="favorite__image" loading="lazy" decoding="async">
                 <div class="favorite__info">
                     <h3 class="favorite__name">{{ item.nome }}</h3>
                     <span class="favorite__price">{{ item.preco }}</span>
