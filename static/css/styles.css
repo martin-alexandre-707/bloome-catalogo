@@ -270,7 +270,8 @@ p {
 .site-header :where(a, button):focus-visible,
 .site-footer :where(a, button):focus-visible,
 .hero :where(a, button):focus-visible,
-.cart__summary :where(a, button):focus-visible {
+.cart__summary :where(a, button):focus-visible,
+.checkout-modal :where(a, button):focus-visible {
   outline-color: var(--focus-color-inverse);
 }
 
@@ -916,6 +917,65 @@ p {
 
 .cart__btn-continue:hover {
   color: var(--color-rose-light);
+}
+
+.checkout-modal {
+  margin: auto;
+  width: min(24rem, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100dvh - var(--space-8));
+  overflow-y: auto;
+  padding: var(--space-8) var(--space-8) var(--space-6);
+  background: var(--color-wine);
+  color: var(--color-cream);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3);
+  text-align: center;
+}
+
+.checkout-modal::backdrop {
+  background: rgba(119, 46, 63, 0.55);
+}
+
+.checkout-modal__icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto var(--space-5);
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--color-rose-light);
+  color: var(--color-wine);
+}
+
+.checkout-modal__icon svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.checkout-modal__brand {
+  font-family: var(--font-script);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+  color: var(--color-rose-light);
+}
+
+.checkout-modal__title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-rose-light);
+  margin-bottom: var(--space-3);
+}
+
+.checkout-modal__message {
+  max-width: 20rem;
+  margin: 0 auto var(--space-6);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.checkout-modal__btn {
+  width: 100%;
 }
 
 /* ==========================================================================
@@ -1576,7 +1636,8 @@ p {
 .about-card,
 .auth,
 .painel__perfil-card,
-.painel__editar {
+.painel__editar,
+.checkout-modal {
   animation: rise-in var(--dur-slow) var(--ease-out) both;
 }
 

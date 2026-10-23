@@ -121,4 +121,33 @@
     </div>
 
 </main>
+
+<dialog id="modal-compra" class="checkout-modal" aria-labelledby="titulo-compra-finalizada">
+    <span class="checkout-modal__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    </span>
+    <p class="checkout-modal__brand">Bloome</p>
+    <h2 class="checkout-modal__title" id="titulo-compra-finalizada">Compra finalizada!</h2>
+    <p class="checkout-modal__message">Obrigado pela sua escolha! Em breve entraremos em contato para combinar a entrega ou retirada do seu pedido.</p>
+    <a href="{{ url_for('index') }}" class="btn checkout-modal__btn">Voltar ao início</a>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const formCheckout = document.getElementById('form-checkout');
+    const modalCompra = document.getElementById('modal-compra');
+    const btnCheckout = document.querySelector('.cart__btn-checkout');
+
+    formCheckout.addEventListener('submit', (evento) => {
+        evento.preventDefault();
+        modalCompra.showModal();
+    });
+
+    modalCompra.addEventListener('close', () => {
+        btnCheckout.focus();
+    });
+</script>
 {% endblock %}
