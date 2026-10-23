@@ -845,6 +845,14 @@ p {
   box-shadow: var(--shadow-1);
 }
 
+.cart__item-img {
+  width: 3rem;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 0.4rem;
+  flex-shrink: 0;
+}
+
 .cart__item-name {
   font-size: var(--text-base);
   font-weight: var(--weight-bold);
