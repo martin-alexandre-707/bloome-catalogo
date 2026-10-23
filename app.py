@@ -50,5 +50,9 @@ def conta():
 def painel():
     return render_template("painel.html", current="painel")
 
+@app.errorhandler(404)
+def pagina_nao_encontrada(erro):
+    return render_template("erro.html", current="erro"), 404
+
 if __name__ == "__main__":
     app.run(debug=True)

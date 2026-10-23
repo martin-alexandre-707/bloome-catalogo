@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Página não encontrada{% endblock %}
+
+{% block description %}A página que você procura não existe no catálogo da Bloome.{% endblock %}
+
+{% block content %}
+<main id="conteudo" tabindex="-1" class="page-content">
+    <span class="error__code" aria-hidden="true">404</span>
+    <h1>Ops, essa página não existe</h1>
+    <p class="subtitle">O produto ou o endereço que você procura não está no nosso catálogo. Que tal voltar ao início ou conferir nossas joias?</p>
+    <div class="error__actions">
+        <a href="{{ url_for('index') }}" class="btn">Voltar ao início</a>
+        <a href="{{ url_for('produtos') }}" class="error__link">Ver todos os produtos</a>
+    </div>
+</main>
+{% endblock %}
