@@ -5,3 +5,7 @@ __pycache__/
 # Ambientes virtuais
 .venv/
 venv/
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
