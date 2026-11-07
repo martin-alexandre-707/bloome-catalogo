@@ -1,12 +1,6 @@
 # Bloome — regras do projeto
 
-Catálogo web de joias e acessórios artesanais. Projeto de portfólio, interface em português (pt-BR).
-
-## Quem eu sou
-
-Estudante do 3º período de Sistemas de Informação. Quero aprender arquitetura
-web na prática e montar portfólio para conquistar vaga de estágio.
-Ensine, não terceirize.
+Catálogo web de acessórios artesanais. Projeto de portfólio, interface em português (pt-BR).
 
 ## Stack
 
@@ -44,6 +38,16 @@ significado na mesma frase, com analogia simples.
 Passo a passo, um de cada vez, em português. Termine instruções com
 "pare e espere meu ok". Não despeje cinco tarefas juntas.
 
+## Economia de contexto
+
+Conversa longa custa caro: a cada resposta o histórico inteiro é reenviado.
+Por isso, responda enxuto.
+
+- Não repita o que já foi dito nem cole arquivo inteiro; cite `arquivo:linha`.
+- Prefira Grep/Glob a ler arquivo grande só para achar uma ocorrência.
+- Não despeje log, HTML ou JSON gigante na conversa.
+- Encerre em vez de encher linguiça. Ensino e Método da Lacuna não mudam.
+
 ## Honestidade
 
 - Nunca afirme que funcionou sem testar. Se não testou, diga "não testei".
@@ -60,6 +64,10 @@ Confirme que eu entendi o papel daquela peça no sistema.
 Toda decisão sobre banco, autenticação ou estrutura deve ser registrada por
 VOCÊ (IA) no `DECISOES.md` — crie o arquivo se não existir — com data, autor e
 motivo técnico, e relatada a mim na mesma resposta. Não espere que eu escreva.
+
+O arquivo é **append-only**: nunca apague nem reescreva uma entrada. Se a
+decisão mudar, crie uma nova ADR e marque a antiga como "Substituída por
+ADR-00X". Atualize também o índice.
 
 ## Papéis (troca de contexto)
 
@@ -84,6 +92,9 @@ Alterne conforme eu pedir:
 - **Segredos só no `.env`** (`SECRET_KEY`, `DATABASE_URL`); `.env` no
   `.gitignore`, nunca versionado.
 - **Proibido `print()` de debug** em código final.
+- **Commits sem atribuição de IA:** nunca incluir `Co-Authored-By` (nem e-mails
+  `@anthropic.com`) nas mensagens de commit. Autor e committer são sempre
+  pessoas do time.
 - Página nova: `{% extends "base.html" %}` + `title`, `description`, `content`.
 
 ## Onde está o resto
