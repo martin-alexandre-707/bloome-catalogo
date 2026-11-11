@@ -28,6 +28,7 @@
 | ADR-008 | 2026-11-09 | Processo | Aceita | Ordem: fundação → banco → auth → front → pagamentos |
 | ADR-009 | 2026-11-09 | Banco | Aceita | psycopg 3 + SQL puro (sem ORM) |
 | ADR-010 | 2026-11-10 | Escopo | Aceita | Fora do escopo: sistema de gestão com IA e Text-to-SQL |
+| ADR-011 | 2026-11-11 | Banco | Aceita | Variações, baixa no pagamento e visibilidade do produto |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -278,6 +279,62 @@
     escolha de acesso ao banco (SQL visível e consultas parametrizadas).
   - Se a IA voltar ao escopo, exige **nova ADR** — esta não é reescrita.
 - **Arquivos:** `CONTEXTO-BLOOME-PARA-IA.md`, `DECISOES.md`
+
+---
+
+## ADR-011 — Banco do e-commerce: variações, baixa no pagamento e visibilidade do produto
+
+- **Data:** 2026-11-11
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o catálogo ainda lê 6 produtos de `catalogo.py`/templates; o banco
+  do gestão resolve receita e estoque por insumo, mas não tem variações de cor,
+  clientes, status de pedido, pagamento/entrega nem idempotência. O Supabase está
+  **sem dados** (confirmado em 2026-11-11), então o schema nasce com `CREATE`,
+  não `ALTER`.
+- **Decisão:**
+  1. Reaproveitar a lógica de receita/estoque do gestão e criar `variacoes` (cor)
+     e `composicao_variacoes` (receita por variação). `itens_pedidos` passa a
+     apontar para `id_variacao`.
+  2. Os itens são gravados no checkout, mas o estoque só é baixado em
+     `confirmar_pagamento` (mudança para `pago`), de forma agregada e idempotente.
+     Estoque insuficiente no webhook vira `pago_sem_estoque`, sem baixa.
+  3. `pedidos` ganha `codigo` público, `status` (incluindo `pronto_para_retirada`),
+     cliente, entrega, endereço (snapshot), `frete_valor`/`frete_pago_por`,
+     rastreio e `estoque_baixado`. Cancelar antes de produzir devolve uma vez.
+  4. Contas separadas: `usuarios` (admin) e `clientes` (comprador), com
+     `recuperacao_senha` (token com hash, 1h). Pagamento via `eventos_pagamento`
+     com `UNIQUE(gateway, evento_id)`.
+  5. Visibilidade: o produto só sai da loja por ação da admin
+     (`status = 'removido'`, sem `DELETE` físico). Sem o pingente
+     cadastrado/disponível, aparece como `volta_em_breve`, com CTA de WhatsApp.
+     A regra antiga “todas as cores esgotadas → some” fica substituída; cor
+     esgotada continua cinza/desabilitada.
+  6. Produto sem receita não pode ser vendido.
+- **Motivo técnico:** o pedido precisa lembrar a cor antes de pagar; baixar no
+  INSERT do item (como no gestão) desconta antes do pagamento. A baixa agregada
+  evita depender da ordem dos itens e fecha a corrida entre dois pedidos.
+  `removido` preserva o histórico de pedidos que referenciam o produto. A unique
+  do evento de pagamento e a checagem de status tornam o webhook idempotente.
+- **Alternativas consideradas:**
+  - Manter a baixa no INSERT do item — desconta antes do pagamento e quebra a
+    regra.
+  - “Itens só após o pagamento” com tabela de carrinho pendente — mais tabela e
+    mais limpeza; não resolve nada que o status não resolva.
+  - `ALTER` no Supabase — desnecessário: o banco está vazio.
+  - `DELETE` físico do produto — quebra o histórico/FK dos pedidos; `removido`
+    é mais seguro.
+- **Consequências:**
+  - O CLI do gestão quebra ao gravar `id_acessorios` em `itens_pedidos`; precisa
+    ser adaptado para `id_variacao` ou virar legado do `/adm`.
+  - O seed fica bloqueado até existir a lista real de modelos, cores e receitas;
+    o schema não.
+  - `VALIDACAO-REGRAS.md` §1/§8 precisa ser ajustado para a nova visibilidade
+    (produto só some por `removido`; sem pingente → `volta_em_breve`).
+  - Sem `psycopg`/`psql`, o DDL será rodado no SQL Editor do Supabase até o
+    driver ser instalado.
+- **Arquivos:** `docs/PLANO-BANCO-BLOOME.md`, `docs/DECISOES.md`, futuros
+  `db/schema.sql`, `db/functions.sql`, `db/seed.sql`
 
 ---
 
