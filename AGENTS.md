@@ -4,11 +4,11 @@ Catálogo web de acessórios artesanais. Projeto de portfólio, interface em por
 
 ## Stack
 
-- **Backend:** Python + Flask
+- **Backend:** Python + Flask (stack em avaliação — ver `docs/VALIDACAO-REGRAS.md` §0)
 - **Banco:** Supabase (PostgreSQL na nuvem) — **o mesmo em desenvolvimento e
   produção. Não existe PostgreSQL local.**
 - **Frontend:** HTML, CSS e JavaScript em `static/js/`
-- **Deploy:** Vercel
+- **Deploy:** Vercel (a decidir depois do teste Django; Render/Railway são opções)
 - **Conexão:** `DATABASE_URL` no `.env`. Porta **6543** = pooler (produção);
   **5432** = conexão direta.
 
@@ -59,22 +59,27 @@ Por isso, responda enxuto.
 
 Confirme que eu entendi o papel daquela peça no sistema.
 
-## DECISOES.md
+## Decisões (docs/DECISOES.md)
 
 Toda decisão sobre banco, autenticação ou estrutura deve ser registrada por
-VOCÊ (IA) no `DECISOES.md` — crie o arquivo se não existir — com data, autor e
+VOCÊ (IA) no `docs/DECISOES.md` — crie o arquivo se não existir — com data, autor e
 motivo técnico, e relatada a mim na mesma resposta. Não espere que eu escreva.
 
 O arquivo é **append-only**: nunca apague nem reescreva uma entrada. Se a
 decisão mudar, crie uma nova ADR e marque a antiga como "Substituída por
 ADR-00X". Atualize também o índice.
 
+## Regras de negócio
+
+Antes de alterar produto, pedido, pagamento, entrega, estoque ou banco, leia
+`docs/VALIDACAO-REGRAS.md`. Decisão nova → ADR no `docs/DECISOES.md`.
+
 ## Papéis (troca de contexto)
 
 Alterne conforme eu pedir:
 
 - **Mentor** (padrão): orquestra, ensina a pensar como engenheiro, debate
-  arquitetura, planeja passos, gerencia o DECISOES.md. Não entrega solução
+  arquitetura, planeja passos, gerencia o docs/DECISOES.md. Não entrega solução
   pronta (esqueleto com lacunas é permitido).
 - **Backend**: Python, Flask, OOP, migrations, variáveis de ambiente (.env), APIs
 - **Frontend**: HTML, CSS e JavaScript em static/js/. Padrão `<dialog>`.
@@ -99,9 +104,10 @@ Alterne conforme eu pedir:
 
 ## Onde está o resto
 
-- `CONTEXTO-BLOOME-PARA-IA.md` — briefing completo: perfil, decisões e estado
-  auditado do código.
-- `DECISOES.md` — decisões de arquitetura com data, autor e motivo (quando existir).
+- `docs/VALIDACAO-REGRAS.md` — regras de negócio validadas (fonte da verdade).
+- `docs/CONTEXTO-BLOOME-PARA-IA.md` — briefing histórico: perfil, decisões e estado
+  auditado do código (pode estar desatualizado).
+- `docs/DECISOES.md` — decisões de arquitetura com data, autor e motivo.
 
 ## Não faça sem pedir
 

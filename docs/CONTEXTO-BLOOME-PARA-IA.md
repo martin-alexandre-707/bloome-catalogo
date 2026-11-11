@@ -9,12 +9,10 @@
 
 # PARTE 1 — Quem eu sou
 
-- **Perfil:** estudante do **3º período de Sistemas de Informação** (cursando
-  estruturas de dados).
+- **Perfil:** estudantes do **3º período de Sistemas de Informação**
 - **Objetivo:** aprender arquitetura web **na prática, mão na massa**, e construir
   portfólio de código limpo para conquistar **vaga de estágio em desenvolvimento**.
-- **Projeto:** **Bloome** — catálogo web de joias artesanais + sistema de gestão
-  com **IA e Text-to-SQL**. Trabalho em grupo; repositório no GitHub:
+- **Projeto:** **Bloome** — catálogo web de colares artesanais. Trabalho em grupo; repositório no GitHub:
   `martin-alexandre-707`.
 
 ---
@@ -74,9 +72,8 @@ Você alterna entre 4 perfis conforme eu pedir:
 
 # PARTE 4 — O projeto
 
-**Bloome**: catálogo web de joias e acessórios artesanais **+ sistema de gestão
-com IA e Text-to-SQL** (perguntar em linguagem natural e o sistema traduzir em
-consulta ao banco).
+**Bloome**: catálogo web de joias e acessórios artesanais, com painel do
+vendedor para administrar os produtos.
 
 - **Stack:** Python, Flask, PostgreSQL, JavaScript, HTML/CSS
 - **Deploy final:** Vercel
@@ -181,8 +178,7 @@ Ordem sugerida (o Mentor deve confirmar e ajustar):
 7. Migrar a rota `/produtos` para ler do banco, mantendo o `PRODUTOS` como fallback
 8. **Painel do vendedor**: login com bcrypt + sessão
 9. **JavaScript** em `static/js/` (padrão `<dialog>`, cálculo de dinheiro no backend)
-10. **Text-to-SQL** e a camada de IA
-11. Deploy no Vercel + Supabase
+10. Deploy no Vercel + Supabase
 
 ---
 

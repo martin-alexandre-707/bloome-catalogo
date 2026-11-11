@@ -25,6 +25,9 @@
 | ADR-005 | 2026-11-06 | Segurança | Aceita | `.env` + `.gitignore`; `.env.example` versionado |
 | ADR-006 | 2026-11-06 | Acessibilidade | Aceita | WCAG 2.1 AA é requisito não negociável |
 | ADR-007 | 2026-11-07 | Git | Aceita | Sem `Co-Authored-By` de IA nos commits |
+| ADR-008 | 2026-11-09 | Processo | Aceita | Ordem: fundação → banco → auth → front → pagamentos |
+| ADR-009 | 2026-11-09 | Banco | Aceita | psycopg 3 + SQL puro (sem ORM) |
+| ADR-010 | 2026-11-10 | Escopo | Aceita | Fora do escopo: sistema de gestão com IA e Text-to-SQL |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -192,6 +195,89 @@
     do push.
   - Histórico já corrigido: `4761c462` → `7ff1063` no `main`.
 - **Arquivos:** `AGENTS.md`
+
+---
+
+## ADR-008 — Ordem de implementação do MVP
+
+- **Data:** 2026-11-09
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o time listou várias frentes ao mesmo tempo (banco, front,
+  login, pagamentos) e perguntou por onde começar. A auditoria mostrou que as
+  rotas e os links entre as páginas já funcionam (9 rotas, test client 200/404)
+  e que a fundação de configuração ainda não existia.
+- **Decisão:** seguir a ordem do briefing: fundação de configuração → banco →
+  rotas lendo do banco → login do painel → front/JS → pagamentos → deploy. A
+  API de pagamentos fica para o fim e exige ADR própria.
+- **Motivo técnico:** o banco depende da `DATABASE_URL`, que vive no `.env`;
+  começar pelo banco sem a fundação bloqueia o passo seguinte. Polir o front
+  antes da migração de dados gera retrabalho.
+- **Alternativas consideradas:**
+  - Começar pelo banco — bloqueado pela ausência do `.env`.
+  - Começar pelo front — retrabalho quando os dados passarem a vir do banco.
+  - Fazer login e pagamentos agora — amplia o escopo sem o catálogo no banco.
+- **Consequências:**
+  - Passos 1–2 concluídos (git, `DECISOES.md`, `.env`, `.env.example`,
+    `python-dotenv`, `app.secret_key`).
+  - A escolha do driver (psycopg vs SQLAlchemy), prevista na ADR-002, torna-se
+    a próxima decisão.
+  - Pagamentos exige provedor, sandbox e webhook — decisão futura.
+- **Arquivos:** `app.py`, `requirements.txt`, `.env.example`,
+  `CONTEXTO-BLOOME-PARA-IA.md`
+
+---
+
+## ADR-009 — Acesso ao banco: psycopg 3 com SQL puro
+
+- **Data:** 2026-11-09
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** a ADR-002 fixou o Supabase como único Postgres, mas deixou em
+  aberto como o Python conversaria com ele (`psycopg` ou SQLAlchemy). O time
+  escolheu SQL puro para aprender o que acontece por baixo.
+- **Decisão:** usar **psycopg 3** (`psycopg[binary]`) com **SQL escrito à mão**
+  e parâmetros (`%s`). Sem ORM.
+- **Motivo técnico:** o SQL fica visível e auditável; consultas parametrizadas
+  bloqueiam injeção de SQL; o pacote binário evita compilador no Windows.
+- **Alternativas consideradas:**
+  - SQLAlchemy ORM — esconde o SQL e adiciona uma camada de aprendizado.
+  - `supabase-py`/PostgREST — outro modelo de acesso (HTTP), não usa
+    `DATABASE_URL`; destoa da ADR-002.
+- **Consequências:**
+  - `psycopg[binary]` entra no `requirements.txt`.
+  - Consultas usam `%s` como placeholder — **nunca** interpolação de string.
+  - Conexão e cursor geridos manualmente (ou com helper próprio em `db.py`).
+  - `DATABASE_URL` no `.env`; porta 5432 (direta) no local e 6543 (pooler)
+    na Vercel.
+- **Arquivos:** `requirements.txt`, `.env` (não versionado), `.env.example`,
+  futuro `db.py`
+
+---
+
+## ADR-010 — Fora do escopo: sistema de gestão com IA e Text-to-SQL
+
+- **Data:** 2026-11-10
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o escopo do produto descrevia o Bloome como catálogo **+ sistema
+  de gestão com IA e Text-to-SQL** (briefing, Parte 4). O time decidiu cortar
+  essa parte.
+- **Decisão:** o Bloome fica sendo **catálogo + painel do vendedor**. Sistema de
+  gestão com IA e Text-to-SQL **não faz parte do escopo**.
+- **Motivo:** o sistema de gestão com IA e Text-to-SQL **não faz parte deste
+  projeto**. O Bloome é um catálogo com painel do vendedor; IA e Text-to-SQL
+  pertencem a outro escopo. Não houve motivo técnico ligado ao código existente.
+- **Alternativas consideradas:**
+  - Manter no MVP — fugiria do escopo deste projeto.
+  - Construir depois — também não é escopo deste projeto.
+- **Consequências:**
+  - `CONTEXTO-BLOOME-PARA-IA.md` Parte 4 atualizada; a Parte 7 passa de **11
+    para 10 passos** (o antigo passo 10 saiu).
+  - A **ADR-009 continua válida sem mudança**: psycopg 3 + SQL puro segue como
+    escolha de acesso ao banco (SQL visível e consultas parametrizadas).
+  - Se a IA voltar ao escopo, exige **nova ADR** — esta não é reescrita.
+- **Arquivos:** `CONTEXTO-BLOOME-PARA-IA.md`, `DECISOES.md`
 
 ---
 

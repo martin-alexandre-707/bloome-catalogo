@@ -1,8 +1,13 @@
-from flask import Flask, abort, render_template
+import os
 
+from dotenv import load_dotenv
+from flask import Flask, abort, render_template
 from catalogo import PRODUTOS
 
+load_dotenv()
+
 app = Flask(__name__)
+app.secret_key= os.environ["SECRET_KEY"]
 
 @app.route("/")
 def index():
@@ -20,8 +25,6 @@ def produto(produto):
         abort(404)
 
     relacionados = [{"id": chave, **dados} for chave, dados in PRODUTOS.items() if chave != produto][:3]
-
-    print(relacionados)
 
     return render_template(
         "produto.html",

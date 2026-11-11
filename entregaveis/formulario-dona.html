@@ -1,0 +1,1337 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Formulário da Dona</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* Plano: creme e vinho da própria Bloome; fio de colar como motivo;
+     formulário em coluna única, com barra fixa de progresso e cópia. */
+  :root {
+    --bg: #f4eceb;
+    --surface: #fffdfc;
+    --surface-2: #f9f2f1;
+    --field: #fcf7f6;
+    --text: #463136;
+    --text-strong: #772e3f;
+    --muted: #6b5b4b;
+    --border: rgba(119, 46, 63, 0.16);
+    --border-strong: rgba(119, 46, 63, 0.32);
+    --accent: #772e3f;
+    --accent-strong: #5e1f2e;
+    --accent-soft: #ecd2d7;
+    --on-accent: #ffffff;
+    --focus: #7d4351;
+    --ok: #2a5f46;
+    --danger: #8f2a3c;
+    --thread: #c9a3ac;
+    --shadow: 0 1px 2px rgba(94, 31, 46, 0.06), 0 10px 30px rgba(94, 31, 46, 0.05);
+    --radius: 16px;
+    --font-body: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1214;
+      --surface: #241a1d;
+      --surface-2: #2b1f22;
+      --field: #2e2124;
+      --text: #f2e8e6;
+      --text-strong: #f3cdd4;
+      --muted: #cdb6ba;
+      --border: rgba(243, 205, 212, 0.16);
+      --border-strong: rgba(243, 205, 212, 0.3);
+      --accent: #e0aeb6;
+      --accent-strong: #f3cdd4;
+      --accent-soft: #4b2d34;
+      --on-accent: #1a1214;
+      --focus: #e0aeb6;
+      --ok: #8fd0b0;
+      --danger: #f0a6b0;
+      --thread: #6f4c52;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a1214;
+    --surface: #241a1d;
+    --surface-2: #2b1f22;
+    --field: #2e2124;
+    --text: #f2e8e6;
+    --text-strong: #f3cdd4;
+    --muted: #cdb6ba;
+    --border: rgba(243, 205, 212, 0.16);
+    --border-strong: rgba(243, 205, 212, 0.3);
+    --accent: #e0aeb6;
+    --accent-strong: #f3cdd4;
+    --accent-soft: #4b2d34;
+    --on-accent: #1a1214;
+    --focus: #e0aeb6;
+    --ok: #8fd0b0;
+    --danger: #f0a6b0;
+    --thread: #6f4c52;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-top: 34px;
+    padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .hero {
+    display: grid;
+    gap: 12px;
+    padding-top: 6px;
+    padding-bottom: 26px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .brand::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--thread);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 7vw, 3.1rem);
+    line-height: 1.08;
+    color: var(--text-strong);
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin: 0;
+    max-width: 64ch;
+    font-size: 1.03rem;
+  }
+
+  .hint {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .legend .tag { margin: 0; }
+
+  .progress-wrap {
+    display: grid;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .progress {
+    height: 8px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+
+  .progress > span {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    transition: width 0.25s ease;
+  }
+
+  #form-dona {
+    display: grid;
+    gap: 16px;
+  }
+
+  .card {
+    display: grid;
+    gap: 18px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    min-width: 0;
+  }
+
+  .sec-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .bead {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--surface);
+  }
+
+  .sec-head::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--thread);
+  }
+
+  .sec-head h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.2;
+    color: var(--text-strong);
+  }
+
+  .q {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .q-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-strong);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .opts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--field);
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .opt:hover { border-color: var(--border-strong); }
+
+  .opt:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .opt:has(input:focus-visible) {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .opt input {
+    flex: none;
+    margin-top: 2px;
+    accent-color: var(--accent);
+  }
+
+  .opt span { min-width: 0; }
+
+  .opts + .field,
+  .field + .opts { margin-top: 10px; }
+
+  .field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .field > span {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .input,
+  textarea,
+  select {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--field);
+    color: var(--text);
+    font: inherit;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 3px solid var(--accent-soft);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+
+  textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+
+  ::placeholder { color: var(--muted); opacity: 0.85; }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .fallback {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--surface-2);
+  }
+
+  .fallback textarea {
+    min-height: 190px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+  }
+
+  .clear-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .clear-confirm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 11px 18px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .btn-primary:hover { background: var(--accent-strong); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-strong);
+    border-color: var(--border-strong);
+  }
+
+  .btn-secondary:hover { background: var(--surface-2); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.07);
+    padding-top: 10px;
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+  }
+
+  .bar-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .bar-info {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .bar-info strong {
+    color: var(--text-strong);
+    font-size: 0.9rem;
+  }
+
+  .status { min-height: 1.2em; }
+
+  .status.ok { color: var(--ok); font-weight: 700; }
+  .status.warn { color: var(--danger); font-weight: 700; }
+
+  .footer-note {
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 4px 8px 0;
+  }
+
+  @media (max-width: 620px) {
+    .row { grid-template-columns: 1fr; }
+    .card { padding: 18px; }
+  }
+
+  @media (max-width: 460px) {
+    .bar-inner { grid-template-columns: 1fr; }
+    .bar .btn-primary { width: 100%; }
+    .bar-info { font-size: 0.8rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+<main class="page" lang="pt-BR">
+  <header class="hero">
+    <p class="brand">Bloome · loja artesanal</p>
+    <h1>Formulário da Dona</h1>
+    <p class="lede">Vamos entender o que já existe e o que precisa existir para a primeira venda. São umas 30 perguntas, 10 a 15 minutos. Pode pular o que não souber — o que importa é a sua rotina, não a tecnologia.</p>
+    <p class="legend"><span class="tag">essencial</span> são as respostas que travam o lançamento se ficarem em branco.</p>
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="progressText">0 de 27 essenciais</span>
+        <span>rascunho salvo neste navegador</span>
+      </div>
+      <div class="progress" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="27" aria-valuenow="0" aria-labelledby="progressText">
+        <span id="progressFill"></span>
+      </div>
+    </div>
+  </header>
+
+  <form id="form-dona" novalidate>
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Ponto de partida</h2></div>
+
+      <div class="row">
+        <label class="field" for="nome"><span>Seu nome</span>
+          <input class="input" id="nome" name="nome" type="text" autocomplete="name" placeholder="Como posso te chamar">
+        </label>
+        <label class="field" for="loja"><span>Nome da loja</span>
+          <input class="input" id="loja" name="loja" type="text" placeholder="Nome que vai aparecer no site">
+        </label>
+      </div>
+
+      <fieldset class="q essential" data-label="O que já está pronto?">
+        <legend class="q-label">O que já está pronto? <span class="tag">essencial</span></legend>
+        <p class="hint">Marque tudo o que existe hoje.</p>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="pronto" value="Peças prontas" id="pronto-pecas"><span>Peças prontas</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Materiais comprados" id="pronto-materiais"><span>Materiais comprados</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Fotos" id="pronto-fotos"><span>Fotos</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Nome da marca" id="pronto-nome"><span>Nome da marca</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Logo" id="pronto-logo"><span>Logo</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="CNPJ ou MEI" id="pronto-cnpj"><span>CNPJ ou MEI</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Conta para receber" id="pronto-conta"><span>Conta para receber</span></label>
+          <label class="opt"><input type="checkbox" name="pronto" value="Nada ainda" id="pronto-nada"><span>Nada ainda</span></label>
+        </div>
+        <label class="field" for="pronto_outro"><span>Outro (conte aqui)</span>
+          <input class="input" id="pronto_outro" name="pronto_outro" type="text" placeholder="Ex.: embalagens, etiquetas">
+        </label>
+      </fieldset>
+
+      <div class="q essential" data-label="Peças que já existem">
+        <div class="row">
+          <label class="field" for="pecas_modelos"><span>Quantas peças diferentes você tem hoje?</span>
+            <input class="input" id="pecas_modelos" name="pecas_modelos" type="text" inputmode="numeric" placeholder="Ex.: 8 modelos">
+          </label>
+          <label class="field" for="pecas_qtd"><span>Quantas de cada?</span>
+            <input class="input" id="pecas_qtd" name="pecas_qtd" type="text" inputmode="numeric" placeholder="Ex.: 3 de cada">
+          </label>
+        </div>
+      </div>
+
+      <fieldset class="q essential" data-label="Preço de venda definido">
+        <legend class="q-label">Você já tem preço de venda? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="preco_definido" value="Sim, para todas" id="preco-todas"><span>Sim, para todas</span></label>
+          <label class="opt"><input type="radio" name="preco_definido" value="Sim, para algumas" id="preco-algumas"><span>Sim, para algumas</span></label>
+          <label class="opt"><input type="radio" name="preco_definido" value="Não" id="preco-nao"><span>Ainda não</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Custo de material conhecido">
+        <legend class="q-label">Sabe o custo de material de cada peça?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="preco_custo" value="Sim" id="custo-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="preco_custo" value="Mais ou menos" id="custo-mais"><span>Mais ou menos</span></label>
+          <label class="opt"><input type="radio" name="preco_custo" value="Não" id="custo-nao"><span>Não</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q essential" data-label="Primeiros clientes">
+        <label class="field" for="primeiros_clientes"><span>Quem são os primeiros clientes?</span>
+          <input class="input" id="primeiros_clientes" name="primeiros_clientes" type="text" placeholder="Instagram, amigos, feira, loja física…">
+        </label>
+      </div>
+
+      <div class="q" data-label="Quem cuida das fotos e descrições">
+        <label class="field" for="fotos_quem"><span>Quem vai cuidar das fotos e das descrições?</span>
+          <input class="input" id="fotos_quem" name="fotos_quem" type="text" placeholder="Você, alguém da família, fotógrafo…">
+        </label>
+        <p class="hint">As fotos já existem — a pergunta é quem cuida das próximas e dos textos.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Produto</h2></div>
+
+      <fieldset class="q essential" data-label="O que o cliente escolhe">
+        <legend class="q-label">O que o cliente escolhe? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="escolhas" value="Cor do fio ou cordão" id="escolha-cor"><span>Cor do fio ou cordão</span></label>
+          <label class="opt"><input type="checkbox" name="escolhas" value="Tipo de cordão" id="escolha-tipo"><span>Tipo de cordão</span></label>
+          <label class="opt"><input type="checkbox" name="escolhas" value="Tamanho ou medida" id="escolha-tamanho"><span>Tamanho ou medida</span></label>
+          <label class="opt"><input type="checkbox" name="escolhas" value="Nome personalizado" id="escolha-nome"><span>Nome personalizado</span></label>
+          <label class="opt"><input type="checkbox" name="escolhas" value="Nada além da peça" id="escolha-nada"><span>Nada além da peça</span></label>
+        </div>
+        <label class="field" for="escolhas_outro"><span>Outra escolha (conte aqui)</span>
+          <input class="input" id="escolhas_outro" name="escolhas_outro" type="text" placeholder="Ex.: pedra, fecho, embalagem">
+        </label>
+      </fieldset>
+
+      <div class="q essential" data-label="Cores por peça">
+        <div class="row">
+          <label class="field" for="cores_qtd"><span>Quantas cores por peça?</span>
+            <input class="input" id="cores_qtd" name="cores_qtd" type="text" inputmode="numeric" placeholder="Ex.: 2 ou 3">
+          </label>
+          <label class="field" for="cores_quais"><span>Quais?</span>
+            <input class="input" id="cores_quais" name="cores_quais" type="text" placeholder="Ex.: azul, dourado, cru">
+          </label>
+        </div>
+      </div>
+
+      <fieldset class="q essential" data-label="A cor muda o preço">
+        <legend class="q-label">A cor muda o preço? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="cor_preco" value="Não, todas iguais" id="cor-preco-nao"><span>Não, todas iguais</span></label>
+          <label class="opt"><input type="radio" name="cor_preco" value="Sim, cada cor tem preço" id="cor-preco-sim"><span>Sim, cada cor tem preço</span></label>
+          <label class="opt"><input type="radio" name="cor_preco" value="Só algumas" id="cor-preco-algumas"><span>Só algumas</span></label>
+        </div>
+        <label class="field" for="cor_preco_valor"><span>Se sim, quanto?</span>
+          <input class="input" id="cor_preco_valor" name="cor_preco_valor" type="text" placeholder="Ex.: + R$ 5 na dourada">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Foto por cor">
+        <legend class="q-label">A foto serve para todas as cores?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="foto_cores" value="Sim" id="foto-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="foto_cores" value="Não" id="foto-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="foto_cores" value="Quero foto por cor" id="foto-por-cor"><span>Quero foto por cor</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q essential" data-label="Tempo de produção">
+        <div class="row">
+          <label class="field" for="tempo_peca"><span>Quanto tempo leva para produzir uma peça?</span>
+            <input class="input" id="tempo_peca" name="tempo_peca" type="text" placeholder="Ex.: 2 dias">
+          </label>
+          <label class="field" for="tempo_varia"><span>Muda por cor ou modelo?</span>
+            <input class="input" id="tempo_varia" name="tempo_varia" type="text" placeholder="Ex.: a dourada demora mais">
+          </label>
+        </div>
+      </div>
+
+      <fieldset class="q essential" data-label="Capacidade de produção">
+        <legend class="q-label">Quantas peças consegue produzir por semana? <span class="tag">essencial</span></legend>
+        <label class="field" for="capacidade_semana"><span>Sua estimativa</span>
+          <input class="input" id="capacidade_semana" name="capacidade_semana" type="text" placeholder="Ex.: 10 peças">
+        </label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="capacidade_ajuda" value="Sim, tenho ajuda" id="ajuda-sim"><span>Tenho ajuda</span></label>
+          <label class="opt"><input type="radio" name="capacidade_ajuda" value="Não, sozinha" id="ajuda-nao"><span>Sozinha</span></label>
+          <label class="opt"><input type="radio" name="capacidade_ajuda" value="Às vezes" id="ajuda-as-vezes"><span>Às vezes</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="O que mais trava">
+        <legend class="q-label">O que mais trava hoje?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="gargalo" value="Material" id="gargalo-material"><span>Material</span></label>
+          <label class="opt"><input type="radio" name="gargalo" value="Tempo" id="gargalo-tempo"><span>Tempo</span></label>
+          <label class="opt"><input type="radio" name="gargalo" value="Dinheiro" id="gargalo-dinheiro"><span>Dinheiro</span></label>
+          <label class="opt"><input type="radio" name="gargalo" value="Não sei" id="gargalo-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Materiais e estoque</h2></div>
+
+      <fieldset class="q essential" data-label="Materiais e o que já tem">
+        <legend class="q-label">Quais materiais você usa? <span class="tag">essencial</span></legend>
+        <label class="field" for="materiais"><span>Liste os principais</span>
+          <textarea id="materiais" name="materiais" placeholder="Fios, pingentes, pedras, embalagens…"></textarea>
+        </label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="materiais_tem" value="Sim, tenho todos" id="materiais-sim"><span>Tenho todos</span></label>
+          <label class="opt"><input type="radio" name="materiais_tem" value="Quase todos" id="materiais-quase"><span>Quase todos</span></label>
+          <label class="opt"><input type="radio" name="materiais_tem" value="Não, falta bastante" id="materiais-nao"><span>Falta bastante</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q essential" data-label="O que falta comprar para começar">
+        <div class="row">
+          <label class="field" for="falta_comprar"><span>O que falta comprar para começar?</span>
+            <textarea id="falta_comprar" name="falta_comprar" placeholder="Ex.: 20 pingentes, 10 fios azuis"></textarea>
+          </label>
+          <label class="field" for="falta_custo"><span>Quanto custa mais ou menos?</span>
+            <input class="input" id="falta_custo" name="falta_custo" type="text" placeholder="Ex.: R$ 300">
+          </label>
+        </div>
+      </div>
+
+      <div class="q essential" data-label="Prazo de reposição">
+        <label class="field" for="reposicao_tempo"><span>Quando compra, quanto tempo demora para chegar?</span>
+          <input class="input" id="reposicao_tempo" name="reposicao_tempo" type="text" placeholder="Ex.: 10 dias">
+        </label>
+      </div>
+
+      <fieldset class="q" data-label="Como pretende controlar o estoque">
+        <legend class="q-label">Como pretende controlar o estoque?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="estoque_controle" value="Caderno" id="estoque-caderno"><span>Caderno</span></label>
+          <label class="opt"><input type="radio" name="estoque_controle" value="Planilha" id="estoque-planilha"><span>Planilha</span></label>
+          <label class="opt"><input type="radio" name="estoque_controle" value="Sistema" id="estoque-sistema"><span>Sistema</span></label>
+          <label class="opt"><input type="radio" name="estoque_controle" value="Ainda não sei" id="estoque-nao-sei"><span>Ainda não sei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="Quando uma cor acaba">
+        <legend class="q-label">Quando uma cor acaba, o que prefere? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="cor_acaba" value="Esconder a opção no site" id="acaba-esconder"><span>Esconder no site</span></label>
+          <label class="opt"><input type="radio" name="cor_acaba" value="Aceitar com prazo maior" id="acaba-prazo"><span>Aceitar com prazo maior</span></label>
+          <label class="opt"><input type="radio" name="cor_acaba" value="Não sei" id="acaba-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Alerta de material acabando">
+        <legend class="q-label">Quer alerta de material acabando?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="alerta" value="Sim" id="alerta-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="alerta" value="Não" id="alerta-nao"><span>Não</span></label>
+        </div>
+        <label class="field" for="alerta_dias"><span>Com quantos dias de antecedência?</span>
+          <input class="input" id="alerta_dias" name="alerta_dias" type="text" inputmode="numeric" placeholder="Ex.: 7 dias">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Controle de custo e lucro">
+        <legend class="q-label">Quer controlar custo e lucro por peça?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="custo_lucro" value="Sim" id="lucro-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="custo_lucro" value="Não" id="lucro-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="custo_lucro" value="Não sei" id="lucro-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Pedidos e produção</h2></div>
+
+      <div class="q essential" data-label="Pedidos por semana no começo">
+        <label class="field" for="pedidos_semana"><span>Quantos pedidos por semana consegue atender no começo?</span>
+          <input class="input" id="pedidos_semana" name="pedidos_semana" type="text" inputmode="numeric" placeholder="Ex.: 5 pedidos">
+        </label>
+      </div>
+
+      <fieldset class="q essential" data-label="Quando o cliente paga">
+        <legend class="q-label">O cliente paga antes da produção ou na entrega? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="pagamento_timing" value="Antes" id="paga-antes"><span>Antes</span></label>
+          <label class="opt"><input type="radio" name="pagamento_timing" value="Metade e metade" id="paga-metade"><span>Metade e metade</span></label>
+          <label class="opt"><input type="radio" name="pagamento_timing" value="Na entrega" id="paga-entrega"><span>Na entrega</span></label>
+          <label class="opt"><input type="radio" name="pagamento_timing" value="Não sei" id="paga-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Tipo de venda">
+        <legend class="q-label">Quer vender só peça pronta, sob encomenda, ou os dois?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="venda_tipo" value="Pronta" id="venda-pronta"><span>Peça pronta</span></label>
+          <label class="opt"><input type="radio" name="venda_tipo" value="Sob encomenda" id="venda-encomenda"><span>Sob encomenda</span></label>
+          <label class="opt"><input type="radio" name="venda_tipo" value="Os dois" id="venda-dois"><span>Os dois</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Desistência depois do pagamento">
+        <legend class="q-label">Se o cliente desistir depois de pagar, devolve?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="desistencia" value="Sim, tudo" id="desiste-tudo"><span>Sim, tudo</span></label>
+          <label class="opt"><input type="radio" name="desistencia" value="Sim, parte" id="desiste-parte"><span>Sim, parte</span></label>
+          <label class="opt"><input type="radio" name="desistencia" value="Não" id="desiste-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="desistencia" value="Depende" id="desiste-depende"><span>Depende</span></label>
+        </div>
+        <label class="field" for="desistencia_quando"><span>Quando?</span>
+          <input class="input" id="desistencia_quando" name="desistencia_quando" type="text" placeholder="Ex.: antes de começar a produzir">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Avisos ao cliente">
+        <legend class="q-label">Quer avisar o cliente a cada etapa?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="aviso_etapas" value="Sim" id="aviso-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="aviso_etapas" value="Não" id="aviso-nao"><span>Não</span></label>
+        </div>
+        <label class="field" for="aviso_como"><span>Como?</span>
+          <input class="input" id="aviso_como" name="aviso_como" type="text" placeholder="WhatsApp, e-mail…">
+        </label>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="Quem responde o cliente e atualiza o site">
+        <legend class="q-label">Quem responde o cliente e atualiza o site? <span class="tag">essencial</span></legend>
+        <label class="field" for="operador"><span>Nome ou papel</span>
+          <input class="input" id="operador" name="operador" type="text" placeholder="Ex.: eu mesma">
+        </label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="operador_so" value="Sim, só eu" id="operador-sim"><span>Só eu</span></label>
+          <label class="opt"><input type="radio" name="operador_so" value="Não, tem ajuda" id="operador-nao"><span>Tem ajuda</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Entrega</h2></div>
+
+      <fieldset class="q essential" data-label="Entrega em Maceió">
+        <legend class="q-label">Em Maceió, como entrega? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="maceio_como" value="Motoboy" id="maceio-motoboy"><span>Motoboy</span></label>
+          <label class="opt"><input type="radio" name="maceio_como" value="Eu mesma" id="maceio-eu"><span>Eu mesma</span></label>
+          <label class="opt"><input type="radio" name="maceio_como" value="Retirada" id="maceio-retirada"><span>Retirada</span></label>
+          <label class="opt"><input type="radio" name="maceio_como" value="Correios" id="maceio-correios"><span>Correios</span></label>
+        </div>
+        <label class="field" for="maceio_valor"><span>Quanto pretende cobrar?</span>
+          <input class="input" id="maceio_valor" name="maceio_valor" type="text" placeholder="Ex.: R$ 10 ou grátis">
+        </label>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="Envio para fora">
+        <legend class="q-label">Para fora, como envia? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="fora_como" value="Correios PAC" id="fora-pac"><span>Correios PAC</span></label>
+          <label class="opt"><input type="radio" name="fora_como" value="Correios SEDEX" id="fora-sedex"><span>Correios SEDEX</span></label>
+          <label class="opt"><input type="radio" name="fora_como" value="Transportadora" id="fora-transportadora"><span>Transportadora</span></label>
+          <label class="opt"><input type="radio" name="fora_como" value="Ainda não sei" id="fora-nao-sei"><span>Ainda não sei</span></label>
+        </div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="fora_pesquisa" value="Sim" id="fora-pesquisa-sim"><span>Já pesquisei preço e prazo</span></label>
+          <label class="opt"><input type="radio" name="fora_pesquisa" value="Não" id="fora-pesquisa-nao"><span>Ainda não pesquisei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="Quem paga o frete">
+        <legend class="q-label">Quem paga o frete? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="frete_quem" value="Cliente" id="frete-cliente"><span>Cliente</span></label>
+          <label class="opt"><input type="radio" name="frete_quem" value="Eu, frete grátis" id="frete-eu"><span>Eu (frete grátis)</span></label>
+          <label class="opt"><input type="radio" name="frete_quem" value="Depende do valor" id="frete-depende"><span>Depende do valor</span></label>
+        </div>
+        <label class="field" for="frete_gratis"><span>Frete grátis a partir de?</span>
+          <input class="input" id="frete_gratis" name="frete_gratis" type="text" placeholder="Ex.: R$ 150">
+        </label>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="Como calcular o frete">
+        <legend class="q-label">Como quer calcular o frete? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="frete_calculo" value="Valor fixo por região" id="frete-fixo"><span>Valor fixo por região</span></label>
+          <label class="opt"><input type="radio" name="frete_calculo" value="Combinar depois" id="frete-combinar"><span>Combinar depois</span></label>
+          <label class="opt"><input type="radio" name="frete_calculo" value="Calcular automático" id="frete-automatico"><span>Calcular automático</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q essential" data-label="Prazo para fora">
+        <label class="field" for="prazo_fora"><span>Qual prazo promete para fora?</span>
+          <input class="input" id="prazo_fora" name="prazo_fora" type="text" placeholder="Ex.: 15 dias úteis">
+        </label>
+        <p class="hint">Some produção + envio.</p>
+      </div>
+
+      <fieldset class="q" data-label="Embalagem especial">
+        <legend class="q-label">A embalagem é especial?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="embalagem" value="Sim" id="embalagem-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="embalagem" value="Não" id="embalagem-nao"><span>Não</span></label>
+        </div>
+        <label class="field" for="embalagem_quem"><span>Quem paga?</span>
+          <input class="input" id="embalagem_quem" name="embalagem_quem" type="text" placeholder="Ex.: já está no preço">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Código de rastreio">
+        <legend class="q-label">Vai mandar código de rastreio?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="rastreio" value="Sim" id="rastreio-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="rastreio" value="Não" id="rastreio-nao"><span>Não</span></label>
+        </div>
+        <label class="field" for="rastreio_como"><span>Como avisa o cliente?</span>
+          <input class="input" id="rastreio_como" name="rastreio_como" type="text" placeholder="WhatsApp, e-mail…">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Frete da troca ou devolução">
+        <legend class="q-label">Troca ou devolução: quem paga o frete?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="troca_frete" value="Cliente" id="troca-cliente"><span>Cliente</span></label>
+          <label class="opt"><input type="radio" name="troca_frete" value="Loja" id="troca-loja"><span>Loja</span></label>
+          <label class="opt"><input type="radio" name="troca_frete" value="Depende" id="troca-depende"><span>Depende</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Pagamento</h2></div>
+      <p class="hint">Pagar no site é por Pix ou cartão, com uma empresa de pagamento (Mercado Pago, Pagar.me, Asaas, Stripe). Não é maquininha. O site nunca guarda o número do cartão.</p>
+
+      <fieldset class="q essential" data-label="Como receber no site">
+        <legend class="q-label">Como quer receber no site? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="receber_site" value="Pix" id="receber-pix"><span>Pix</span></label>
+          <label class="opt"><input type="checkbox" name="receber_site" value="Cartão" id="receber-cartao"><span>Cartão</span></label>
+          <label class="opt"><input type="checkbox" name="receber_site" value="Os dois" id="receber-dois"><span>Os dois</span></label>
+          <label class="opt"><input type="checkbox" name="receber_site" value="Combinar no WhatsApp" id="receber-whats"><span>Combinar no WhatsApp</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q essential" data-label="CNPJ e conta de pagamento">
+        <legend class="q-label">Tem CNPJ ou MEI? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="cnpj" value="Sim" id="cnpj-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="cnpj" value="Não" id="cnpj-nao"><span>Não</span></label>
+        </div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="conta_gateway" value="Sim" id="gateway-sim"><span>Já tenho conta de pagamento</span></label>
+          <label class="opt"><input type="radio" name="conta_gateway" value="Não" id="gateway-nao"><span>Não tenho</span></label>
+          <label class="opt"><input type="radio" name="conta_gateway" value="Não sei" id="gateway-nao-sei"><span>Não sei</span></label>
+        </div>
+        <p class="hint">Mercado Pago, Pagar.me, Asaas ou Stripe.</p>
+      </fieldset>
+
+      <fieldset class="q" data-label="Aceita abrir conta de pagamento">
+        <legend class="q-label">Se não tem conta, aceita abrir?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="abrir_conta" value="Sim" id="abrir-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="abrir_conta" value="Não" id="abrir-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="abrir_conta" value="Não sei" id="abrir-nao-sei"><span>Não sei</span></label>
+        </div>
+        <p class="hint">Alguns aceitam CPF; outros exigem CNPJ. A gente verifica juntas.</p>
+      </fieldset>
+
+      <div class="q" data-label="Taxa por venda aceita">
+        <label class="field" for="taxa"><span>Quanto de taxa por venda aceita pagar?</span>
+          <input class="input" id="taxa" name="taxa" type="text" placeholder="Ex.: até 5% ou 'não sei'">
+        </label>
+      </div>
+
+      <fieldset class="q" data-label="Parcelamento">
+        <legend class="q-label">Parcelamento?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="parcelamento" value="Não" id="parc-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="parcelamento" value="Até 2x" id="parc-2"><span>Até 2x</span></label>
+          <label class="opt"><input type="radio" name="parcelamento" value="Até 3x" id="parc-3"><span>Até 3x</span></label>
+          <label class="opt"><input type="radio" name="parcelamento" value="Até 6x" id="parc-6"><span>Até 6x</span></label>
+          <label class="opt"><input type="radio" name="parcelamento" value="Não sei" id="parc-nao-sei"><span>Não sei</span></label>
+        </div>
+        <label class="field" for="parcelamento_juros"><span>Quem paga os juros?</span>
+          <input class="input" id="parcelamento_juros" name="parcelamento_juros" type="text" placeholder="Ex.: eu ou o cliente">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Quando o dinheiro cai">
+        <legend class="q-label">Quando o dinheiro cai?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="dinheiro_cai" value="No dia seguinte" id="cai-dia"><span>No dia seguinte</span></label>
+          <label class="opt"><input type="radio" name="dinheiro_cai" value="Em 30 dias" id="cai-30"><span>Em 30 dias</span></label>
+          <label class="opt"><input type="radio" name="dinheiro_cai" value="Não sei" id="cai-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Nota fiscal">
+        <legend class="q-label">Emite nota fiscal?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="nota_fiscal" value="Sim" id="nota-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="nota_fiscal" value="Não" id="nota-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="nota_fiscal" value="Não sei" id="nota-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q" data-label="Se o pagamento falhar">
+        <label class="field" for="falha_pagamento"><span>Se o pagamento falhar, o que faz?</span>
+          <textarea id="falha_pagamento" name="falha_pagamento" placeholder="Ex.: aviso no WhatsApp e mando outro link"></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Lançamento</h2></div>
+
+      <div class="q essential" data-label="A primeira coisa que precisa funcionar">
+        <label class="field" for="prioridade"><span>Se só uma coisa funcionasse no começo, qual seria?</span>
+          <textarea id="prioridade" name="prioridade" placeholder="Ex.: receber pedido e pagamento sem perder no WhatsApp"></textarea>
+        </label>
+      </div>
+
+      <fieldset class="q essential" data-label="O que não pode dar errado">
+        <legend class="q-label">O que não pode dar errado? <span class="tag">essencial</span></legend>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="nao_falhar" value="Pagamento" id="falhar-pagamento"><span>Pagamento</span></label>
+          <label class="opt"><input type="checkbox" name="nao_falhar" value="Prazo" id="falhar-prazo"><span>Prazo</span></label>
+          <label class="opt"><input type="checkbox" name="nao_falhar" value="Estoque" id="falhar-estoque"><span>Estoque</span></label>
+          <label class="opt"><input type="checkbox" name="nao_falhar" value="Entrega" id="falhar-entrega"><span>Entrega</span></label>
+          <label class="opt"><input type="checkbox" name="nao_falhar" value="Atendimento" id="falhar-atendimento"><span>Atendimento</span></label>
+        </div>
+        <label class="field" for="nao_falhar_outro"><span>Outro</span>
+          <input class="input" id="nao_falhar_outro" name="nao_falhar_outro" type="text" placeholder="Conte aqui">
+        </label>
+      </fieldset>
+
+      <div class="q essential" data-label="Quando quer lançar">
+        <label class="field" for="lancar"><span>Quando quer lançar?</span>
+          <input class="input" id="lancar" name="lancar" type="text" placeholder="Data aproximada">
+        </label>
+      </div>
+
+      <div class="q" data-label="Pedidos por mês no começo">
+        <label class="field" for="pedidos_mes"><span>Quantos pedidos por mês espera no começo?</span>
+          <input class="input" id="pedidos_mes" name="pedidos_mes" type="text" inputmode="numeric" placeholder="Ex.: 20 pedidos">
+        </label>
+      </div>
+
+      <fieldset class="q" data-label="Aceitar encomenda antes de a peça estar pronta">
+        <legend class="q-label">Quer aceitar encomenda antes de a peça estar pronta?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="encomenda" value="Sim" id="encomenda-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="encomenda" value="Não" id="encomenda-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="encomenda" value="Não sei" id="encomenda-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Orçamento para fotos e anúncios">
+        <legend class="q-label">Tem orçamento para fotos e anúncios?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="orcamento" value="Sim" id="orcamento-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="orcamento" value="Não" id="orcamento-nao"><span>Não</span></label>
+          <label class="opt"><input type="radio" name="orcamento" value="Não sei" id="orcamento-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Gestão e chatbot</h2></div>
+
+      <fieldset class="q essential" data-label="Quem vai usar o sistema">
+        <legend class="q-label">Quem vai usar o sistema? <span class="tag">essencial</span></legend>
+        <label class="field" for="sistema_quem"><span>Nome ou papel</span>
+          <input class="input" id="sistema_quem" name="sistema_quem" type="text" placeholder="Ex.: eu e minha filha">
+        </label>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="sistema_so" value="Sim, só eu" id="sistema-so-sim"><span>Só eu</span></label>
+          <label class="opt"><input type="radio" name="sistema_so" value="Não, mais alguém" id="sistema-so-nao"><span>Mais alguém</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="O que precisa ver todo dia">
+        <legend class="q-label">O que precisa ver todo dia?</legend>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="ver_dia" value="Pedidos para produzir" id="ver-pedidos"><span>Pedidos para produzir</span></label>
+          <label class="opt"><input type="checkbox" name="ver_dia" value="Estoque baixo" id="ver-estoque"><span>Estoque baixo</span></label>
+          <label class="opt"><input type="checkbox" name="ver_dia" value="Vendas" id="ver-vendas"><span>Vendas</span></label>
+          <label class="opt"><input type="checkbox" name="ver_dia" value="Faturamento" id="ver-faturamento"><span>Faturamento</span></label>
+          <label class="opt"><input type="checkbox" name="ver_dia" value="Nada específico" id="ver-nada"><span>Nada específico</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="q" data-label="Relatórios desejados">
+        <legend class="q-label">Que relatórios quer?</legend>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" name="relatorios" value="Faturamento" id="rel-fat"><span>Faturamento</span></label>
+          <label class="opt"><input type="checkbox" name="relatorios" value="Lucro" id="rel-lucro"><span>Lucro</span></label>
+          <label class="opt"><input type="checkbox" name="relatorios" value="Peça mais vendida" id="rel-peca"><span>Peça mais vendida</span></label>
+          <label class="opt"><input type="checkbox" name="relatorios" value="Material mais usado" id="rel-material"><span>Material mais usado</span></label>
+          <label class="opt"><input type="checkbox" name="relatorios" value="Despesas" id="rel-despesas"><span>Despesas</span></label>
+        </div>
+        <label class="field" for="relatorios_outro"><span>Outro</span>
+          <input class="input" id="relatorios_outro" name="relatorios_outro" type="text" placeholder="Conte aqui">
+        </label>
+      </fieldset>
+
+      <fieldset class="q" data-label="Cadastro de despesas">
+        <legend class="q-label">Quer cadastrar despesas?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="despesas" value="Sim" id="despesas-sim"><span>Sim</span></label>
+          <label class="opt"><input type="radio" name="despesas" value="Não" id="despesas-nao"><span>Não</span></label>
+        </div>
+      </fieldset>
+
+      <div class="q" data-label="O que perguntar ao assistente">
+        <label class="field" for="chatbot_perguntas"><span>O que gostaria de perguntar para um assistente?</span>
+          <textarea id="chatbot_perguntas" name="chatbot_perguntas" placeholder="Ex.: quanto vendi este mês? o que preciso comprar? quais pedidos estão atrasados?"></textarea>
+        </label>
+      </div>
+
+      <fieldset class="q" data-label="Onde o chatbot funciona">
+        <legend class="q-label">O chatbot seria no WhatsApp ou na tela do sistema?</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="chatbot_onde" value="WhatsApp" id="chat-whats"><span>WhatsApp</span></label>
+          <label class="opt"><input type="radio" name="chatbot_onde" value="Na tela do sistema" id="chat-tela"><span>Na tela do sistema</span></label>
+          <label class="opt"><input type="radio" name="chatbot_onde" value="Os dois" id="chat-dois"><span>Os dois</span></label>
+          <label class="opt"><input type="radio" name="chatbot_onde" value="Não sei" id="chat-nao-sei"><span>Não sei</span></label>
+        </div>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="chatbot_modo" value="Só consulta" id="chat-consulta"><span>Só consulta</span></label>
+          <label class="opt"><input type="radio" name="chatbot_modo" value="Também dá ordens" id="chat-ordens"><span>Também dá ordens</span></label>
+          <label class="opt"><input type="radio" name="chatbot_modo" value="Não sei" id="chat-modo-nao-sei"><span>Não sei</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="card">
+      <div class="sec-head"><span class="bead" aria-hidden="true"></span><h2>Observações</h2></div>
+
+      <div class="q" data-label="Algo que não perguntei">
+        <label class="field" for="observacoes"><span>Algo que eu não perguntei e é importante?</span>
+          <textarea id="observacoes" name="observacoes" placeholder="Fique à vontade"></textarea>
+        </label>
+      </div>
+
+      <div class="clear-row">
+        <button class="btn btn-secondary" type="button" id="btnLimpar">Limpar respostas</button>
+        <div class="clear-confirm" id="clearConfirm" hidden>
+          <span class="hint">Tem certeza? Isso apaga o rascunho neste navegador.</span>
+          <button class="btn btn-danger" type="button" id="btnLimparSim">Sim, limpar</button>
+          <button class="btn btn-secondary" type="button" id="btnLimparNao">Cancelar</button>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">Obrigada! Se preferir, pode responder por áudio que eu organizo depois.</p>
+  </form>
+
+  <div class="bar">
+    <div class="bar-inner">
+      <div class="bar-info">
+        <strong id="barProgress">0 de 27 essenciais</strong>
+        <span class="status" id="status" role="status" aria-live="polite"></span>
+      </div>
+      <button class="btn btn-primary" type="submit" form="form-dona" data-action="copy" id="btnCopiar">Copiar respostas</button>
+    </div>
+  </div>
+
+  <div class="fallback" id="fallback" hidden>
+    <strong>Copie o texto abaixo e me envie</strong>
+    <p class="hint">Selecione tudo, copie e cole no WhatsApp. Se estiver no celular, toque e segure para copiar.</p>
+    <textarea id="fallbackText" readonly aria-label="Respostas para copiar"></textarea>
+  </div>
+</main>
+
+<script>
+  (function () {
+    const form = document.getElementById('form-dona');
+    const KEY = 'bloome-form-dona-v1';
+    const essentialQs = Array.from(form.querySelectorAll('.q.essential'));
+    const progressFill = document.getElementById('progressFill');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const barProgress = document.getElementById('barProgress');
+    const status = document.getElementById('status');
+    const fallback = document.getElementById('fallback');
+    const fallbackText = document.getElementById('fallbackText');
+    const btnLimpar = document.getElementById('btnLimpar');
+    const clearConfirm = document.getElementById('clearConfirm');
+    const btnLimparSim = document.getElementById('btnLimparSim');
+    const btnLimparNao = document.getElementById('btnLimparNao');
+
+    function controlsIn(q) {
+      return Array.from(q.querySelectorAll('input, textarea, select'));
+    }
+
+    function isAnswered(q) {
+      return controlsIn(q).some(function (el) {
+        if (el.type === 'checkbox' || el.type === 'radio') return el.checked;
+        return el.value.trim() !== '';
+      });
+    }
+
+    function updateProgress() {
+      const total = essentialQs.length;
+      const done = essentialQs.filter(isAnswered).length;
+      progressText.textContent = done + ' de ' + total + ' essenciais';
+      barProgress.textContent = done + ' de ' + total + ' essenciais';
+      progressBar.setAttribute('aria-valuenow', String(done));
+      progressBar.setAttribute('aria-valuemax', String(total));
+      progressFill.style.width = total ? (done / total * 100) + '%' : '0%';
+    }
+
+    function save() {
+      const data = {};
+      form.querySelectorAll('input, textarea, select').forEach(function (el) {
+        if (!el.name) return;
+        if (el.type === 'checkbox') {
+          if (el.checked) {
+            if (!Array.isArray(data[el.name])) data[el.name] = [];
+            data[el.name].push(el.value);
+          }
+        } else if (el.type === 'radio') {
+          if (el.checked) data[el.name] = el.value;
+        } else {
+          data[el.name] = el.value;
+        }
+      });
+      try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+    }
+
+    function restore() {
+      let data = {};
+      try { data = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+      Object.keys(data).forEach(function (name) {
+        const els = Array.from(form.querySelectorAll('[name="' + CSS.escape(name) + '"]'));
+        if (!els.length) return;
+        const val = data[name];
+        if (Array.isArray(val)) {
+          els.forEach(function (el) {
+            if (el.type === 'checkbox') el.checked = val.indexOf(el.value) !== -1;
+          });
+        } else if (els[0].type === 'radio') {
+          els.forEach(function (el) {
+            if (el.type === 'radio') el.checked = (el.value === val);
+          });
+        } else {
+          els[0].value = val;
+        }
+      });
+    }
+
+    function optionLabel(el) {
+      if (el.labels && el.labels[0]) {
+        return el.labels[0].textContent.replace(/\s+/g, ' ').trim();
+      }
+      return el.value;
+    }
+
+    function fieldLabel(el) {
+      if (el.labels && el.labels[0]) {
+        return el.labels[0].textContent.replace(/\s+/g, ' ').trim();
+      }
+      return el.name;
+    }
+
+    function buildSummary() {
+      const blocks = [];
+      const missing = [];
+      form.querySelectorAll('.q').forEach(function (q) {
+        const answers = [];
+        controlsIn(q).forEach(function (el) {
+          if (el.type === 'checkbox' && el.checked) {
+            answers.push(optionLabel(el));
+          } else if (el.type === 'radio' && el.checked) {
+            answers.push(optionLabel(el));
+          } else if (el.type !== 'checkbox' && el.type !== 'radio' && el.value.trim()) {
+            answers.push(fieldLabel(el) + ': ' + el.value.trim());
+          }
+        });
+        const label = q.getAttribute('data-label') || '';
+        if (answers.length) {
+          blocks.push(label + '\n- ' + answers.join('\n- '));
+        } else if (q.classList.contains('essential')) {
+          missing.push(label);
+        }
+      });
+
+      const nome = (form.elements.nome && form.elements.nome.value.trim()) || '';
+      const loja = (form.elements.loja && form.elements.loja.value.trim()) || '';
+      let out = 'BLOOME — RESPOSTAS DA DONA\n';
+      if (nome || loja) out += (nome + (nome && loja ? ' · ' : '') + loja) + '\n';
+      out += '\n' + blocks.join('\n\n');
+      if (missing.length) {
+        out += '\n\nESSENCIAIS SEM RESPOSTA\n- ' + missing.join('\n- ');
+      }
+      out += '\n';
+      return out;
+    }
+
+    function copyAnswers() {
+      const text = buildSummary();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          fallback.hidden = true;
+          status.textContent = 'Respostas copiadas. Agora é só enviar.';
+          status.className = 'status ok';
+          setTimeout(function () { status.textContent = ''; }, 6000);
+        }).catch(function () {
+          showFallback(text);
+        });
+      } else {
+        showFallback(text);
+      }
+    }
+
+    function showFallback(text) {
+      fallback.hidden = false;
+      fallbackText.value = text;
+      fallbackText.focus();
+      fallbackText.select();
+      status.textContent = 'Selecione o texto abaixo e copie.';
+      status.className = 'status warn';
+    }
+
+    form.addEventListener('input', function () {
+      if (!fallback.hidden) fallback.hidden = true;
+      updateProgress();
+      save();
+    });
+
+    form.addEventListener('change', function () {
+      updateProgress();
+      save();
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (e.submitter && e.submitter.getAttribute('data-action') === 'copy') {
+        copyAnswers();
+      }
+    });
+
+    btnLimpar.addEventListener('click', function () {
+      clearConfirm.hidden = false;
+      btnLimpar.hidden = true;
+    });
+
+    btnLimparNao.addEventListener('click', function () {
+      clearConfirm.hidden = true;
+      btnLimpar.hidden = false;
+    });
+
+    btnLimparSim.addEventListener('click', function () {
+      form.reset();
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      clearConfirm.hidden = true;
+      btnLimpar.hidden = false;
+      fallback.hidden = true;
+      status.textContent = '';
+      updateProgress();
+    });
+
+    restore();
+    updateProgress();
+  })();
+</script>

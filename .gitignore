@@ -9,3 +9,6 @@ venv/
 .env
 .env.*
 !.env.example
+
+# Backups locais
+*.bak
