@@ -29,6 +29,9 @@
 | ADR-009 | 2026-11-09 | Banco | Aceita | psycopg 3 + SQL puro (sem ORM) |
 | ADR-010 | 2026-11-10 | Escopo | Aceita | Fora do escopo: sistema de gestão com IA e Text-to-SQL |
 | ADR-011 | 2026-11-11 | Banco | Aceita | Variações, baixa no pagamento e visibilidade do produto |
+| ADR-012 | 2026-11-12 | Banco | Aceita | Edge cases do schema: pingente, esgotado derivado, frete, idempotência e LGPD |
+| ADR-013 | 2026-11-12 | Banco | Aceita | Endurecimento após auditoria: snapshot da baixa, total por trigger e DELETE bloqueado |
+| ADR-014 | 2026-11-12 | Banco | Aceita | DDL aplicado por `db/aplicar.py` (psycopg, conexão direta), sem DROP |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -335,6 +338,169 @@
     driver ser instalado.
 - **Arquivos:** `docs/PLANO-BANCO-BLOOME.md`, `docs/DECISOES.md`, futuros
   `db/schema.sql`, `db/functions.sql`, `db/seed.sql`
+
+---
+
+## ADR-012 — Edge cases do schema: pingente, esgotado derivado, frete, idempotência e LGPD
+
+- **Data:** 2026-11-12
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** a ADR-011 fechou as entidades principais, mas deixou decisões
+  abertas que mudam o schema: como detectar "sem pingente" (`PLANO-BANCO-BLOOME.md:39`),
+  se "esgotado" é manual ou derivado, o que fazer com frete indefinido, como
+  impedir checkout duplicado, quais transições de status são válidas e como
+  atender LGPD sem apagar histórico. O Supabase segue vazio; nada foi executado.
+- **Decisão:**
+  1. **Variação:** MVP só com a dimensão **cor**; `UNIQUE(id_acessorios, cor)`.
+     Evolução futura acrescenta `tamanho` e nova unique, sem reescrever pedidos.
+  2. **Sem pingente:** `acessorios.pingente_insumo_id` (FK nullável, `RESTRICT`)
+     identifica o pingente do modelo. O produto vira `volta_em_breve` quando o
+     pingente não está cadastrado ou está com `quantidade_estoque <= 0`, mesmo
+     que existam cores de cordão.
+  3. **Sem cor de cordão:** o produto também vira `volta_em_breve` quando
+     nenhuma variação tem receita completa e saldo para 1 unidade. Cores
+     individuais sem saldo continuam visíveis, cinza e desabilitadas.
+  4. **Cor esgotada é derivada:** a view calcula a disponibilidade a partir da
+     receita e do saldo. A coluna `variacoes.status` permanece apenas como
+     bloqueio manual; a disponibilidade exibida nunca diverge do estoque.
+  5. **Frete:** `frete_valor NULL` significa "a calcular/combinar";
+     `valor_total = subtotal + COALESCE(frete_valor, 0)`, nunca nulo. No MVP o
+     gateway cobra o subtotal; o frete é acertado à parte e preenchido depois
+     não dispara nova cobrança.
+  6. **Idempotência de checkout:** `pedidos.idempotencia uuid UNIQUE`, gerado
+     no formulário, com `INSERT ... ON CONFLICT DO NOTHING` e leitura do
+     pedido existente.
+  7. **Transições de status:** matriz fixa em trigger. Cancelamento permitido
+     só até `pago`/`pago_sem_estoque`; a partir de `em_producao`, proibido.
+  8. **Reembolso manual:** campos `motivo_cancelamento`, `reembolsado_em` e
+     `reembolso_valor`; nenhuma chamada automática ao gateway.
+  9. **LGPD:** sem `DELETE` de cliente; `anonimizado_em` + função de
+     anonimização, com unique de e-mail parcial (`WHERE anonimizado_em IS NULL`).
+  10. **Tipos e schema:** dinheiro `NUMERIC(10,2)`, insumo `NUMERIC(12,3)`,
+      datas `TIMESTAMPTZ`; schema dedicado `bloome` (não `public`), evitando
+      exposição acidental via PostgREST.
+  11. **Normalização:** e-mail e nomes em `lower(btrim())`; admin único via
+      `UNIQUE(singleton)`; código público por sequence (`#BLO-0001`).
+- **Motivo técnico:** cada regra vira garantia verificável no banco (CHECK,
+  UNIQUE, FK, trigger ou função), não apenas validação no app. O pingente
+  explícito evita heurística frágil na receita. "Esgotado" derivado impede
+  divergência entre status e saldo. A idempotência de checkout cobre duplo
+  clique, que a unique do evento de pagamento não cobre. A anonimização
+  preserva o histórico de pedidos exigido pela FK.
+- **Alternativas consideradas:**
+  - Derivar "sem pingente" por `insumos.categoria = 'pingente'` — menos
+    explícito e dependente de padronização de categoria.
+  - Marcar "esgotado" manualmente — simples, mas diverge do estoque real.
+  - `frete_valor` obrigatório no checkout — trava o pedido enquanto o frete não
+    é calculado, e o cálculo automático está fora do MVP.
+  - `DELETE` de cliente — quebra o histórico de pedidos; anonimização é mais
+    segura.
+  - Tabela de carrinho pendente para idempotência — mais tabela e limpeza sem
+    resolver o que a chave de idempotência resolve.
+- **Consequências:**
+  - O seed continua bloqueado até existirem pingente, cores e receitas reais.
+  - `frete_valor` preenchido após o pagamento não gera nova cobrança no MVP.
+  - O app precisa enviar `idempotencia`, normalizar e-mail/nome e usar
+    `search_path=bloome`.
+  - `VALIDACAO-REGRAS.md` §1/§3/§7/§8 foi ajustado nesta rodada.
+  - O DDL segue no SQL Editor do Supabase até o `psycopg` ser instalado.
+- **Arquivos:** `docs/PLANO-BANCO-BLOOME.md`, `docs/VALIDACAO-REGRAS.md`,
+  futuros `db/schema.sql`, `db/functions.sql`, `db/views.sql`, `db/tests.sql`
+
+---
+
+## ADR-013 — Endurecimento do schema após auditoria: snapshot da baixa, total por trigger e DELETE bloqueado
+
+- **Data:** 2026-11-12
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** após implementar `db/01_schema.sql` e `db/02_funcoes.sql`, uma
+  auditoria comparou o schema com a matriz EC-01..EC-52 e encontrou pontos em
+  que a regra dependia só do app ou podia divergir: `idempotencia` anulável,
+  devolução usando a receita atual (que pode mudar após o pagamento), total
+  violando o CHECK ao atualizar só o frete, pedido vazio virando `pago`,
+  `DELETE` físico de produto/cliente e campos opcionais aceitando string vazia.
+- **Decisão:**
+  1. `pedidos.idempotencia` passa a `NOT NULL DEFAULT gen_random_uuid()`;
+     todo checkout tem chave, mesmo quando o formulário não enviar.
+  2. `pedidos.consumo_snapshot jsonb` grava exatamente o consumo baixado no
+     pagamento. A devolução usa o snapshot; pedidos antigos sem snapshot caem
+     na receita atual.
+  3. `valor_total` é mantido por trigger `BEFORE INSERT OR UPDATE OF
+     subtotal, frete_valor`; atualizar só o frete não viola o CHECK.
+  4. `confirmar_pagamento` recusa pedido sem itens (`pedido_sem_itens`).
+  5. `DELETE` físico é bloqueado por trigger em `acessorios` e `clientes`;
+     produto sai por `removido`, cliente por anonimização.
+  6. Checks adicionais: campos de endereço/rastreio/motivo não vazios;
+     `cancelado` exige motivo; `reembolsado_em` e `reembolso_valor` andam
+     juntos; retirada não cobra frete; `ordem >= 0`; `expira_em > criado_em`;
+     `gateway` minúsculo; `processado` exige assinatura válida.
+  7. Índices novos: evento por pedido, receita por insumo, pingente, fila de
+     produção (`status, criado_em`) e reset por cliente.
+  8. O pingente do modelo precisa estar na receita de cada variação; senão a
+     venda levanta `pingente_fora_da_receita` (o estoque do pingente nunca
+     baixaria).
+  9. `preco_unitario` e `custo_unitario` são calculados pelo trigger no INSERT
+     (preço do modelo + custo da receita) e recalculados na troca de variação;
+     com a mesma variação, o snapshot é imutável (`snapshot_imutavel`).
+  10. Itens podem ser alterados em `pago_sem_estoque` para a troca de cor,
+     já que nada foi baixado. A diferença de valor, se houver, é acertada
+     manualmente no gateway.
+- **Motivo técnico:** sem snapshot, editar a receita entre pagamento e
+  cancelamento devolveria quantidade diferente da baixada. O total por trigger
+  remove a dependência de o app lembrar de recalcular. Bloquear `DELETE`
+  preserva histórico e LGPD. Os checks transformam combinações inválidas em
+  erro de banco, não em dado inconsistente.
+- **Alternativas consideradas:**
+  - Tabela `movimentos_estoque` como razão de baixas/devoluções — mais
+    auditável, porém mais escopo; o JSON resolve o MVP.
+  - Deixar `idempotencia` anulável — o UNIQUE do Postgres aceita vários NULLs,
+    então não protegeria checkout sem a chave.
+  - Recalcular o total só no app — repete o problema do legado, que confiava
+    `valor_total` ao cliente.
+- **Consequências:**
+  - O app deve enviar `gateway` em minúsculas e incluir o pingente na receita
+    de todas as cores.
+  - O app **não** envia preço/custo do item: o banco calcula no INSERT. Se
+    enviar, o valor é ignorado.
+  - Produto e cliente não podem mais ser apagados; usar `removido` e
+    `anonimizar_cliente`.
+  - O snapshot fica como histórico do pedido; a devolução não o apaga.
+  - `db/02_funcoes.sql` implementa os efeitos; `db/01_schema.sql` já contém as
+    colunas e constraints.
+- **Arquivos:** `db/01_schema.sql`, `db/02_funcoes.sql`, `docs/DECISOES.md`
+
+---
+
+## ADR-014 — Aplicação do DDL por script psycopg (conexão direta, sem DROP)
+
+- **Data:** 2026-11-12
+- **Autor:** IA (Mentor), a pedido do time
+- **Status:** Aceita
+- **Contexto:** o banco nasce no Supabase e não há PostgreSQL local. Rodar os
+  arquivos à mão no SQL Editor funciona, mas é fácil pular a ordem, esquecer os
+  testes ou aplicar em cima de um schema já existente.
+- **Decisão:** `db/aplicar.py` lê `DATABASE_URL` do `.env`, conecta em
+  autocommit, roda o inventário e só aplica `01` → `02` → `03` → `99` → `04`
+  com `--aplicar`. Aborta se o schema `bloome` já existir, nunca executa DROP,
+  para no primeiro erro e mostra SQLSTATE/constraint.
+- **Motivo técnico:** reduz erro humano e deixa o passo 8 repetível. A conexão
+  direta (5432) evita as limitações de DDL do pooler (6543).
+- **Alternativas consideradas:**
+  - Só SQL Editor — simples, porém não repetível e sem conferência automática
+    dos 28 testes.
+  - Framework de migração (Alembic/Flyway) — descartado no MVP: a ADR-009 já
+    fixou SQL puro; seria mais uma ferramenta sem ganho agora.
+  - Rodar no pooler 6543 — descartado: DDL e estado de sessão não combinam com
+    o pooler de transação.
+- **Consequências:**
+  - `requirements.txt` passa a incluir `psycopg[binary]` (também exigido pelo
+    app, ADR-009).
+  - O script não substitui a revisão: `99_tests.sql` continua sendo a prova de
+    que as regras funcionam.
+  - O admin continua manual (hash bcrypt gerado fora do SQL).
+- **Arquivos:** `db/aplicar.py`, `requirements.txt`, `docs/DECISOES.md`
 
 ---
 

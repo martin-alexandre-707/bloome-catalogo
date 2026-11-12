@@ -27,10 +27,12 @@
 - [x] Uma foto por modelo (a mesma foto serve para todas as cores).
 - [x] Peça do zero/personalizada: **só WhatsApp**.
 - [x] Material fixo por modelo (courinho, camurça, fio torcido, corrente, courinho dourado). O PDF (p. 11) mostra que a escolha camurça/courinho é da **personalização do zero**; no catálogo, o material já está definido pelo modelo. Não é uma variação do site.
-- [x] Status por produto e por cor: **ativo / volta em breve / esgotado**.
-  - **Produto esgotado sai do site** (não aparece).
-  - **Cor esgotada**: a bolinha continua visível, mas fica **cinza/opaca e desabilitada**. O produto só sai do site quando **todas** as cores estiverem esgotadas.
-  - **Volta em breve** aparece com aviso e sem botão de compra.
+- [x] Status por produto e por cor: **ativo / volta em breve / esgotado** (ADR-011/012).
+  - **Produto só sai do site por retirada da admin** (`removido`, lógica, sem DELETE físico).
+  - **Sem o pingente do modelo** cadastrado ou com saldo, o produto aparece como **volta em breve**, mesmo que existam cores de cordão.
+  - **Sem nenhuma cor de cordão vendável**, o produto também aparece como **volta em breve**.
+  - **Cor esgotada**: a bolinha continua visível, mas fica **cinza/opaca e desabilitada**; o status é derivado do estoque, não manual.
+  - **Volta em breve** aparece com aviso e CTA de WhatsApp, sem botão de compra.
 - [x] Não mostrar quantidade; não usar selo "disponível".
 
 **Cores inferidas:** preto, marrom, vinho, oliva, dourado. O catálogo mostra as bolinhas, não os nomes escritos; confirmar com a dona depois (não bloqueia).
@@ -85,7 +87,7 @@ O que **não** existe e é novo no `/adm`:
 - [x] Cancelamento/reembolso no MVP: **manual**. A dona marca `cancelado` no `/adm` e reembolsa pelo painel do Mercado Pago; automação depois.
 - [x] Webhook **idempotente** e com assinatura validada.
   - Em português: o Mercado Pago avisa o site quando o pagamento cai. "Idempotente" = se avisar duas vezes, o site não conta duas. "Assinatura" = o site confere se o aviso veio mesmo do Mercado Pago.
-- [x] Status: `aguardando_pagamento`, `pago`, `pago_sem_estoque`, `em_producao`, `enviado`, `entregue`, `cancelado`.
+- [x] Status: `aguardando_pagamento`, `pago`, `pago_sem_estoque`, `em_producao`, `pronto_para_retirada`, `enviado`, `entregue`, `cancelado`.
 - [x] Nunca guardar dado de cartão.
 - [x] Conta no checkout **obrigatória**: e-mail + senha, histórico e rastreio.
 - [x] Layout do checkout **autoral, com a cara do Bloome**; o print da referência serve só para as funções (resumo, etapas, pagamento), não para copiar o visual.
@@ -135,14 +137,14 @@ O que **não** existe e é novo no `/adm`:
 ## 7. Banco (mínimo)
 
 - [x] Reaproveitar o `database.sql`; não remodelar tudo.
-- [x] `acessorios` ganha: **material, foto, descrição, status**. `nome_acessorios` é o modelo e `categoria_acessorio` é o tipo (Cordão/Colar/Chocker). A **cor não fica aqui**. **MVP: foto em `static/imgs/`; Supabase Storage depois.**
+- [x] `acessorios` ganha: **material, foto, descrição, status** e `pingente_insumo_id` (o pingente do modelo). `nome_acessorios` é o modelo e `categoria_acessorio` é o tipo (Cordão/Colar/Chocker). A **cor não fica aqui**. **MVP: foto em `static/imgs/`; Supabase Storage depois.**
 - [x] Tabela **`variacoes`**: `id_variacao`, `id_acessorios`, `cor`, `cor_hex`, `status`. Cada cor é uma linha em `variacoes`; a mesma peça muda só a cor.
 - [x] Receita por variação: **`composicao_variacoes`** (`id_variacao`, `id_insumos`, `quantidade`).
 - [x] `itens_pedidos` passa a apontar para **`id_variacao`** (não `id_acessorios`).
 - [x] `pedidos` ganha: status, cliente, entrega, endereço, frete, **frete_pago**, rastreio, pagamento. O carrinho fechado vira `itens_pedidos` (não precisa de coluna "carrinho").
 - [x] Liberar o check de pagamento para **Pix/Débito/Crédito**. (Dinheiro só se o CLI antigo continuar.)
 - [x] `clientes` (conta obrigatória) e `eventos_pagamento` (idempotência).
-- [x] O trigger fica; itens entram **só após o pagamento**.
+- [x] Itens entram no checkout; a baixa de estoque ocorre **só na confirmação do pagamento** (ADR-011/012).
 
 **Prazos:** 3 dias úteis de **confecção**, global; não precisa de coluna `prazo` por produto.
 
@@ -157,7 +159,7 @@ O que **não** existe e é novo no `/adm`:
 **Pagamento:** gateway → webhook → valida assinatura → marca pago → **recheca estoque** → baixa insumos → fila de produção. Se o estoque acabou: `pago_sem_estoque` → reembolso/troca.
 
 - [x] Fluxos ok.
-- [x] Produto esgotado sai da loja; cor esgotada fica cinza/opaca; "volta em breve" aparece com aviso.
+- [x] Produto só sai da loja por `removido`; sem pingente ou sem cor vendável → "volta em breve"; cor esgotada fica cinza/opaca.
 
 ---
 
@@ -181,7 +183,7 @@ Resolvidas:
 - [x] Endereços de retirada: combinar no WhatsApp; não listar.
 - [x] E-mail: pessoal como remetente; cliente usa o e-mail dele; sem `@bloome.com`.
 - [x] Frete: cálculo fica para o futuro ("a calcular/combinar").
-- [x] Cor esgotada: bolinha cinza/opaca; produto só sai se todas as cores esgotarem.
+- [x] Cor esgotada: bolinha cinza/opaca; produto só sai por `removido`; sem pingente ou sem cor vendável → "volta em breve".
 - [x] Estoque no pagamento: rechecar; `pago_sem_estoque` → reembolso/troca.
 - [x] Cancelamento/reembolso no MVP: manual.
 - [x] Foto no MVP: `static/imgs/`.

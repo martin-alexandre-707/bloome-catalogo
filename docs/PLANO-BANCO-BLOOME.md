@@ -1,6 +1,9 @@
 # Plano do banco — Bloome
 
-> **Status:** planejamento registrado em **2026-11-11**. **Nada foi executado no banco.**
+> **Status:** planejamento registrado em **2026-11-11**; edge cases e decisões
+> complementares em **2026-11-12** (ADR-012). **Aplicado no Supabase em
+> 2026-11-12:** schema, funções, views, testes (28/28) e seed (16 produtos,
+> 49 cores). Falta criar o admin e cadastrar pingente/receita/fotos.
 > **Para quem retomar:** leia as decisões fechadas (§6) e a próxima etapa (§11).
 > **Fonte das regras:** [`docs/VALIDACAO-REGRAS.md`](VALIDACAO-REGRAS.md) + decisões desta rodada (ADR-011 em [`docs/DECISOES.md`](DECISOES.md)).
 
@@ -132,6 +135,83 @@ Arquivos lidos: `docs/VALIDACAO-REGRAS.md`, `docs/DECISOES.md`, `AGENTS.md`, `ap
    - com estoque: baixa tudo de uma vez, marca `pago` e `estoque_baixado = true`;
    - sem estoque: marca `pago_sem_estoque`, sem baixar.
 4. Cancelar antes de produzir devolve **só se** `estoque_baixado = true`, e zera a flag. Depois de produzir, não devolve.
+
+### 7.1 Edge cases e garantias (ADR-012)
+
+Legenda: `CK` CHECK · `UQ` UNIQUE · `FK` foreign key · `TRG` trigger · `FN` função · `VW` view · `APP` backend.
+
+**Catálogo, estoque e visibilidade**
+
+| ID | Cenário / regra | Garantia | Teste |
+|---|---|---|---|
+| EC-01 | Estoque é de insumos, não de peça pronta (`VALIDACAO:22,42`) | Modelo + `FN confirmar_pagamento` | T01 |
+| EC-02 | Receita é por variação/cor (`VALIDACAO:43,140`) | PK `(id_variacao, id_insumos)` | T01, T07 |
+| EC-03 | Baixa só no pagamento (`VALIDACAO:46`) | `FN confirmar_pagamento`; sem trigger no INSERT do item | T01, T02 |
+| EC-04 | Pré-check no checkout e recheck no pagamento (`VALIDACAO:44-45`) | `FN verificar_estoque_pedido` + recheck | T02, T06 |
+| EC-05 | Acabou entre checkout e pagamento | `CK status='pago_sem_estoque' ⇒ estoque_baixado=false` | T02 |
+| EC-06 | Cancelar antes de produzir devolve uma vez | `FN cancelar_pedido` + flag com lock | T04, T21 |
+| EC-07 | Cancelar depois de produzir não devolve | `TRG validar_transicao_status` | T05, T10 |
+| EC-08 | Produto sem receita não vende | `TRG validar_item_vendavel` (`produto_sem_receita`) | T07 |
+| EC-09 | Produto só sai por `removido`, sem DELETE | `CK` de status + `FK RESTRICT` | T18 |
+| EC-10 | Sem pingente do modelo → `volta_em_breve`, mesmo com cores | `acessorios.pingente_insumo_id` + `VW catalogo_publico` | T20 |
+| EC-11 | Sem nenhuma cor vendável → `volta_em_breve` | `VW catalogo_publico` | T20 |
+| EC-12 | Cor esgotada continua visível e cinza | `VW variacoes_disponiveis` (status derivado) | T19 |
+| EC-13 | Alerta de insumo ≤ 5 | `estoque_minimo DEFAULT 5` + `VW alerta_estoque` | T26 |
+| EC-14 | Cor duplicada no mesmo modelo | `UQ(id_acessorios, cor)` | T08 |
+| EC-15 | Preço/material/foto são do modelo | Colunas em `acessorios`; `variacoes` só cor | T19 |
+| EC-16 | Excluir insumo apagava receita | `FK ... ON DELETE RESTRICT` | T27 |
+| EC-17 | Excluir variação com histórico | `FK ... ON DELETE RESTRICT` | T28 |
+| EC-18 | Nome duplicado por caixa/espaço | Único em `lower(btrim(nome))` | T14 |
+| EC-19 | String vazia vs NULL | `CK btrim(col) <> ''` quando não nulo | T11 |
+| EC-20 | Cor sem estoque não pode ser vendida | `VW variacoes_disponiveis` + validação no item | T19 |
+
+**Pedido, pagamento e dinheiro**
+
+| ID | Cenário / regra | Garantia | Teste |
+|---|---|---|---|
+| EC-21 | Pedido nasce `aguardando_pagamento` | `DEFAULT` + `CK` de status | T01 |
+| EC-22 | Pix/débito/crédito apenas | `CK metodo_pagamento` | T10 |
+| EC-23 | Webhook repetido → uma baixa | `UQ(gateway, evento_id)` + `FN` idempotente | T03 |
+| EC-24 | Assinatura inválida não processa | `TRG validar_evento` | T17 |
+| EC-25 | Evento chega antes do pedido | `id_pedidos` nullable + `aguardando_pedido` | T16 |
+| EC-26 | Dois gateways com mesmo `evento_id` | `UQ(gateway, evento_id)` | T17 |
+| EC-27 | Double submit de checkout | `idempotencia uuid UNIQUE` + `ON CONFLICT` | T13 |
+| EC-28 | Total adulterado pelo app | `TRG recalcular_pedido` | T12 |
+| EC-29 | Frete NULL quebrando total | `valor_total = subtotal + COALESCE(frete_valor,0)` | T12 |
+| EC-30 | Frete incompatível com entrega | `CK` por `tipo_entrega` | T11 |
+| EC-31 | Endereço incoerente com a entrega | `CK` condicional | T11 |
+| EC-32 | CEP/UF inválidos | `CK` regex | T11 |
+| EC-33 | Transição inválida de status | `TRG validar_transicao_status` | T10 |
+| EC-34 | Código público duplicado | Sequence + `UQ(codigo)` | T25 |
+| EC-35 | Dois pedidos no mesmo dia perdem hora | `criado_em TIMESTAMPTZ` + índice | T25 |
+| EC-36 | Duas cores do mesmo modelo no pedido | `UQ(id_pedidos, id_variacao)` | T09 |
+| EC-37 | Item repetido no mesmo pedido | `UQ` + consolidação no app | T08 |
+| EC-38 | Preço/custo mudam depois do pedido | Snapshots `preco_unitario`/`custo_unitario` | T22 |
+| EC-39 | Alterar item depois do pagamento | Trigger bloqueia fora de `aguardando_pagamento` | T12 |
+| EC-40 | Baixa deixaria insumo negativo | `CK quantidade_estoque >= 0` + recheck | T06, T23 |
+| EC-41 | Dois pedidos disputando o mesmo insumo | Lock do pedido + insumos por `id` crescente | T06 |
+| EC-42 | Reembolso manual sem registro | Campos de cancelamento/reembolso | T04 |
+| EC-43 | `pago_sem_estoque` com estoque baixado | `CK` de coerência | T02 |
+| EC-44 | Produção com estoque não baixado | `CK` de coerência | T10 |
+
+**Contas, reset e LGPD**
+
+| ID | Cenário / regra | Garantia | Teste |
+|---|---|---|---|
+| EC-45 | Conta obrigatória no checkout | `pedidos.id_cliente NOT NULL` | T14 |
+| EC-46 | E-mail duplicado por caixa/espaço | Único parcial em `lower(btrim(email))` | T14 |
+| EC-47 | Admin único | `UNIQUE(singleton)` | T14 |
+| EC-48 | Senha mínimo 8 | `APP` (banco guarda só hash bcrypt) | T14 |
+| EC-49 | Reset expirado/usado/reutilizado | `expira_em`, `usado_em`, consumo atômico | T15 |
+| EC-50 | Vários resets ativos | `FN criar_recuperacao_senha` revoga anteriores | T15 |
+| EC-51 | LGPD: excluir cliente com pedidos | Anonimização; sem DELETE | T24 |
+| EC-52 | Dados de cartão | Schema sem coluna de cartão/PAN | T17 |
+
+**Decisões de schema que sustentam a matriz:** pingente explícito por modelo
+(`pingente_insumo_id`); esgotado derivado do estoque; frete `NULL` = a combinar;
+`idempotencia` no checkout; transições de status em trigger; anonimização LGPD;
+`NUMERIC(10,2)`; schema `bloome`. Detalhes e motivos na **ADR-012**
+(`docs/DECISOES.md`).
 
 ---
 
