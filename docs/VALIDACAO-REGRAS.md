@@ -11,9 +11,10 @@
 - [x] Fazer o **teste Django** na branch `experimento/django` por 1 dia.
 - [x] Critério: todo mundo **roda e explica** URL → view → template; o `/adm` cobre o CRUD; o CSS atual sobrevive.
 - [x] Resultado: **passou → Django; não passou → Flask**.
-- [ ] Teste executado. (Aguardando a branch; enquanto isso, o site atual continua em Flask.)
+- [x] Teste Django **cancelado** por decisão do time em 2026-11-24 (ADR-015).
+  O projeto segue em Flask.
 
-**Status:** regra fechada; falta rodar o teste. O código atual (Flask) não é jogado fora antes do resultado.
+**Status:** regra fechada; stack decidida (Flask).
 
 ---
 

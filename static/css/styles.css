@@ -499,6 +499,13 @@ p {
 .btn:hover {
   background: var(--color-cream);
   box-shadow: var(--shadow-1);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover {
+    transform: none;
+  }
 }
 
 .btn:active {
@@ -1916,4 +1923,40 @@ p {
 
 .error__link:hover {
   color: var(--color-wine);
+}
+
+/* Bolinhas de cor no detalhe do produto */
+.product-detail__colors {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 16px;
+}
+
+.color-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.color-dot--off {
+  opacity: 0.4;
+}
+
+/* Card inteiro clicável: o link do nome cobre a área toda */
+.product {
+  position: relative;
+}
+
+.product__name a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* Botões dentro do card ficam acima da área clicável */
+.product__info .btn {
+  position: relative;
+  z-index: 1;
 }

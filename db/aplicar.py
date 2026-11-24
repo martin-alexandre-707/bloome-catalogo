@@ -5,6 +5,8 @@ Uso (na raiz do projeto):
     python db/aplicar.py              # SOMENTE LEITURA: roda o inventário
     python db/aplicar.py --aplicar    # inventário + schema + funções +
                                       # views + testes + seed
+    python db/aplicar.py --dados      # dados reais (fotos + descrições)
+    python db/aplicar.py --teste      # --dados + insumos FICTÍCIOS (ADR-017)
 
 Regras de segurança (ADR-014):
 - lê `DATABASE_URL` do `.env` e nunca imprime a conexão;
@@ -148,6 +150,20 @@ def main() -> None:
         print(">> 00_inventario.sql (somente leitura)")
         resultados, _ = executar_sql(conn, notices, "00_inventario.sql")
         imprimir_resultados(resultados)
+
+        if "--dados" in sys.argv[1:] or "--teste" in sys.argv[1:]:
+            if not schema_existe(conn):
+                sys.exit("O schema `bloome` ainda nao existe. Rode --aplicar primeiro.")
+            arquivos = (
+                ["06_dados_reais.sql", "07_placeholder_teste.sql"]
+                if "--teste" in sys.argv[1:]
+                else ["06_dados_reais.sql"]
+            )
+            for nome in arquivos:
+                print(f">> {nome}")
+                executar_sql(conn, notices, nome)
+                print("   ok")
+            return
 
         if schema_existe(conn):
             sys.exit(

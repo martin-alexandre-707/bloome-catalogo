@@ -32,6 +32,9 @@
 | ADR-012 | 2026-11-12 | Banco | Aceita | Edge cases do schema: pingente, esgotado derivado, frete, idempotência e LGPD |
 | ADR-013 | 2026-11-12 | Banco | Aceita | Endurecimento após auditoria: snapshot da baixa, total por trigger e DELETE bloqueado |
 | ADR-014 | 2026-11-12 | Banco | Aceita | DDL aplicado por `db/aplicar.py` (psycopg, conexão direta), sem DROP |
+| ADR-015 | 2026-11-24 | Stack | Aceita | Flask confirmado; teste Django cancelado |
+| ADR-016 | 2026-11-24 | Banco | Aceita | Fotos reais do PDF e descrições em `db/06_dados_reais.sql` |
+| ADR-017 | 2026-11-24 | Banco | Aceita (temporária) | Insumos e receitas FICTÍCIOS para teste, com reversão documentada |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -522,6 +525,87 @@
 ```
 
 Depois de escrever a entrada, adicione uma linha no **Índice**.
+
+---
+
+## ADR-015 — Stack web: Flask confirmada (teste Django cancelado)
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o §0 do `VALIDACAO-REGRAS.md` previa um teste de 1 dia com
+  Django na branch `experimento/django`. O teste não chegou a ser executado, e
+  em 2026-11-24 o time decidiu seguir com o que já está funcionando.
+- **Decisão:** manter **Flask + Jinja** como stack do projeto. O teste Django
+  fica **cancelado** e deixa de ser pendência.
+- **Motivo técnico:** o catálogo já conecta no Supabase, lê views e renderiza
+  com Jinja; migrar agora custaria retrabalho sem ganho demonstrado.
+- **Consequências:**
+  - O §0 do `VALIDACAO-REGRAS.md` passa a registrar a decisão.
+  - Decisões futuras assumem Flask (ADR-001).
+- **Arquivos:** `docs/DECISOES.md`, `docs/VALIDACAO-REGRAS.md`
+
+---
+
+## ADR-016 — Dados reais do catálogo: fotos do PDF e descrições
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o seed (ADR-014) deixa `foto`, `descricao` e `insumos` vazios,
+  e por isso todos os 16 produtos aparecem como "volta em breve". O PDF oficial
+  (`docs/referencias/Catalogo-BLOOME.pdf`) tem as 16 fotos reais, mas **não tem
+  descrições**.
+- **Decisão:**
+  - Fotos: extraídas do PDF (páginas 2, 3, 4 e 6), recortadas, redimensionadas
+    para 900 px e salvas como JPEG otimizado em `static/imgs/` (MVP: foto local,
+    conforme §7 do `VALIDACAO-REGRAS.md`).
+  - Descrições: 6 vêm do `catalogo.py` (texto já aprovado); as outras 10 foram
+    escritas a partir de dados reais do PDF (nome, material, categoria) e
+    **aguardam revisão da dona**. Nenhum dado de estoque foi inventado.
+  - Aplicação idempotente via `python db/aplicar.py --dados`, que executa
+    `db/06_dados_reais.sql` (só UPDATE; pode rodar de novo).
+- **Motivo técnico:** dado real e auditável, sem quebrar o seed; o `aplicar.py`
+  aborta quando o schema já existe, então o novo flag separa DDL de DML.
+- **Consequências:**
+  - O catálogo passa a exibir foto e descrição reais.
+  - O status continua `volta_em_breve` até existirem insumos + receita
+    (`pingente_insumo_id` e `composicao_variacoes` ainda vazios).
+  - As 6 imagens PNG antigas em `static/imgs/` ficaram sem referência e podem
+    ser removidas quando o time confirmar.
+- **Arquivos:** `db/06_dados_reais.sql`, `db/aplicar.py`, `static/imgs/*.jpg`,
+  `docs/DECISOES.md`
+
+---
+
+## ADR-017 — Dados fictícios de estoque para teste (temporária)
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita, **temporária** — sai antes do lançamento
+- **Contexto:** sem insumos e receitas, nada é vendável e todo o catálogo
+  aparece como "volta em breve". O time pediu para testar o fluxo visual
+  enquanto os dados reais não chegam.
+- **Decisão:** criar 19 insumos fictícios (5 fios + 14 pingentes) com saldo 99,
+  receita de fio + pingente em todas as 49 variações, e manter **3 modelos**
+  como "em breve" para testar os dois estados:
+  - 26 Cordão Amarração — sem pingente (o modelo não tem pingente);
+  - 27 Chocker Fita Pura — sem pingente (o modelo não tem pingente);
+  - 28 Cordão Gota — pingente com saldo 0.
+  O detalhe do produto passa a mostrar um botão desabilitado **"Em breve"**
+  (mesmo visual do "Comprar", estado `:disabled` já existente no CSS).
+- **Motivo técnico:** exercitar o caminho real (views + regras D2/D3) em vez de
+  mascarar a regra no template; preços e quantidades são fictícios.
+- **Consequências:**
+  - **Nenhum** desses números é dado real: não usar em relatório nem em venda.
+  - Reversão documentada no rodapé de `db/07_placeholder_teste.sql`
+    (`DELETE` receitas → `pingente_insumo_id = null` → `DELETE insumos`).
+  - A regra D2 (sem pingente → "volta em breve") impede vender modelos sem
+    pingente; decisão de produto pendente com a dona.
+  - `python db/aplicar.py --teste` aplica dados reais + fictícios; `--dados`
+    aplica só os reais.
+- **Arquivos:** `db/07_placeholder_teste.sql`, `db/aplicar.py`,
+  `templates/produto.html`, `docs/DECISOES.md`
 
 ---
 

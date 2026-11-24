@@ -2,19 +2,35 @@
 
 {% block title %}{{ produto.nome }}{% endblock %}
 
-{% block description %}{{ produto.descricao | truncate(150) }}{% endblock %}
+{% block description %}{{ (produto.descricao or '') | truncate(150) }}{% endblock %}
 
 {% block content %}
 <main id="conteudo" tabindex="-1" class="page-content">
     <a href="{{ url_for('produtos') }}" class="back-link">← Voltar para o catálogo</a>
 
     <article class="product-detail">
+        {% if produto.imagem %}
         <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-detail__image" fetchpriority="high" decoding="async">
+        {% endif %}
         <div class="product-detail__info">
             <h1 class="product-detail__name">{{ produto.nome }}</h1>
             <span class="product-detail__price">{{ produto.preco }}</span>
-            <p class="product-detail__description">{{ produto.descricao }}</p>
+            {% if produto.cores %}
+            <div class="product-detail__colors">
+                {% for cor in produto.cores %}
+                <span class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
+                      style="background: {{ cor.cor_hex }}"
+                      role="img"
+                      aria-label="{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}"></span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if produto.descricao %}<p class="product-detail__description">{{ produto.descricao }}</p>{% endif %}
+            {% if produto.status_exibicao == 'volta_em_breve' %}
+            <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
+            {% else %}
             <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            {% endif %}
         </div>
     </article>
 
@@ -23,7 +39,9 @@
         <div class="favorites">
             {% for item in relacionados %}
             <a href="{{ url_for('produto', produto=item.id) }}" class="favorite">
+                {% if item.imagem %}
                 <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="{{ item.nome }}" class="favorite__image" loading="lazy" decoding="async">
+                {% endif %}
                 <div class="favorite__info">
                     <h3 class="favorite__name">{{ item.nome }}</h3>
                     <span class="favorite__price">{{ item.preco }}</span>
