@@ -371,6 +371,10 @@ p {
 }
 
 .navbar__logout {
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1473,6 +1477,10 @@ p {
 }
 
 .painel__btn-sair {
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
