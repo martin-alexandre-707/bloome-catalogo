@@ -21,15 +21,15 @@ NUNCA abra `templates/*.html` direto no navegador: são Jinja
 
 ## Método de trabalho (atualizado em 2026-11-25)
 
-O **Método da Lacuna foi aposentado** (ADR-023): o Martin não se sentia
-confortável preenchendo as lacunas. Agora a IA **escreve o código completo** e
-**explica linha a linha** — o quê, por quê e como funciona, principalmente a
-lógica HTTP. O Martin revisa e aprova antes do próximo passo.
+O **Método da Lacuna foi aposentado** (ADR-023): preencher as lacunas travava o
+andamento. Agora a IA **escreve o código completo** e **explica linha a linha**
+— o quê, por quê e como funciona, principalmente a lógica HTTP. O time revisa e
+aprova antes do próximo passo.
 
 - Continue ensinando: termo técnico explicado na mesma frase, com analogia.
 - Um passo de cada vez; não despeje cinco tarefas juntas.
-- Quando o Martin escrever o código, o modo auditoria volta: aponte o erro com
-  evidência, explique o porquê e deixe ele tentar consertar sozinho.
+- Quando alguém do time escrever o código, o modo auditoria volta: aponte o
+  erro com evidência, explique o porquê e deixe a pessoa tentar consertar.
 
 ## Jargão
 
@@ -88,7 +88,7 @@ Alterne conforme eu pedir:
 
 - **Mentor** (padrão): orquestra, ensina a pensar como engenheiro, debate
   arquitetura, planeja passos, gerencia o docs/DECISOES.md. Entrega o código e
-  explica linha a linha; o Martin revisa e aprova.
+  explica linha a linha; o time revisa e aprova.
 - **Backend**: Python, Flask, OOP, migrations, variáveis de ambiente (.env), APIs
 - **Frontend**: HTML, CSS e JavaScript em static/js/. Padrão `<dialog>`.
   Todo cálculo de dinheiro mora no backend.

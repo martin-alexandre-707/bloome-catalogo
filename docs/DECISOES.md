@@ -50,7 +50,7 @@
 ## ADR-001 — Stack web: Flask + Jinja, sem build
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o catálogo nasceu como HTML/CSS estático e precisava de rotas,
   templates reutilizáveis e, depois, banco de dados.
@@ -74,7 +74,7 @@
 ## ADR-002 — Banco: Supabase (Postgres na nuvem), sem Postgres local
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** os dados estão em memória (`PRODUTOS`, em `catalogo.py`).
   Precisamos de banco real sem criar diferença entre desenvolvimento e produção.
@@ -98,7 +98,7 @@
 ## ADR-003 — Refatoração estranguladora
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o catálogo atual funciona com dados em memória. Substituir tudo
   de uma vez quebraria o site e dificultaria achar a causa.
@@ -119,7 +119,7 @@
 ## ADR-004 — Autenticação: painel do vendedor
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o visitante deve navegar livremente; o vendedor precisa de uma
   área protegida.
@@ -143,7 +143,7 @@
 ## ADR-005 — Segredos e configuração
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** `SECRET_KEY` e `DATABASE_URL` são segredos; se vazarem, qualquer
   pessoa assume sessões ou acessa o banco.
@@ -165,7 +165,7 @@
 ## ADR-006 — Acessibilidade WCAG 2.1 AA
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o projeto tem foco declarado em acessibilidade e o `styles.css`
   tem ~1.575 linhas com decisões validadas. Regressões são caras.
@@ -188,7 +188,7 @@
 ## ADR-007 — Commits sem atribuição de IA
 
 - **Data:** 2026-11-07
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** um commit gerado com `Co-Authored-By: Claude Code
   <noreply@anthropic.com>` fez a conta **claude** aparecer no painel de
@@ -618,7 +618,7 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-018 — Cadastro de cliente: validação no servidor, `flash` e POST-Redirect-GET
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o formulário "Criar conta" já chega ao servidor
   (`POST /conta/criar`), mas nada era validado. Atributos HTML (`required`,
@@ -660,7 +660,7 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-019 — Senha com bcrypt, `INSERT` em `bloome.clientes` e sessão assinada
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** com as validações prontas (ADR-018), o cadastro precisava
   persistir o cliente e deixá-lo autenticado.
@@ -707,7 +707,7 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-020 — Economia de contexto: hábito de leitura, sem ferramenta extra
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** avaliou-se adotar RTK/Headroom (compressão de saída de
   terminal) e hooks `PostToolUse`. Os comandos do projeto produzem saída
@@ -731,7 +731,7 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-021 — Ritmo sem a frase obrigatória "pare e espere meu ok"
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** a regra "Ritmo" exigia encerrar toda instrução com
   "pare e espere meu ok", o que virava ruído em respostas de consulta e de
@@ -753,7 +753,7 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-022 — Login, logout e `/painel` protegido por decorador
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o cadastro (ADR-019) já criava a sessão, mas o `/painel`
   continuava público, o header mostrava "Lucas" fixo e o formulário "Entrar"
@@ -812,15 +812,15 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 ## ADR-023 — Fim do Método da Lacuna: a IA escreve e explica
 
 - **Data:** 2026-11-25
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
-- **Contexto:** o Método da Lacuna pedia que o Martin preenchesse esqueletos
-  com lacunas. Na prática ele relatou não conseguir preencher e pediu que a IA
-  escrevesse o código, explicasse linha a linha e ele revisasse/aprovasse.
+- **Contexto:** o Método da Lacuna pedia que o time preenchesse esqueletos com
+  lacunas. Na prática, preencher as lacunas travava o andamento, então o método
+  foi trocado.
 - **Decisão:** a IA passa a **entregar o código completo**, explicando o quê, o
-  porquê e como funciona (com foco na lógica HTTP), em passos pequenos. O
-  Martin revisa e aprova antes do próximo passo. O modo auditoria continua
-  disponível quando ele mesmo escrever código.
+  porquê e como funciona (com foco na lógica HTTP), em passos pequenos. O time
+  revisa e aprova antes do próximo passo. O modo auditoria continua disponível
+  quando alguém do time escrever código.
 - **Motivo:** manter o aprendizado sem travar o projeto; a explicação linha a
   linha preserva o objetivo didático.
 - **Alternativas consideradas:**
