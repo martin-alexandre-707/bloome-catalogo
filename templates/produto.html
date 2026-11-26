@@ -29,7 +29,26 @@
             {% if produto.status_exibicao == 'volta_em_breve' %}
             <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
             {% else %}
-            <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+            <form method="post" action="{{ url_for('adicionar_carrinho') }}" class="product-detail__form">
+                {% if produto.cores %}
+                <fieldset class="product-detail__colors">
+                    <legend>Escolha a cor</legend>
+                    <div class="product-detail__color-options">
+                        {% for cor in produto.cores %}
+                        <label class="color-option{% if not cor.disponivel %} color-option--off{% endif %}">
+                            <input type="radio" name="id_variacao" value="{{ cor.id_variacao }}"
+                                   {% if cor.disponivel %}required{% else %}disabled{% endif %}>
+                            <span class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
+                                  style="background: {{ cor.cor_hex }}" aria-hidden="true"></span>
+                            <span class="visually-hidden">{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+                {% endif %}
+                <input type="hidden" name="id_acessorios" value="{{ produto.id }}">
+                <button type="submit" class="btn">Adicionar ao carrinho</button>
+            </form>
             {% endif %}
         </div>
     </article>

@@ -16,11 +16,7 @@ app = Flask(__name__)
 
 _chave = os.environ.get("SECRET_KEY")
 if not _chave:
-    if dados.modo_mock():
-        # Só vale quando não há banco: serve para o clone rodar sem .env.
-        _chave = "modo-mock-sem-seguranca-nao-use-em-producao"
-    else:
-        raise RuntimeError("SECRET_KEY não definida no .env")
+    raise RuntimeError("SECRET_KEY não definida no .env")
 app.secret_key = _chave
 
 app.config.update(
@@ -65,9 +61,38 @@ def produto(produto):
         relacionados=dados.listar_relacionados(produto),
     )
 
+@app.route("/carrinho/adicionar", methods=["POST"])
+def adicionar_carrinho():
+    try:
+        id_acessorios = int(request.form.get("id_acessorios", ""))
+        id_variacao = int(request.form.get("id_variacao", ""))
+    except ValueError:
+        flash("Escolha uma cor para adicionar ao carrinho.", "erro")
+        return redirect(url_for("produtos"))
+
+    item = dados.buscar_produto(id_acessorios)
+    if item is None:
+        abort(404)
+
+    cor = next((c for c in item["cores"] if c["id_variacao"] == id_variacao), None)
+    if cor is None or not cor["disponivel"]:
+        flash("Essa cor não está disponível. Escolha outra.", "erro")
+        return redirect(url_for("produto", produto=id_acessorios))
+
+    carrinho = session.get("carrinho", [])
+    for linha in carrinho:
+        if linha["id_variacao"] == id_variacao:
+            linha["quantidade"] += 1
+            break
+    else:
+        carrinho.append({"id_variacao": id_variacao, "quantidade": 1})
+
+    session["carrinho"] = carrinho
+
+    flash(f"{item['nome']} ({cor['cor']}) foi para o carrinho.", "sucesso")
+    return redirect(url_for("produto", produto=id_acessorios))
 
 
- 
 @app.route("/favoritos")
 def favoritos():
     return render_template("favoritos.html", current="favoritos")
@@ -86,14 +111,6 @@ def conta():
 
 @app.route("/conta/entrar", methods=["POST"])
 def entrar():
-    if dados.modo_mock():
-        # Sem banco não há conta: entra como visitante para o fluxo poder
-        # ser testado. Nunca acontece quando DATABASE_URL existe.
-        session.clear()
-        session["cliente_id"] = 0
-        session["cliente_nome"] = "Visitante (demonstração)"
-        return redirect(url_for("painel"))
-
     email = request.form.get("email", "").strip().lower()
     senha = request.form.get("senha", "")
 
@@ -130,13 +147,6 @@ def sair():
 
 @app.route("/conta/criar", methods=["POST"])
 def criar_conta():
-    if dados.modo_mock():
-        # Idem: entrada direta no painel, sem gravar cliente nenhum.
-        session.clear()
-        session["cliente_id"] = 0
-        session["cliente_nome"] = "Visitante (demonstração)"
-        return redirect(url_for("painel"))
-
     nome = request.form.get("nome", "").strip()
     email = request.form.get("email", "").strip().lower()
     whatsapp = request.form.get("whatsapp", "").strip()
@@ -162,7 +172,8 @@ def criar_conta():
         valido = False
 
     if not valido:
-        return redirect(url_for("conta"))
+        # Volta para a aba "Criar conta", não para "Entrar".
+        return redirect(url_for("conta", aba="criar"))
 
     hash_senha = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
@@ -182,11 +193,11 @@ def criar_conta():
     except psycopg.errors.UniqueViolation:
         conn.rollback()
         flash("Já existe uma conta com esse e-mail. Tente entrar.", "erro")
-        return redirect(url_for("conta"))
+        return redirect(url_for("conta", aba="criar"))
     except psycopg.Error:
         conn.rollback()
         flash("Não foi possível criar a conta agora. Tente de novo.", "erro")
-        return redirect(url_for("conta"))
+        return redirect(url_for("conta", aba="criar"))
 
     session.clear()
     session["cliente_id"] = id_cliente
@@ -198,9 +209,7 @@ def criar_conta():
 @app.route("/painel")
 @login_requerido
 def painel():
-    return render_template(
-        "painel.html", current="painel", modo_demo=dados.modo_mock()
-    )
+    return render_template("painel.html", current="painel")
 
 @app.errorhandler(404)
 def pagina_nao_encontrada(erro):

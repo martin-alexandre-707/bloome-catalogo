@@ -46,6 +46,17 @@
         </nav>
     </header>
 
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% if mensagens %}
+    <div class="flash-area" role="alert" aria-live="assertive">
+        {% for categoria, mensagem in mensagens %}
+        <p class="flash flash--{{ categoria }}">{{ mensagem }}</p>
+        {% endfor %}
+    </div>
+    <script>history.scrollRestoration = "manual";</script>
+    {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
 
     <footer class="site-footer">

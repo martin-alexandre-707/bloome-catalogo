@@ -9,10 +9,6 @@
     <h1>Olá, {{ session.get("cliente_nome") }}</h1>
     <p class="subtitle">Acompanhe seus pedidos e gerencie seus dados.</p>
 
-    {% if modo_demo %}
-    <p class="auth__erros" role="status"><strong>Modo demonstração:</strong> sem banco conectado, os dados abaixo são fictícios.</p>
-    {% endif %}
-
     <div class="painel">
 
         <aside class="painel__perfil" aria-label="Meus dados">

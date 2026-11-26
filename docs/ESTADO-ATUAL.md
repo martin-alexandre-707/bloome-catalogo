@@ -25,14 +25,19 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 | 1b | Validação no servidor + `flash` + POST-Redirect-GET (ADR-018) | ✅ |
 | 1c | bcrypt + `INSERT` em `bloome.clientes` + sessão (ADR-019) | ✅ |
 | 1d | Login, logout, `/painel` protegido e header dinâmico (ADR-022) | ✅ |
-| 2 | Escolher cor no detalhe + `POST /carrinho/adicionar` (session) | ⏳ próximo |
-| 3 | Carrinho real: session + banco, total calculado no backend | ⬜ |
+| 1e | Feedback de formulário: flash global, aba de origem preservada, e-mail com `pattern` | ✅ |
+| 2 | Escolher cor no detalhe + `POST /carrinho/adicionar` (session) | ✅ |
+| 3 | Carrinho real: session + banco, total calculado no backend | ⏳ próximo |
 | 4 | Checkout: `pedidos` + `itens_pedidos` em transação | ⬜ |
 | 5 | Mercado Pago + webhook idempotente e assinado | ⬜ |
 
-**Modo demonstração (ADR-024):** `dados.py` é a camada de dados; sem
-`DATABASE_URL` (ou com `MOCK=1`) o app serve o mock do `catalogo.py` e todas
-as páginas renderizam. Permite trabalhar no front sem credencial.
+**Banco real conectado** (2026-11-26). O problema era o `.env`: prefixo
+`DATABASE_URL=` duplicado e ref do projeto errado por uma letra — a senha
+sempre esteve certa. O app roda contra o Supabase pelo pooler (porta 5432).
+
+**Sem mock (ADR-025):** `dados.py` é a camada de dados e lê **só** o Supabase.
+Sem `DATABASE_URL` ou `SECRET_KEY` no `.env` o app não inicia — não há mais
+modo demonstração nem `catalogo.py`.
 
 Na sessão nova, basta: *"Bloome. Leia AGENTS.md, docs/DECISOES.md e
 docs/ESTADO-ATUAL.md. Continua o passo X."*
@@ -41,18 +46,13 @@ docs/ESTADO-ATUAL.md. Continua o passo X."*
 
 ## Pendências conhecidas (não bloqueiam o passo atual)
 
-- **A credencial do `.env` está falhando** (`password authentication failed`
-  em 2026-11-26). O `DATABASE_URL` parece antigo: a senha foi trocada ou o
-  projeto foi recriado. Enquanto isso, só o modo mock funciona. Reconferir no
-  painel do Supabase (Settings → Database → senha) antes do próximo passo.
-- Login real com conta no Supabase ainda **não** foi testado ponta a ponta
-  (só com `test_client` e cursor falso).
+- **Validação de e-mail**: o `pattern` do HTML é mais rígido que o `if` do
+  `app.py` para `@b.com`, `a@.com` e `a b@c.com`. Fechar com `re.fullmatch`
+  no servidor.
 - `login_requerido` não consulta o banco por requisição: conta anonimizada
   durante a sessão continua logada até o cookie sumir.
 - Ainda **sem token CSRF**; `SameSite=Lax` cobre o caso cross-site comum, mas
   não é equivalente.
-- Mensagem de sucesso do login não aparece: o painel não renderiza `flash`.
-  Mover o bloco `get_flashed_messages()` para `base.html` quando fizer sentido.
 - Pedidos e cartão "Meus dados" do painel continuam fictícios.
 - Contas de teste não podem ser apagadas (`trg_clientes_sem_delete`);
   usar `bloome.anonimizar_cliente(id)`.
@@ -62,4 +62,5 @@ docs/ESTADO-ATUAL.md. Continua o passo X."*
   (`db/06_dados_reais.sql`) e aguardam revisão da dona.
 - Modelos 26 (Cordão Amarração) e 27 (Chocker Fita Pura) são "sem pingente" e
   pela regra D2 nunca ficam vendáveis — decisão de produto pendente.
-- `.auth__erros` sem CSS próprio; categoria `"sucesso"` do flash sem estilo.
+- O spike Django foi **removido da máquina** em 2026-11-26 (ADR-015 já o tinha
+  cancelado); o código dele não está versionado.

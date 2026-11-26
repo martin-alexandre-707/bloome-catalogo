@@ -41,7 +41,9 @@
 | ADR-021 | 2026-11-25 | Processo | Aceita | Fim do "pare e espere meu ok" em instruções |
 | ADR-022 | 2026-11-25 | Auth | Aceita | Login, logout e `/painel` protegido por decorador; cookie HttpOnly/SameSite |
 | ADR-023 | 2026-11-25 | Processo | Aceita | Fim do Método da Lacuna: IA escreve o código e explica linha a linha |
-| ADR-024 | 2026-11-26 | Estrutura | Aceita | Modo demonstração (mock) e camada `dados.py`; sem `.env` o app roda |
+| ADR-024 | 2026-11-26 | Estrutura | Substituída por ADR-026 | Modo demonstração (mock) e camada `dados.py`; sem `.env` o app roda |
+| ADR-025 | 2026-11-26 | Estrutura | Aceita | Sem mock: toda consulta vai ao Supabase; `catalogo.py` removido |
+| ADR-026 | 2026-11-26 | Estrutura | Aceita | Carrinho na sessão guarda só variação + quantidade; preço nunca vai ao cookie |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -836,6 +838,8 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 
 ## ADR-024 — Modo demonstração (mock) e camada `dados.py`
 
+> **Substituída por ADR-026** (2026-11-26): o mock foi removido do projeto.
+
 - **Data:** 2026-11-26
 - **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
@@ -871,6 +875,77 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
   pequeno e restrito a leitura; telas novas seguem o mesmo padrão
   (`dados.py` → aba `MOCK`). `README.md` e `.env.example` atualizados.
 - **Arquivos:** `dados.py`, `app.py`, `.env.example`, `README.md`
+
+---
+
+## ADR-025 — Sem mock: toda consulta vai ao Supabase
+
+- **Data:** 2026-11-26
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** a ADR-024 criou o modo demonstração para rodar sem `.env`.
+  O banco real foi conectado no mesmo dia e passou a ser a única fonte
+  verdadeira; manter dois caminhos de leitura deixava código morto e dúvida
+  sobre qual ramo rodava.
+
+- **Decisão:**
+  1. Remover `modo_mock()`, `_mock_lista()`, `_mock_cores()`, `_CORES_MOCK` e
+     os ramos `if modo_mock()` de `dados.py`. Só sobra SQL.
+  2. Remover `catalogo.py` (a lista de 6 produtos escrita à mão).
+  3. Remover de `app.py`: a `SECRET_KEY` insegura de demonstração, a entrada
+     fake em `/conta/entrar`, o cadastro fake em `/conta/criar` e a tarja de
+     demonstração do painel.
+  4. Sem `SECRET_KEY` ou `DATABASE_URL`, o app **falha na inicialização** com
+     erro claro — não há plano B.
+  5. Variável `MOCK` e documentação do modo demonstração saem de
+     `.env.example` e `README.md`.
+
+- **Alternativas consideradas:**
+  - Manter o mock como fallback — rejeitada: dois caminhos para o mesmo dado,
+    mock envelhece e confunde a leitura.
+  - Manter só a flag `MOCK=1` — rejeitada: sem outro dado fictício, a flag
+    não tem função.
+
+- **Consequências:** clonar o repositório exige `.env` com Supabase para
+  rodar; o teste do projeto passa a usar o banco real (apenas leitura no
+  catálogo). `dados.py` ganha `id_variacao` em `buscar_produto` para o passo 2
+  do carrinho.
+
+- **Arquivos:** `dados.py`, `app.py`, `catalogo.py` (removido),
+  `templates/painel.html`, `.env.example`, `README.md`
+
+---
+
+## ADR-026 — Carrinho na sessão: referência à variação, não cópia do produto
+
+- **Data:** 2026-11-26
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** o detalhe do produto agora tem um formulário que envia a cor
+  escolhida (`POST /carrinho/adicionar`). Era preciso decidir o que guardar na
+  `session` — cookie assinado, legível pelo visitante — e como validar.
+
+- **Decisão:**
+  1. A sessão guarda **apenas** `[{"id_variacao": int, "quantidade": int}]`.
+     Nome, cor e preço são relidos do banco na hora de exibir (passo 3).
+  2. O POST valida no servidor: o `id_variacao` precisa existir **e** estar
+     disponível para aquele `id_acessorios`; entrada inválida → `flash` + 302.
+  3. Adicionar a mesma variação duas vezes soma `quantidade` em vez de criar
+     outra linha.
+  4. Resposta segue POST-Redirect-GET (302 de volta ao detalhe do produto).
+
+- **Alternativas consideradas:**
+  - Guardar nome/preço/imagem na sessão — rejeitada: preço no cookie fica
+    velho e é dado do cliente; cálculo de dinheiro pertence ao backend.
+  - Carrinho em tabela do banco — adiada para o checkout (passo 4), quando o
+    pedido vira registro transacional.
+
+- **Consequências:** o passo 3 precisa de uma função em `dados.py` que receba
+  os `id_variacao` e devolva os detalhes atuais para renderizar o carrinho. O
+  total é sempre recalculado no servidor.
+
+- **Arquivos:** `app.py`, `dados.py`, `templates/produto.html`,
+  `static/css/styles.css`
 
 ---
 
