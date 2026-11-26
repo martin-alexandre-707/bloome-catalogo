@@ -567,6 +567,7 @@ p {
 }
 
 .product__open,
+.favorite__open,
 .favorite__link {
   display: block;
   border-radius: var(--radius-sm);
@@ -589,6 +590,7 @@ p {
 }
 
 .product__open:hover .product__image,
+.favorite__open:hover .favorite__image,
 .favorite__link:hover .favorite__image {
   transform: scale(1.03);
 }
@@ -638,6 +640,7 @@ p {
 }
 
 .product__open:focus-visible,
+.favorite__open:focus-visible,
 .favorite__link:focus-visible {
   outline: var(--focus-width) solid var(--color-wine);
   outline-offset: 2px;
@@ -945,8 +948,8 @@ p {
   max-height: calc(100dvh - var(--space-8));
   overflow-y: auto;
   padding: var(--space-8) var(--space-8) var(--space-6);
-  background: var(--color-wine);
-  color: var(--color-cream);
+  background: var(--color-success);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-3);
@@ -954,7 +957,7 @@ p {
 }
 
 .checkout-modal::backdrop {
-  background: rgba(119, 46, 63, 0.55);
+  background: rgba(42, 95, 70, 0.55);
 }
 
 .checkout-modal__icon {
@@ -964,8 +967,8 @@ p {
   display: grid;
   place-items: center;
   border-radius: var(--radius-full);
-  background: var(--color-rose-light);
-  color: var(--color-wine);
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
 .checkout-modal__icon svg {
@@ -977,13 +980,13 @@ p {
   font-family: var(--font-script);
   font-size: var(--text-xl);
   font-weight: var(--weight-regular);
-  color: var(--color-rose-light);
+  color: #ffffff;
 }
 
 .checkout-modal__title {
   font-family: var(--font-display);
   font-size: var(--text-2xl);
-  color: var(--color-rose-light);
+  color: #ffffff;
   margin-bottom: var(--space-3);
 }
 
@@ -996,6 +999,12 @@ p {
 
 .checkout-modal__btn {
   width: 100%;
+  background: #ffffff;
+  color: var(--color-success);
+}
+
+.checkout-modal__btn:hover {
+  background: var(--color-cream);
 }
 
 /* ==========================================================================
@@ -1064,6 +1073,15 @@ p {
 
 .form-field input:focus-visible {
   border-color: var(--color-wine);
+}
+
+/* Aviso de campo: mensagem dinâmica; role="alert" no HTML faz o
+   leitor de tela anunciá-la quando aparece (WCAG 4.1.3). */
+.form-field__aviso {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-danger);
 }
 
 /* --- Validação nativa em CSS puro --- */
@@ -1476,26 +1494,44 @@ p {
   color: var(--color-wine);
 }
 
+/* "Sair" com mais destaque: bloco vinho centralizado sob o card, com
+   ícone de logout. O anel de foco global fica no creme ao redor
+   (outline-offset), então continua visível sobre o fundo vinho. */
+.painel__sair {
+  display: flex;
+  justify-content: center;
+}
+
 .painel__btn-sair {
-  background: none;
+  background: var(--color-wine);
+  color: var(--color-cream);
   border: 0;
   font: inherit;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   min-height: var(--touch-target);
-  color: var(--color-text);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  border-radius: var(--radius-sm);
-  transition: color var(--dur-fast) var(--ease);
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-full);
+  transition: background var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+
+.painel__btn-sair svg {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .painel__btn-sair:hover {
-  color: var(--color-wine);
+  background: var(--color-wine-deep);
+}
+
+.painel__btn-sair:active {
+  transform: translateY(1px);
 }
 
 .painel__pedidos .painel__titulo {
@@ -1978,9 +2014,11 @@ p {
 }
 
 /* Botão que abre o modal de detalhes: ocupa a coluna da foto (em fluxo,
-   como o antigo .product__link). O restante do card também abre o modal
-   via listener no <article>; a via de teclado é este botão (aria-label). */
-.product__open {
+   como o antigo .product__link), nos cards de produto e de favorito.
+   O restante do card também abre o modal via listener no <article>;
+   a via de teclado é este botão (aria-label). */
+.product__open,
+.favorite__open {
   padding: 0;
   border: none;
   background: none;

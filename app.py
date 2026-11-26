@@ -70,7 +70,12 @@ def produto(produto):
  
 @app.route("/favoritos")
 def favoritos():
-    return render_template("favoritos.html", current="favoritos")
+    # Favoritos ainda não persistem (sem tabela): a página exibe os
+    # 3 primeiros produtos do catálogo, com os mesmos dados de /produtos.
+    lista = dados.listar_produtos()
+    return render_template(
+        "favoritos.html", current="favoritos", produtos=lista[:3]
+    )
 
 @app.route("/sobre")
 def sobre():
