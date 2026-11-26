@@ -1072,6 +1072,15 @@ p {
   border-color: var(--color-wine);
 }
 
+/* Aviso de campo: mensagem dinâmica; role="alert" no HTML faz o
+   leitor de tela anunciá-la quando aparece (WCAG 4.1.3). */
+.form-field__aviso {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-danger);
+}
+
 /* --- Validação nativa em CSS puro --- */
 .form-field input:user-invalid {
   border-color: var(--color-danger);
