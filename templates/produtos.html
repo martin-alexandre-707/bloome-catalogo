@@ -12,25 +12,115 @@
     <section class="products" aria-label="Lista de produtos">
         {% for produto in produtos %}
         <article class="product">
-            <a href="{{ url_for('produto', produto=produto.id) }}" class="product__link">
+            <button type="button"
+                    class="product__open"
+                    data-abrir-produto="{{ produto.id }}"
+                    aria-label="Ver detalhes de {{ produto.nome }}">
                 {% if produto.imagem %}
-                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product__image" loading="lazy" decoding="async">
+                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="product__image" loading="lazy" decoding="async">
                 {% endif %}
-            </a>
+            </button>
             <div class="product__info">
-                <h2 class="product__name"><a href="{{ url_for('produto', produto=produto.id) }}">{{ produto.nome }}</a></h2>
+                <h2 class="product__name">{{ produto.nome }}</h2>
                 <p class="product__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
                 <hr class="product__divider">
                 <span class="product__price">{{ produto.preco }}</span>
                 {% if produto.status_exibicao == 'volta_em_breve' %}
                 <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
                 {% else %}
-                <a href="{{ url_for('carrinho') }}" class="btn">Comprar</a>
+                <button type="button" class="btn product__btn-comprar" data-abrir-produto="{{ produto.id }}">Comprar</button>
                 {% endif %}
             </div>
         </article>
         {% endfor %}
     </section>
 
+    {# Detalhes de cada produto: <template> é conteúdo inerte (não renderiza).
+       O script copia o template do produto clicado para dentro do <dialog>. #}
+    {% for produto in produtos %}
+    <template data-produto="{{ produto.id }}">
+        {% if produto.imagem %}
+        <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-modal__image" loading="lazy" decoding="async">
+        {% endif %}
+        <h2 class="product-modal__title" id="titulo-modal-produto">{{ produto.nome }}</h2>
+        <span class="product-detail__price">{{ produto.preco }}</span>
+        {% if produto.cores %}
+        <div class="product-detail__colors">
+            {% for cor in produto.cores %}
+            <button type="button"
+                    class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
+                    style="background: {{ cor.cor_hex }}"
+                    aria-pressed="false"
+                    aria-label="{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}"
+                    {% if not cor.disponivel %}disabled{% endif %}></button>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if produto.descricao %}<p class="product-detail__description">{{ produto.descricao }}</p>{% endif %}
+        {% if produto.status_exibicao == 'volta_em_breve' %}
+        <button type="button" class="btn product-modal__cta" disabled aria-disabled="true">Em breve</button>
+        {% else %}
+        <a href="{{ url_for('carrinho') }}" class="btn product-modal__cta">Comprar</a>
+        {% endif %}
+    </template>
+    {% endfor %}
+
+    <dialog class="product-modal" id="modal-produto" aria-labelledby="titulo-modal-produto">
+        <button type="button" class="product-modal__close" aria-label="Fechar detalhes do produto">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="product-modal__content" id="conteudo-modal-produto"></div>
+    </dialog>
+
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Modal de detalhes no catálogo: o card ou o botão "Comprar" abre o
+    // <dialog> preenchido com o <template> do produto. O conteúdo é
+    // renderizado pelo servidor; o JS só copia e cuida do foco.
+    const modal = document.getElementById('modal-produto');
+    const conteudo = document.getElementById('conteudo-modal-produto');
+    const botaoFechar = modal.querySelector('.product-modal__close');
+    let ultimoGatilho = null;
+
+    function selecionarCores(scope) {
+        // Bolinhas de cor: comportamento de rádio (uma cor por vez).
+        const bolinhas = scope.querySelectorAll('.color-dot');
+        bolinhas.forEach((bolinha) => {
+            bolinha.addEventListener('click', () => {
+                bolinhas.forEach((outra) => outra.setAttribute('aria-pressed', 'false'));
+                bolinha.setAttribute('aria-pressed', 'true');
+            });
+        });
+    }
+
+    document.querySelectorAll('[data-abrir-produto]').forEach((gatilho) => {
+        gatilho.addEventListener('click', () => {
+            const template = document.querySelector(
+                'template[data-produto="' + gatilho.dataset.abrirProduto + '"]'
+            );
+            conteudo.replaceChildren(template.content.cloneNode(true));
+            selecionarCores(conteudo);
+            ultimoGatilho = gatilho;
+            modal.showModal();
+            botaoFechar.focus();
+        });
+    });
+
+    botaoFechar.addEventListener('click', () => modal.close());
+
+    // Clique no fundo escuro (backdrop) também fecha
+    modal.addEventListener('click', (evento) => {
+        if (evento.target === modal) modal.close();
+    });
+
+    // Ao fechar, o foco volta para o gatilho que abriu (WCAG 2.4.3)
+    modal.addEventListener('close', () => {
+        if (ultimoGatilho) ultimoGatilho.focus();
+    });
+</script>
 {% endblock %}

@@ -63,6 +63,7 @@ def _mock_lista():
                 "imagem": produto["imagem"],
                 "descricao": produto["descricao"],
                 "status_exibicao": "ativo",
+                "cores": _mock_cores(id_acessorio),
             }
         )
     return itens
@@ -83,6 +84,31 @@ def _mock_cores(id_acessorio):
     return cores
 
 
+def _cores_por_acessorio(cur):
+    """Agrupa as cores do catálogo inteiro, em uma consulta só.
+
+    Devolve {id_acessorio: [{cor, cor_hex, disponivel}, ...]} já na ordem
+    da view (coluna `ordem`), para a bolinha certa vir primeiro.
+    """
+    cur.execute(
+        """
+        select id_acessorios, cor, cor_hex, disponivel
+        from bloome.vw_variacoes_disponiveis
+        order by ordem
+        """
+    )
+    cores_por_id = {}
+    for linha in cur.fetchall():
+        cores_por_id.setdefault(linha["id_acessorios"], []).append(
+            {
+                "cor": linha["cor"],
+                "cor_hex": linha["cor_hex"],
+                "disponivel": linha["disponivel"],
+            }
+        )
+    return cores_por_id
+
+
 # ---------------------------------------------------------------------------
 # API usada pelas rotas.
 # ---------------------------------------------------------------------------
@@ -101,6 +127,7 @@ def listar_produtos():
             order by id_acessorios
         """)
         linhas = cur.fetchall()
+        cores_por_id = _cores_por_acessorio(cur)
 
     return [
         {
@@ -110,6 +137,7 @@ def listar_produtos():
             "imagem": linha["foto"],
             "descricao": linha["descricao"],
             "status_exibicao": linha["status_exibicao"],
+            "cores": cores_por_id.get(linha["id_acessorios"], []),
         }
         for linha in linhas
     ]
