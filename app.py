@@ -87,8 +87,12 @@ def conta():
 @app.route("/conta/entrar", methods=["POST"])
 def entrar():
     if dados.modo_mock():
-        flash("Modo demonstração: entrar na conta exige o banco real.", "erro")
-        return redirect(url_for("conta"))
+        # Sem banco não há conta: entra como visitante para o fluxo poder
+        # ser testado. Nunca acontece quando DATABASE_URL existe.
+        session.clear()
+        session["cliente_id"] = 0
+        session["cliente_nome"] = "Visitante (demonstração)"
+        return redirect(url_for("painel"))
 
     email = request.form.get("email", "").strip().lower()
     senha = request.form.get("senha", "")
@@ -127,8 +131,11 @@ def sair():
 @app.route("/conta/criar", methods=["POST"])
 def criar_conta():
     if dados.modo_mock():
-        flash("Modo demonstração: criar conta exige o banco real.", "erro")
-        return redirect(url_for("conta"))
+        # Idem: entrada direta no painel, sem gravar cliente nenhum.
+        session.clear()
+        session["cliente_id"] = 0
+        session["cliente_nome"] = "Visitante (demonstração)"
+        return redirect(url_for("painel"))
 
     nome = request.form.get("nome", "").strip()
     email = request.form.get("email", "").strip().lower()
@@ -191,7 +198,9 @@ def criar_conta():
 @app.route("/painel")
 @login_requerido
 def painel():
-    return render_template("painel.html", current="painel")
+    return render_template(
+        "painel.html", current="painel", modo_demo=dados.modo_mock()
+    )
 
 @app.errorhandler(404)
 def pagina_nao_encontrada(erro):
