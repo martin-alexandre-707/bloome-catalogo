@@ -1951,6 +1951,31 @@ p {
   opacity: 0.4;
 }
 
+/* Bolinhas de cor: estados interativos (teclado 2.1.1, foco 2.4.7, estado 4.1.2) */
+.color-dot {
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.color-dot:hover:not(:disabled),
+.color-dot:focus-visible:not(:disabled) {
+  transform: scale(1.12);
+}
+
+.color-dot:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Cor selecionada: anel duplo (creme + vinho) visível sem depender só de cor */
+.color-dot[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--color-cream), 0 0 0 4px var(--color-wine-deep);
+}
+
+.color-dot:disabled {
+  cursor: not-allowed;
+}
+
 /* Card inteiro clicável: o link do nome cobre a área toda */
 .product {
   position: relative;

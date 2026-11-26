@@ -18,10 +18,12 @@
             {% if produto.cores %}
             <div class="product-detail__colors">
                 {% for cor in produto.cores %}
-                <span class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
-                      style="background: {{ cor.cor_hex }}"
-                      role="img"
-                      aria-label="{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}"></span>
+                <button type="button"
+                        class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
+                        style="background: {{ cor.cor_hex }}"
+                        aria-pressed="false"
+                        aria-label="{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}"
+                        {% if not cor.disponivel %}disabled{% endif %}></button>
                 {% endfor %}
             </div>
             {% endif %}
@@ -51,4 +53,18 @@
         </div>
     </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Seleção de cor: funciona como rádio — uma cor por vez, e a
+    // escolha fica anunciada pelo aria-pressed (leitor de tela).
+    const bolinhas = document.querySelectorAll('.color-dot');
+    bolinhas.forEach((bolinha) => {
+        bolinha.addEventListener('click', () => {
+            bolinhas.forEach((outra) => outra.setAttribute('aria-pressed', 'false'));
+            bolinha.setAttribute('aria-pressed', 'true');
+        });
+    });
+</script>
 {% endblock %}
