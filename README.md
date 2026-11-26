@@ -12,20 +12,11 @@ pip install -r requirements.txt
 python app.py          # http://127.0.0.1:5000
 ```
 
-**Sem `.env`, o app roda em modo demonstração**: os produtos vêm do
-`catalogo.py` (dados fictícios) e o fluxo inteiro — catálogo, detalhe, carrinho,
-favoritos — abre normalmente. É o suficiente para trabalhar no front.
+**O banco é obrigatório.** Copie `.env.example` para `.env` e preencha
+`SECRET_KEY` e `DATABASE_URL` (Supabase). Sem isso o app **não inicia** — não
+existe modo demonstração; toda leitura vai ao banco.
 
-Para usar o banco real (Supabase), copie `.env.example` para `.env` e preencha
-`SECRET_KEY` e `DATABASE_URL`. A troca é automática:
-
-| Cenário | Origem dos produtos |
-| ------- | ------------------- |
-| `.env` com `DATABASE_URL` | views do Supabase |
-| sem `.env` | dados fictícios do `catalogo.py` |
-| `MOCK=1` no ambiente | dados fictícios, mesmo com banco |
-
-Toda tela nova lê dados por `dados.py` — o mock mora lá, nunca no template.
+Toda tela nova lê dados por `dados.py`, nunca direto no template.
 
 ## Páginas
 
@@ -47,9 +38,8 @@ Toda tela nova lê dados por `dados.py` — o mock mora lá, nunca no template.
 ```
 bloome-catalogo-main/
 ├── app.py           # Rotas Flask
-├── dados.py         # Fonte de dados: Supabase ou mock (escolhida pelo .env)
+├── dados.py         # Fonte de dados: consultas ao Supabase
 ├── db.py            # Conexão psycopg com o banco
-├── catalogo.py      # Dados fictícios usados no modo demonstração
 ├── db/              # SQL versionado (schema, funções, views, seed, testes)
 ├── templates/       # Jinja: base, index, produtos, produto, carrinho, conta...
 ├── static/          # CSS, JS e imagens (static/imgs/)
