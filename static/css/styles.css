@@ -1476,26 +1476,44 @@ p {
   color: var(--color-wine);
 }
 
+/* "Sair" com mais destaque: bloco vinho centralizado sob o card, com
+   ícone de logout. O anel de foco global fica no creme ao redor
+   (outline-offset), então continua visível sobre o fundo vinho. */
+.painel__sair {
+  display: flex;
+  justify-content: center;
+}
+
 .painel__btn-sair {
-  background: none;
+  background: var(--color-wine);
+  color: var(--color-cream);
   border: 0;
   font: inherit;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   min-height: var(--touch-target);
-  color: var(--color-text);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  border-radius: var(--radius-sm);
-  transition: color var(--dur-fast) var(--ease);
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-full);
+  transition: background var(--dur-fast) var(--ease),
+              transform var(--dur-fast) var(--ease);
+}
+
+.painel__btn-sair svg {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .painel__btn-sair:hover {
-  color: var(--color-wine);
+  background: var(--color-wine-deep);
+}
+
+.painel__btn-sair:active {
+  transform: translateY(1px);
 }
 
 .painel__pedidos .painel__titulo {
