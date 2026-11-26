@@ -566,7 +566,7 @@ p {
   transform: translateY(-2px);
 }
 
-.product__link,
+.product__open,
 .favorite__link {
   display: block;
   border-radius: var(--radius-sm);
@@ -588,7 +588,7 @@ p {
   transition: transform var(--dur-base) var(--ease);
 }
 
-.product__link:hover .product__image,
+.product__open:hover .product__image,
 .favorite__link:hover .favorite__image {
   transform: scale(1.03);
 }
@@ -637,7 +637,7 @@ p {
   text-decoration: underline;
 }
 
-.product__link:focus-visible,
+.product__open:focus-visible,
 .favorite__link:focus-visible {
   outline: var(--focus-width) solid var(--color-wine);
   outline-offset: 2px;
@@ -1661,7 +1661,8 @@ p {
 .auth,
 .painel__perfil-card,
 .painel__editar,
-.checkout-modal {
+.checkout-modal,
+.product-modal {
   animation: rise-in var(--dur-slow) var(--ease-out) both;
 }
 
@@ -1797,7 +1798,7 @@ p {
     margin: var(--space-3) auto;
   }
 
-  .product__link {
+  .product__open {
     width: 100%;
   }
 
@@ -1951,20 +1952,212 @@ p {
   opacity: 0.4;
 }
 
-/* Card inteiro clicável: o link do nome cobre a área toda */
-.product {
-  position: relative;
+/* Bolinhas de cor: estados interativos (teclado 2.1.1, foco 2.4.7, estado 4.1.2) */
+.color-dot {
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
-.product__name a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-lg);
+.color-dot:hover:not(:disabled),
+.color-dot:focus-visible:not(:disabled) {
+  transform: scale(1.12);
+}
+
+.color-dot:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Cor selecionada: anel duplo (creme + vinho) visível sem depender só de cor */
+.color-dot[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--color-cream), 0 0 0 4px var(--color-wine-deep);
+}
+
+.color-dot:disabled {
+  cursor: not-allowed;
+}
+
+/* Botão que abre o modal de detalhes: ocupa a coluna da foto (em fluxo,
+   como o antigo .product__link). O restante do card também abre o modal
+   via listener no <article>; a via de teclado é este botão (aria-label). */
+.product__open {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 /* Botões dentro do card ficam acima da área clicável */
 .product__info .btn {
   position: relative;
   z-index: 1;
+}
+
+/* ==========================================================================
+   Modal de detalhes do produto (catálogo)
+   <dialog> padrão do projeto: Esc fecha, backdrop clica-para-fechar,
+   foco preso enquanto aberto e devolvido ao gatilho ao fechar.
+   ========================================================================== */
+.product-modal {
+  margin: auto;
+  position: relative;
+  width: min(34rem, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100dvh - var(--space-8));
+  overflow-y: auto;
+  padding: var(--space-8);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3);
+  text-align: left;
+}
+
+.product-modal::backdrop {
+  background: rgba(119, 46, 63, 0.55);
+}
+
+.product-modal__close {
+  position: absolute;
+  top: var(--space-1);
+  right: 0;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-text-strong);
+  cursor: pointer;
+}
+
+.product-modal__close:hover {
+  background: var(--color-surface-sunken);
+}
+
+.product-modal__close svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.product-modal__image {
+  width: 100%;
+  max-height: 22rem;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+}
+
+.product-modal__title {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-wine);
+  margin-bottom: var(--space-2);
+}
+
+.product-modal__cta {
+  display: block;
+  margin-top: var(--space-6);
+}
+
+/* Seletor de quantidade no modal de detalhes */
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-5);
+  padding: var(--space-1);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-sunken);
+}
+
+.qty__btn {
+  width: var(--touch-target);
+  height: var(--touch-target);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-text-strong);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.qty__btn:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.qty__btn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.qty__btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.qty__valor {
+  min-width: 2ch;
+  text-align: center;
+  font-weight: var(--weight-bold);
+  color: var(--color-text-strong);
+}
+
+/* Toast na lateral esquerda: confirmação de "adicionado ao carrinho".
+   role="status" faz o leitor de tela anunciar a mensagem (WCAG 4.1.3).
+   O fade in/out é a classe .is-abierto (ligada/desligada pelo script);
+   com prefers-reduced-motion a transição é zerada pelo bloco global. */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: var(--space-4);
+  transform: translateY(-50%) translateX(-0.5rem);
+  z-index: var(--z-skip-link);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-success);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+
+.toast.is-abierto {
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.toast[hidden] {
+  display: none;
+}
+
+.toast__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.toast__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.toast__msg {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
 }
