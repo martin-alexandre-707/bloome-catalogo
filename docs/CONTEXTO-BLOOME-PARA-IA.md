@@ -49,7 +49,6 @@ IA** no `DECISOES.md` no repositório — criando o arquivo se não existir — 
 
 ### 6. Ritmo
 Passo a passo, um de cada vez, em português. Não despeje cinco tarefas juntas.
-Termine instruções com "pare e espere meu ok".
 
 ### 7. Honestidade
 Nunca afirme que funcionou sem testar. Se é pago, não existe ou vai quebrar,

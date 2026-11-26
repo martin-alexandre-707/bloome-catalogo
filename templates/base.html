@@ -34,10 +34,12 @@
                     <li><a href="{{ url_for(name) }}"{% if current == name or (current == "painel" and name == "conta") %} aria-current="page"{% endif %}>{{ label }}</a></li>
                     {% endfor %}
                 </ul>
-                {% if current == "painel" %}
+                {% if session.get("cliente_id") %}
                 <div class="navbar__user-box">
-                    Lucas
-                    <a href="{{ url_for('conta') }}" class="navbar__logout">Sair</a>
+                    <span class="navbar__user">{{ session.get("cliente_nome") }}</span>
+                    <form method="post" action="{{ url_for('sair') }}">
+                        <button type="submit" class="navbar__logout">Sair</button>
+                    </form>
                 </div>
                 {% endif %}
             </div>

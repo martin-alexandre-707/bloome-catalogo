@@ -6,7 +6,7 @@
 
 {% block content %}
 <main id="conteudo" tabindex="-1" class="page-content">
-    <h1>Olá, Lucas</h1>
+    <h1>Olá, {{ session.get("cliente_nome") }}</h1>
     <p class="subtitle">Acompanhe seus pedidos e gerencie seus dados.</p>
 
     <div class="painel">
@@ -61,7 +61,9 @@
                 </div>
             </form>
 
-            <a href="{{ url_for('conta') }}" class="painel__btn-sair">Sair</a>
+            <form method="post" action="{{ url_for('sair') }}">
+                <button type="submit" class="painel__btn-sair">Sair</button>
+            </form>
         </aside>
 
         <section class="painel__pedidos" aria-labelledby="titulo-pedidos">

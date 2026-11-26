@@ -1,13 +1,38 @@
 import os
+from functools import wraps
 
+import bcrypt
+import psycopg
 from dotenv import load_dotenv
-from flask import Flask, abort, render_template
-from catalogo import PRODUTOS
+from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
+from psycopg.rows import dict_row
+import db
+
 
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key= os.environ["SECRET_KEY"]
+app.secret_key = os.environ["SECRET_KEY"]
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+)
+
+db.init_app(app)
+
+def formatar_preco(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def login_requerido(view):
+    @wraps(view)
+    def protegida(*args, **kwargs):
+        if "cliente_id" not in session:
+            flash("Entre na sua conta para acessar o painel.", "erro")
+            return redirect(url_for("conta"))
+        return view(*args, **kwargs)
+
+    return protegida
 
 @app.route("/")
 def index():
@@ -15,24 +40,94 @@ def index():
 
 @app.route("/produtos")
 def produtos():
-    return render_template("produtos.html", current="produtos")
+    conn = db.get_db()
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute("""
+            select id_acessorios, nome_acessorios, valor_acessorario,
+                   foto, descricao, status_exibicao
+            from bloome.vw_catalogo_publico
+            order by id_acessorios
+        """)
+        linhas = cur.fetchall()
+
+    lista = [
+        {
+            "id": l["id_acessorios"],
+            "nome": l["nome_acessorios"],
+            "preco": formatar_preco(l["valor_acessorario"]),
+            "imagem": l["foto"],
+            "descricao": l["descricao"],
+            "status_exibicao": l["status_exibicao"],
+        }
+        for l in linhas
+    ]
+    return render_template("produtos.html", current="produtos", produtos=lista)
+
 
 @app.route("/produtos/<int:produto>")
 def produto(produto):
-    item = PRODUTOS.get(produto)
+    conn = db.get_db()
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute("""
+            select id_acessorios, nome_acessorios, valor_acessorario,
+                   foto, descricao, status_exibicao
+            from bloome.vw_catalogo_publico
+            where id_acessorios = %s
+        """, (produto,))
+        linha = cur.fetchone()
 
-    if item is None:
-        abort(404)
+        if linha is None:
+            abort(404)
 
-    relacionados = [{"id": chave, **dados} for chave, dados in PRODUTOS.items() if chave != produto][:3]
+        cur.execute("""
+            select cor, cor_hex, disponivel
+            from bloome.vw_variacoes_disponiveis
+            where id_acessorios = %s
+            order by ordem
+        """, (produto,))
+        cores = cur.fetchall()
+
+        cur.execute("""
+            select id_acessorios, nome_acessorios, valor_acessorario, foto
+            from bloome.vw_catalogo_publico
+            where id_acessorios <> %s
+            order by id_acessorios
+            limit 3
+        """, (produto,))
+        rel = cur.fetchall()
+
+    item = {
+        "id": linha["id_acessorios"],
+        "nome": linha["nome_acessorios"],
+        "preco": formatar_preco(linha["valor_acessorario"]),
+        "imagem": linha["foto"],
+        "descricao": linha["descricao"],
+        "status_exibicao": linha["status_exibicao"],
+        "cores": [
+            {"cor": c["cor"], "cor_hex": c["cor_hex"], "disponivel": c["disponivel"]}
+            for c in cores
+        ],
+    }
+    relacionados = [
+        {
+            "id": r["id_acessorios"],
+            "nome": r["nome_acessorios"],
+            "preco": formatar_preco(r["valor_acessorario"]),
+            "imagem": r["foto"],
+        }
+        for r in rel
+    ]
 
     return render_template(
         "produto.html",
         current="produtos",
-        produto={"id": produto, **item},
+        produto=item,
         relacionados=relacionados,
     )
 
+
+
+ 
 @app.route("/favoritos")
 def favoritos():
     return render_template("favoritos.html", current="favoritos")
@@ -49,7 +144,104 @@ def carrinho():
 def conta():
     return render_template("conta.html", current="conta")
 
+@app.route("/conta/entrar", methods=["POST"])
+def entrar():
+    email = request.form.get("email", "").strip().lower()
+    senha = request.form.get("senha", "")
+
+    conn = db.get_db()
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute(
+            """
+            select id_cliente, nome, senha_hash
+            from bloome.clientes
+            where email = %s and anonimizado_em is null
+            """,
+            (email,),
+        )
+        cliente = cur.fetchone()
+
+    if cliente is None or not bcrypt.checkpw(
+        senha.encode("utf-8"), cliente["senha_hash"].encode("utf-8")
+    ):
+        flash("E-mail ou senha inválidos.", "erro")
+        return redirect(url_for("conta"))
+
+    session.clear()
+    session["cliente_id"] = cliente["id_cliente"]
+    session["cliente_nome"] = cliente["nome"]
+    return redirect(url_for("painel"))
+
+
+@app.route("/conta/sair", methods=["POST"])
+def sair():
+    session.clear()
+    flash("Você saiu da sua conta.", "sucesso")
+    return redirect(url_for("conta"))
+
+
+@app.route("/conta/criar", methods=["POST"])
+def criar_conta():
+    nome = request.form.get("nome", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    whatsapp = request.form.get("whatsapp", "").strip()
+    senha = request.form.get("senha", "")
+    confirmar = request.form.get("confirmar-senha", "")
+
+    valido = True
+
+    if len(nome) < 2:
+        flash("Informe seu nome completo.", "erro")
+        valido = False
+
+    if not ("@" in email and "." in email.split("@")[-1]):
+        flash("Informe um e-mail válido, por exemplo nome@email.com.", "erro")
+        valido = False
+
+    if len(senha) < 8:
+        flash("A senha precisa ter pelo menos 8 caracteres.", "erro")
+        valido = False
+
+    if senha != confirmar:
+        flash("As senhas não conferem.", "erro")
+        valido = False
+
+    if not valido:
+        return redirect(url_for("conta"))
+
+    hash_senha = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+    conn = db.get_db()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                insert into bloome.clientes (nome, email, senha_hash, telefone)
+                values (%s, %s, %s, %s)
+                returning id_cliente
+                """,
+                (nome, email, hash_senha, whatsapp or None),
+            )
+            id_cliente = cur.fetchone()[0]
+        conn.commit()
+    except psycopg.errors.UniqueViolation:
+        conn.rollback()
+        flash("Já existe uma conta com esse e-mail. Tente entrar.", "erro")
+        return redirect(url_for("conta"))
+    except psycopg.Error:
+        conn.rollback()
+        flash("Não foi possível criar a conta agora. Tente de novo.", "erro")
+        return redirect(url_for("conta"))
+
+    session.clear()
+    session["cliente_id"] = id_cliente
+    session["cliente_nome"] = nome
+    flash("Conta criada com sucesso!", "sucesso")
+    return redirect(url_for("painel"))
+
+
 @app.route("/painel")
+@login_requerido
 def painel():
     return render_template("painel.html", current="painel")
 

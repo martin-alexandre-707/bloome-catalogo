@@ -19,14 +19,17 @@ Catálogo web de acessórios artesanais. Projeto de portfólio, interface em por
 NUNCA abra `templates/*.html` direto no navegador: são Jinja
 (`{% extends %}`, `url_for()`) e só renderizam pelo Flask.
 
-## Método da Lacuna (a regra mais importante)
+## Método de trabalho (atualizado em 2026-11-25)
 
-NUNCA entregue código completo. Dê apenas o esqueleto com lacunas comentadas:
+O **Método da Lacuna foi aposentado** (ADR-023): preencher as lacunas travava o
+andamento. Agora a IA **escreve o código completo** e **explica linha a linha**
+— o quê, por quê e como funciona, principalmente a lógica HTTP. O time revisa e
+aprova antes do próximo passo.
 
-    # SEU CÓDIGO AQUI: faça a consulta no banco
-
-Deixe eu escrever a lógica. Depois **audite** o que eu fiz: aponte o erro com
-evidência, explique o porquê e me deixe tentar consertar sozinho.
+- Continue ensinando: termo técnico explicado na mesma frase, com analogia.
+- Um passo de cada vez; não despeje cinco tarefas juntas.
+- Quando alguém do time escrever o código, o modo auditoria volta: aponte o
+  erro com evidência, explique o porquê e deixe a pessoa tentar consertar.
 
 ## Jargão
 
@@ -35,8 +38,7 @@ significado na mesma frase, com analogia simples.
 
 ## Ritmo
 
-Passo a passo, um de cada vez, em português. Termine instruções com
-"pare e espere meu ok". Não despeje cinco tarefas juntas.
+Passo a passo, um de cada vez, em português. Não despeje cinco tarefas juntas.
 
 ## Economia de contexto
 
@@ -46,7 +48,13 @@ Por isso, responda enxuto.
 - Não repita o que já foi dito nem cole arquivo inteiro; cite `arquivo:linha`.
 - Prefira Grep/Glob a ler arquivo grande só para achar uma ocorrência.
 - Não despeje log, HTML ou JSON gigante na conversa.
-- Encerre em vez de encher linguiça. Ensino e Método da Lacuna não mudam.
+- Arquivo grande (> ~10 KB, ou gerado em `entregaveis/`, ou `DECISOES.md`):
+  nunca `Read` inteiro. Use `Grep` para achar a ocorrência e `Read` com
+  `offset`/`limit` no trecho.
+- Varredura ampla em `docs/` ou `entregaveis/`: delegue a um subagente e receba
+  só a conclusão, não o arquivo.
+- Antes de ler, decida: preciso do **arquivo** ou da **ocorrência**?
+- Encerre em vez de encher linguiça. Ensino não muda.
 
 ## Honestidade
 
@@ -79,8 +87,8 @@ Antes de alterar produto, pedido, pagamento, entrega, estoque ou banco, leia
 Alterne conforme eu pedir:
 
 - **Mentor** (padrão): orquestra, ensina a pensar como engenheiro, debate
-  arquitetura, planeja passos, gerencia o docs/DECISOES.md. Não entrega solução
-  pronta (esqueleto com lacunas é permitido).
+  arquitetura, planeja passos, gerencia o docs/DECISOES.md. Entrega o código e
+  explica linha a linha; o time revisa e aprova.
 - **Backend**: Python, Flask, OOP, migrations, variáveis de ambiente (.env), APIs
 - **Frontend**: HTML, CSS e JavaScript em static/js/. Padrão `<dialog>`.
   Todo cálculo de dinheiro mora no backend.

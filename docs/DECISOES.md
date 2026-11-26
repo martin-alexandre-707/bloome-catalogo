@@ -32,6 +32,15 @@
 | ADR-012 | 2026-11-12 | Banco | Aceita | Edge cases do schema: pingente, esgotado derivado, frete, idempotência e LGPD |
 | ADR-013 | 2026-11-12 | Banco | Aceita | Endurecimento após auditoria: snapshot da baixa, total por trigger e DELETE bloqueado |
 | ADR-014 | 2026-11-12 | Banco | Aceita | DDL aplicado por `db/aplicar.py` (psycopg, conexão direta), sem DROP |
+| ADR-015 | 2026-11-24 | Stack | Aceita | Flask confirmado; teste Django cancelado |
+| ADR-016 | 2026-11-24 | Banco | Aceita | Fotos reais do PDF e descrições em `db/06_dados_reais.sql` |
+| ADR-017 | 2026-11-24 | Banco | Aceita (temporária) | Insumos e receitas FICTÍCIOS para teste, com reversão documentada |
+| ADR-018 | 2026-11-25 | Auth | Aceita | Cadastro de cliente: validação no servidor + `flash` + POST-Redirect-GET |
+| ADR-019 | 2026-11-25 | Auth | Aceita | Senha com bcrypt, `INSERT` em `clientes` e sessão assinada |
+| ADR-020 | 2026-11-25 | Processo | Aceita | Economia de contexto por hábito; sem RTK/hook |
+| ADR-021 | 2026-11-25 | Processo | Aceita | Fim do "pare e espere meu ok" em instruções |
+| ADR-022 | 2026-11-25 | Auth | Aceita | Login, logout e `/painel` protegido por decorador; cookie HttpOnly/SameSite |
+| ADR-023 | 2026-11-25 | Processo | Aceita | Fim do Método da Lacuna: IA escreve o código e explica linha a linha |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -41,7 +50,7 @@
 ## ADR-001 — Stack web: Flask + Jinja, sem build
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o catálogo nasceu como HTML/CSS estático e precisava de rotas,
   templates reutilizáveis e, depois, banco de dados.
@@ -65,7 +74,7 @@
 ## ADR-002 — Banco: Supabase (Postgres na nuvem), sem Postgres local
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** os dados estão em memória (`PRODUTOS`, em `catalogo.py`).
   Precisamos de banco real sem criar diferença entre desenvolvimento e produção.
@@ -89,7 +98,7 @@
 ## ADR-003 — Refatoração estranguladora
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o catálogo atual funciona com dados em memória. Substituir tudo
   de uma vez quebraria o site e dificultaria achar a causa.
@@ -110,7 +119,7 @@
 ## ADR-004 — Autenticação: painel do vendedor
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o visitante deve navegar livremente; o vendedor precisa de uma
   área protegida.
@@ -134,7 +143,7 @@
 ## ADR-005 — Segredos e configuração
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** `SECRET_KEY` e `DATABASE_URL` são segredos; se vazarem, qualquer
   pessoa assume sessões ou acessa o banco.
@@ -156,7 +165,7 @@
 ## ADR-006 — Acessibilidade WCAG 2.1 AA
 
 - **Data:** 2026-11-06 *(registro retroativo em 2026-11-07)*
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** o projeto tem foco declarado em acessibilidade e o `styles.css`
   tem ~1.575 linhas com decisões validadas. Regressões são caras.
@@ -179,7 +188,7 @@
 ## ADR-007 — Commits sem atribuição de IA
 
 - **Data:** 2026-11-07
-- **Autor:** Martin Alexandre *(decisão)* · Claude *(registro)*
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
 - **Status:** Aceita
 - **Contexto:** um commit gerado com `Co-Authored-By: Claude Code
   <noreply@anthropic.com>` fez a conta **claude** aparecer no painel de
@@ -522,6 +531,305 @@
 ```
 
 Depois de escrever a entrada, adicione uma linha no **Índice**.
+
+---
+
+## ADR-015 — Stack web: Flask confirmada (teste Django cancelado)
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o §0 do `VALIDACAO-REGRAS.md` previa um teste de 1 dia com
+  Django na branch `experimento/django`. O teste não chegou a ser executado, e
+  em 2026-11-24 o time decidiu seguir com o que já está funcionando.
+- **Decisão:** manter **Flask + Jinja** como stack do projeto. O teste Django
+  fica **cancelado** e deixa de ser pendência.
+- **Motivo técnico:** o catálogo já conecta no Supabase, lê views e renderiza
+  com Jinja; migrar agora custaria retrabalho sem ganho demonstrado.
+- **Consequências:**
+  - O §0 do `VALIDACAO-REGRAS.md` passa a registrar a decisão.
+  - Decisões futuras assumem Flask (ADR-001).
+- **Arquivos:** `docs/DECISOES.md`, `docs/VALIDACAO-REGRAS.md`
+
+---
+
+## ADR-016 — Dados reais do catálogo: fotos do PDF e descrições
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o seed (ADR-014) deixa `foto`, `descricao` e `insumos` vazios,
+  e por isso todos os 16 produtos aparecem como "volta em breve". O PDF oficial
+  (`docs/referencias/Catalogo-BLOOME.pdf`) tem as 16 fotos reais, mas **não tem
+  descrições**.
+- **Decisão:**
+  - Fotos: extraídas do PDF (páginas 2, 3, 4 e 6), recortadas, redimensionadas
+    para 900 px e salvas como JPEG otimizado em `static/imgs/` (MVP: foto local,
+    conforme §7 do `VALIDACAO-REGRAS.md`).
+  - Descrições: 6 vêm do `catalogo.py` (texto já aprovado); as outras 10 foram
+    escritas a partir de dados reais do PDF (nome, material, categoria) e
+    **aguardam revisão da dona**. Nenhum dado de estoque foi inventado.
+  - Aplicação idempotente via `python db/aplicar.py --dados`, que executa
+    `db/06_dados_reais.sql` (só UPDATE; pode rodar de novo).
+- **Motivo técnico:** dado real e auditável, sem quebrar o seed; o `aplicar.py`
+  aborta quando o schema já existe, então o novo flag separa DDL de DML.
+- **Consequências:**
+  - O catálogo passa a exibir foto e descrição reais.
+  - O status continua `volta_em_breve` até existirem insumos + receita
+    (`pingente_insumo_id` e `composicao_variacoes` ainda vazios).
+  - As 6 imagens PNG antigas em `static/imgs/` ficaram sem referência e podem
+    ser removidas quando o time confirmar.
+- **Arquivos:** `db/06_dados_reais.sql`, `db/aplicar.py`, `static/imgs/*.jpg`,
+  `docs/DECISOES.md`
+
+---
+
+## ADR-017 — Dados fictícios de estoque para teste (temporária)
+
+- **Data:** 2026-11-24
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita, **temporária** — sai antes do lançamento
+- **Contexto:** sem insumos e receitas, nada é vendável e todo o catálogo
+  aparece como "volta em breve". O time pediu para testar o fluxo visual
+  enquanto os dados reais não chegam.
+- **Decisão:** criar 19 insumos fictícios (5 fios + 14 pingentes) com saldo 99,
+  receita de fio + pingente em todas as 49 variações, e manter **3 modelos**
+  como "em breve" para testar os dois estados:
+  - 26 Cordão Amarração — sem pingente (o modelo não tem pingente);
+  - 27 Chocker Fita Pura — sem pingente (o modelo não tem pingente);
+  - 28 Cordão Gota — pingente com saldo 0.
+  O detalhe do produto passa a mostrar um botão desabilitado **"Em breve"**
+  (mesmo visual do "Comprar", estado `:disabled` já existente no CSS).
+- **Motivo técnico:** exercitar o caminho real (views + regras D2/D3) em vez de
+  mascarar a regra no template; preços e quantidades são fictícios.
+- **Consequências:**
+  - **Nenhum** desses números é dado real: não usar em relatório nem em venda.
+  - Reversão documentada no rodapé de `db/07_placeholder_teste.sql`
+    (`DELETE` receitas → `pingente_insumo_id = null` → `DELETE insumos`).
+  - A regra D2 (sem pingente → "volta em breve") impede vender modelos sem
+    pingente; decisão de produto pendente com a dona.
+  - `python db/aplicar.py --teste` aplica dados reais + fictícios; `--dados`
+    aplica só os reais.
+- **Arquivos:** `db/07_placeholder_teste.sql`, `db/aplicar.py`,
+  `templates/produto.html`, `docs/DECISOES.md`
+
+---
+
+## ADR-018 — Cadastro de cliente: validação no servidor, `flash` e POST-Redirect-GET
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o formulário "Criar conta" já chega ao servidor
+  (`POST /conta/criar`), mas nada era validado. Atributos HTML (`required`,
+  `minlength`) são só conveniência do navegador e podem ser burlados com o
+  DevTools desligando-os ou com um `curl`.
+- **Decisão:**
+  1. Toda regra do formulário existe **também no servidor**, em
+     `criar_conta()`: nome ≥ 2 caracteres, e-mail com `@` e um ponto depois
+     dele, senha ≥ 8 caracteres, senha igual à confirmação.
+  2. As regras são enfileiradas com uma bandeira booleana (`valido`) para
+     exibir **todos** os erros de uma vez, não só o primeiro.
+  3. Mensagens de erro vão por `flash()` com categoria `"erro"` e são lidas em
+     `conta.html` com `get_flashed_messages(with_categories=true)`, dentro de um
+     bloco `role="alert"` (WCAG: anúncio imediato por leitor de tela).
+  4. E-mail é normalizado no servidor (`.strip().lower()`), como o schema exige
+     em `ck_clientes_email_norm`.
+  5. A resposta é sempre **302 + redirect** (POST-Redirect-GET): o POST nunca
+     devolve HTML, então F5 na página final não reenvia o cadastro.
+  6. Senha mínimo 8 alinhada a `docs/VALIDACAO-REGRAS.md` §5 (antes o HTML
+     dizia 6).
+- **Motivo técnico:** validação de servidor é a única que conta; PRG evita
+  reenvio duplicado; `flash` resolve o problema de mensagem que não sobrevive a
+  um `redirect`.
+- **Alternativas consideradas:**
+  - Renderizar `conta.html` direto no POST com a mensagem — quebra o PRG e
+    permite reenvio no F5.
+  - Validar só no HTML — declaradamente inseguro.
+  - Regex completa de e-mail — o schema também não usa; a checagem simples é
+    coerente com o banco e suficiente para o MVP.
+- **Consequências:**
+  - Ainda **não** persiste nada: o `INSERT` com bcrypt é o passo seguinte
+    (nova ADR quando entrar).
+  - O bloco `.auth__erros` está sem CSS próprio; herda o padrão da página.
+  - Categoria `"erro"` já trafega e não é usada — fica pronta para estilizar.
+- **Arquivos:** `app.py`, `templates/conta.html`
+
+---
+
+## ADR-019 — Senha com bcrypt, `INSERT` em `bloome.clientes` e sessão assinada
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** com as validações prontas (ADR-018), o cadastro precisava
+  persistir o cliente e deixá-lo autenticado.
+- **Decisão:**
+  1. Senha é gravada **somente** como hash bcrypt: `bcrypt.hashpw(senha, bcrypt.gensalt())`.
+     Custo padrão da biblioteca (`2b$12$` = 2¹² rodadas), 60 caracteres no total,
+     o que satisfaz `ck_clientes_hash` (`length >= 20`).
+  2. A senha em texto puro existe apenas na memória durante a requisição e
+     nunca é logada, gravada ou devolvida.
+  3. `INSERT` parametrizado (`%s` + tupla) com `returning id_cliente`.
+  4. Telefone vazio vai como `NULL` (`whatsapp or None`), porque
+     `ck_clientes_telefone` rejeita string vazia.
+  5. E-mail duplicado é capturado por `psycopg.errors.UniqueViolation`
+     (índice `ux_clientes_email_ativo`), com `rollback()` e mensagem amigável.
+     A mensagem é **explícita** no cadastro ("já existe conta, tente entrar");
+     no login e no reset ela será genérica, como fazem os sites grandes.
+  6. `psycopg.Error` genérico captura o resto (banco fora, rede) — evita 500
+     com sucesso parcial.
+  7. Autenticação por `session` do Flask: grava `cliente_id` e `cliente_nome`;
+     **nunca** senha, hash, CPF ou dado de cartão. O cookie da sessão é
+     assinado com `SECRET_KEY`, portanto **legível** pelo cliente — assinatura
+     garante integridade, não sigilo.
+  8. Após criar a conta, redireciona para `/painel` já logado.
+- **Motivo técnico:** bcrypt é lento por projeto (resistente a força bruta em
+  GPU), diferente de MD5/SHA-256; o unique do banco é a única garantia real de
+  unicidade sob concorrência; a sessão evita re-login imediato.
+- **Alternativas consideradas:**
+  - `bcrypt.hashpw(senha, bcrypt.gensalt(rounds=14))` — mais seguro, ~4x mais
+    lento; desnecessário no MVP, dá para subir depois sem migrar hashes.
+  - Guardar `senha` na sessão para pré-preencher — vazamento inaceitável.
+  - Autenticação por `itsdangerous`/JWT — complexidade sem ganho no escopo.
+- **Consequências:**
+  - `/painel` continua **público**: a sessão é gravada, mas nada verifica ainda.
+    Proteger a rota (e exibir `cliente_nome` no header) é o passo seguinte.
+  - A tabela `clientes` tem trigger que bloqueia `DELETE` físico
+    (`trg_clientes_sem_delete`); cadastros de teste só saem por
+    `bloome.anonimizar_cliente()`.
+  - Conta de teste `teste.1c@teste.local` (id 27) foi criada e **anonimizada**
+    ao final do teste.
+- **Arquivos:** `app.py`, `docs/DECISOES.md`
+
+---
+
+## ADR-020 — Economia de contexto: hábito de leitura, sem ferramenta extra
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** avaliou-se adotar RTK/Headroom (compressão de saída de
+  terminal) e hooks `PostToolUse`. Os comandos do projeto produzem saída
+  pequena (centenas de caracteres); o gasto real vem de ler arquivos grandes
+  inteiros (`entregaveis/`, `DECISOES.md`, `styles.css`).
+- **Decisão:** não instalar ferramenta. Economia via três hábitos:
+  leitura cirúrgica (`Grep` + `Read` com trecho), delegação de varredura a
+  subagente, e `/clear` por tarefa. Regras registradas no `AGENTS.md`.
+- **Motivo técnico:** comprimir saída de 500 caracteres não compensa; o custo
+  dominante é o contexto de entrada, não o output de shell.
+- **Alternativas consideradas:**
+  - RTK/Headroom — ganho marginal neste perfil de uso; mais uma dependência.
+  - Hook `PostToolUse` comprimindo Bash — mesmo motivo.
+  - Roteamento de modelo — já se usa modelo barato.
+- **Consequências:** arquivo grande lido sem `Grep` prévio é considerado erro
+  de processo nas revisões. Reavaliar se surgir build/log volumoso.
+- **Arquivos:** `AGENTS.md`, `docs/DECISOES.md`
+
+---
+
+## ADR-021 — Ritmo sem a frase obrigatória "pare e espere meu ok"
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** a regra "Ritmo" exigia encerrar toda instrução com
+  "pare e espere meu ok", o que virava ruído em respostas de consulta e de
+  pergunta.
+- **Decisão:** remover a frase obrigatória. Mantêm-se "passo a passo, um de
+  cada vez, em português" e a proibição de despejar cinco tarefas juntas.
+- **Motivo técnico:** a confirmação explícita continua fazendo sentido em
+  mudanças de arquivo/estrutura — isso é coberto pela regra "Não faça sem
+  pedir", aplicada por contexto, não mecanicamente em toda resposta.
+- **Alternativas consideradas:**
+  - Manter só em instruções de código — rejeitada: duplica "Não faça sem pedir".
+  - Remover "Não faça sem pedir" também — rejeitada: protege mudanças grandes.
+- **Consequências:** pedidos de confirmação passam a ocorrer apenas em
+  mudanças grandes ou irreversíveis.
+- **Arquivos:** `AGENTS.md`, `docs/DECISOES.md`
+
+---
+
+## ADR-022 — Login, logout e `/painel` protegido por decorador
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o cadastro (ADR-019) já criava a sessão, mas o `/painel`
+  continuava público, o header mostrava "Lucas" fixo e o formulário "Entrar"
+  era um GET para `/painel` — a senha ia para a URL, o histórico, os logs e o
+  header `Referer` de links seguintes.
+- **Decisão:**
+  1. `POST /conta/entrar` lê `request.form`, normaliza o e-mail
+     (`.strip().lower()`) e **não** mexe na senha.
+  2. A consulta é parametrizada e filtra `anonimizado_em is null` — conta
+     anonimizada não loga.
+  3. A senha é conferida com `bcrypt.checkpw`; e-mail inexistente e senha
+     errada devolvem a **mesma** mensagem genérica (evita enumeração de
+     contas).
+  4. Em sucesso, `session.clear()` antes de gravar `cliente_id` e
+     `cliente_nome` (session fixation); nenhum segredo entra na sessão.
+  5. O decorador `login_requerido` (com `functools.wraps`) protege rotas
+     privadas; ele checa só a presença de `cliente_id` na sessão já validada
+     pelo Flask. Hoje só o `/painel` usa.
+  6. `POST /conta/sair` limpa a sessão **antes** do `flash` (o flash mora na
+     sessão) e redireciona para `/conta`.
+  7. O formulário "Entrar" vira POST para `/conta/entrar`; "Sair" vira
+     `<form method="post">` no header e no painel. GET não altera estado.
+  8. O header e a saudação do painel leem `session["cliente_nome"]`; o bloco
+     só aparece quando existe `cliente_id`.
+  9. Cookie de sessão com `HttpOnly` e `SameSite=Lax` explícitos
+     (`SESSION_COOKIE_HTTPONLY`, `SESSION_COOKIE_SAMESITE`). `Secure` fica para
+     o deploy com HTTPS.
+- **Motivo técnico:** POST-Redirect-GET evita reenvio no F5; a mensagem
+  genérica fecha enumeração; o decorador centraliza a regra e reduz a chance de
+  esquecer uma rota nova; POST no logout impede disparo por prefetch/crawler;
+  HttpOnly e SameSite reduzem roubo de sessão por XSS e CSRF.
+- **Alternativas consideradas:**
+  - Checar `cliente_id` dentro de cada rota — funciona, mas repete a regra e é
+    fácil esquecer.
+  - `@app.before_request` com lista de exceções — mais automático, porém fácil
+    de bloquear o catálogo por engano.
+  - Logout por link GET — quebra a semântica de método seguro.
+  - JWT/itsdangerous puro — complexidade sem ganho no MVP.
+- **Consequências:**
+  - O decorador **não** consulta o banco por requisição: conta anonimizada
+    durante a sessão continua logada até o cookie sumir.
+  - Ainda **não** há token CSRF; `SameSite=Lax` cobre o caso cross-site mais
+    comum, mas não substitui o token.
+  - Mensagem de sucesso do login não é exibida porque o painel não renderiza
+    `get_flashed_messages()`; evitar `flash` no login até existir um bloco
+    global (ou mover o bloco para `base.html`).
+  - Pedidos e cartão "Meus dados" do painel continuam fictícios.
+  - Testado com `test_client` e cursor falso no fluxo login → painel → logout;
+    com `SELECT` real de e-mail inexistente; login real com conta no Supabase
+    ainda não testado.
+- **Arquivos:** `app.py`, `templates/conta.html`, `templates/base.html`,
+  `templates/painel.html`, `static/css/styles.css`
+
+---
+
+## ADR-023 — Fim do Método da Lacuna: a IA escreve e explica
+
+- **Data:** 2026-11-25
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** o Método da Lacuna pedia que o time preenchesse esqueletos com
+  lacunas. Na prática, preencher as lacunas travava o andamento, então o método
+  foi trocado.
+- **Decisão:** a IA passa a **entregar o código completo**, explicando o quê, o
+  porquê e como funciona (com foco na lógica HTTP), em passos pequenos. O time
+  revisa e aprova antes do próximo passo. O modo auditoria continua disponível
+  quando alguém do time escrever código.
+- **Motivo:** manter o aprendizado sem travar o projeto; a explicação linha a
+  linha preserva o objetivo didático.
+- **Alternativas consideradas:**
+  - Manter a lacuna e esperar — rejeitada: bloqueava o avanço.
+  - Entregar código sem explicação — rejeitada: perde o ensino.
+- **Consequências:** `AGENTS.md` atualizado (método, papéis e economia de
+  contexto). `docs/CONTEXTO-BLOOME-PARA-IA.md` é briefing histórico e pode
+  continuar descrevendo o método antigo.
+- **Arquivos:** `AGENTS.md`
 
 ---
 
