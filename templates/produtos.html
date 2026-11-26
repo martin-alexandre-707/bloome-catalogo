@@ -98,16 +98,32 @@
         });
     }
 
+    function abrirDetalhes(idProduto, gatilho) {
+        const template = document.querySelector(
+            'template[data-produto="' + idProduto + '"]'
+        );
+        conteudo.replaceChildren(template.content.cloneNode(true));
+        selecionarCores(conteudo);
+        ultimoGatilho = gatilho;
+        modal.showModal();
+        botaoFechar.focus();
+    }
+
     document.querySelectorAll('[data-abrir-produto]').forEach((gatilho) => {
-        gatilho.addEventListener('click', () => {
-            const template = document.querySelector(
-                'template[data-produto="' + gatilho.dataset.abrirProduto + '"]'
-            );
-            conteudo.replaceChildren(template.content.cloneNode(true));
-            selecionarCores(conteudo);
-            ultimoGatilho = gatilho;
-            modal.showModal();
-            botaoFechar.focus();
+        gatilho.addEventListener('click', () => abrirDetalhes(
+            gatilho.dataset.abrirProduto,
+            gatilho
+        ));
+    });
+
+    // O restante do card (nome, preço, descrição) também abre o modal.
+    // A via de teclado é o botão da foto, que tem aria-label.
+    document.querySelectorAll('.product').forEach((card) => {
+        const botao = card.querySelector('.product__open');
+        card.addEventListener('click', (evento) => {
+            // Se o clique já caiu num botão com gatilho, ele cuida de si
+            if (evento.target.closest('[data-abrir-produto]')) return;
+            abrirDetalhes(botao.dataset.abrirProduto, botao);
         });
     });
 

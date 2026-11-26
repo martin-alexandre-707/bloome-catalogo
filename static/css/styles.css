@@ -1977,21 +1977,12 @@ p {
   cursor: not-allowed;
 }
 
-/* Card inteiro clicável: o botão .product__open cobre a área toda e abre o
-   modal de detalhes; fica abaixo do botão "Comprar" (que tem z-index 1). */
-.product {
-  position: relative;
-}
-
+/* Botão que abre o modal de detalhes: ocupa a coluna da foto (em fluxo,
+   como o antigo .product__link). O restante do card também abre o modal
+   via listener no <article>; a via de teclado é este botão (aria-label). */
 .product__open {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: grid;
-  place-items: center;
   padding: 0;
   border: none;
-  border-radius: var(--radius-lg);
   background: none;
   cursor: pointer;
 }
