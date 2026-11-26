@@ -28,7 +28,7 @@
                 {% if produto.status_exibicao == 'volta_em_breve' %}
                 <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
                 {% else %}
-                <button type="button" class="btn product__btn-comprar" data-abrir-produto="{{ produto.id }}">Comprar</button>
+                <button type="button" class="btn product__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
                 {% endif %}
             </div>
         </article>
@@ -60,7 +60,20 @@
         {% if produto.status_exibicao == 'volta_em_breve' %}
         <button type="button" class="btn product-modal__cta" disabled aria-disabled="true">Em breve</button>
         {% else %}
-        <a href="{{ url_for('carrinho') }}" class="btn product-modal__cta">Comprar</a>
+        <div class="qty" role="group" aria-label="Quantidade de {{ produto.nome }}">
+            <button type="button" class="qty__btn" data-qty="menos" aria-label="Diminuir quantidade">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                    <path d="M5 12h14"></path>
+                </svg>
+            </button>
+            <output class="qty__valor">1</output>
+            <button type="button" class="qty__btn" data-qty="mais" aria-label="Aumentar quantidade">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+            </button>
+        </div>
+        <a href="{{ url_for('carrinho') }}" class="btn product-modal__cta">Adicionar ao carrinho</a>
         {% endif %}
     </template>
     {% endfor %}
@@ -104,9 +117,31 @@
         );
         conteudo.replaceChildren(template.content.cloneNode(true));
         selecionarCores(conteudo);
+        configurarQuantidade(conteudo);
         ultimoGatilho = gatilho;
         modal.showModal();
         botaoFechar.focus();
+    }
+
+    function configurarQuantidade(scope) {
+        // Mínimo 1 (quantidade 0 não existe numa compra) e sem teto:
+        // a validação real de estoque é do backend no checkout
+        // (verificar_estoque_carrinho — VALIDACAO-REGRAS.md §2).
+        const valor = scope.querySelector('.qty__valor');
+        if (!valor) return; // produtos "Em breve" não têm seletor
+
+        const menos = scope.querySelector('[data-qty="menos"]');
+        const mais = scope.querySelector('[data-qty="mais"]');
+
+        function atualizar(novo) {
+            const n = Math.max(1, novo);
+            valor.textContent = n;
+            menos.disabled = n <= 1;
+        }
+
+        menos.addEventListener('click', () => atualizar(+valor.textContent - 1));
+        mais.addEventListener('click', () => atualizar(+valor.textContent + 1));
+        atualizar(1);
     }
 
     document.querySelectorAll('[data-abrir-produto]').forEach((gatilho) => {
