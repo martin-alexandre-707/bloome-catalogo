@@ -4,12 +4,28 @@ Catálogo online de joias e acessórios artesanais da **Bloome**, desenvolvido e
 
 ## Como executar
 
-O projeto não tem build nem dependências. Basta abrir o `index.html` no navegador:
+O catálogo é um app **Flask** com templates Jinja. Não abra `templates/*.html`
+direto no navegador — eles só renderizam pelo Flask.
 
 ```bash
-# ou sirva localmente (opcional)
-python -m http.server
+pip install -r requirements.txt
+python app.py          # http://127.0.0.1:5000
 ```
+
+**Sem `.env`, o app roda em modo demonstração**: os produtos vêm do
+`catalogo.py` (dados fictícios) e o fluxo inteiro — catálogo, detalhe, carrinho,
+favoritos — abre normalmente. É o suficiente para trabalhar no front.
+
+Para usar o banco real (Supabase), copie `.env.example` para `.env` e preencha
+`SECRET_KEY` e `DATABASE_URL`. A troca é automática:
+
+| Cenário | Origem dos produtos |
+| ------- | ------------------- |
+| `.env` com `DATABASE_URL` | views do Supabase |
+| sem `.env` | dados fictícios do `catalogo.py` |
+| `MOCK=1` no ambiente | dados fictícios, mesmo com banco |
+
+Toda tela nova lê dados por `dados.py` — o mock mora lá, nunca no template.
 
 ## Páginas
 
@@ -29,13 +45,15 @@ python -m http.server
 ## Estrutura
 
 ```
-bloome-catalogo/
-├── index.html      # Página inicial (hero e apresentação)
-├── produtos.html   # Catálogo completo de joias com cards acessíveis
-├── sobre.html      # Página institucional e proposta de valor
-├── carrinho.html   # Carrinho de compras e questionário de checkout
-├── styles.css      # Estilos globais e regras de responsividade
-└── imgs/           # Fotos das peças e acessórios
+bloome-catalogo-main/
+├── app.py           # Rotas Flask
+├── dados.py         # Fonte de dados: Supabase ou mock (escolhida pelo .env)
+├── db.py            # Conexão psycopg com o banco
+├── catalogo.py      # Dados fictícios usados no modo demonstração
+├── db/              # SQL versionado (schema, funções, views, seed, testes)
+├── templates/       # Jinja: base, index, produtos, produto, carrinho, conta...
+├── static/          # CSS, JS e imagens (static/imgs/)
+└── docs/            # Regras, decisões (ADR) e estado do projeto
 ```
 
 ## Acessibilidade

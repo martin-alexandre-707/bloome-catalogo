@@ -6,22 +6,29 @@ import psycopg
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from psycopg.rows import dict_row
+import dados
 import db
 
 
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ["SECRET_KEY"]
+
+_chave = os.environ.get("SECRET_KEY")
+if not _chave:
+    if dados.modo_mock():
+        # Só vale quando não há banco: serve para o clone rodar sem .env.
+        _chave = "modo-mock-sem-seguranca-nao-use-em-producao"
+    else:
+        raise RuntimeError("SECRET_KEY não definida no .env")
+app.secret_key = _chave
+
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
 )
 
 db.init_app(app)
-
-def formatar_preco(valor):
-    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 def login_requerido(view):
@@ -40,89 +47,22 @@ def index():
 
 @app.route("/produtos")
 def produtos():
-    conn = db.get_db()
-    with conn.cursor(row_factory=dict_row) as cur:
-        cur.execute("""
-            select id_acessorios, nome_acessorios, valor_acessorario,
-                   foto, descricao, status_exibicao
-            from bloome.vw_catalogo_publico
-            order by id_acessorios
-        """)
-        linhas = cur.fetchall()
-
-    lista = [
-        {
-            "id": l["id_acessorios"],
-            "nome": l["nome_acessorios"],
-            "preco": formatar_preco(l["valor_acessorario"]),
-            "imagem": l["foto"],
-            "descricao": l["descricao"],
-            "status_exibicao": l["status_exibicao"],
-        }
-        for l in linhas
-    ]
+    lista = dados.listar_produtos()
     return render_template("produtos.html", current="produtos", produtos=lista)
 
 
 @app.route("/produtos/<int:produto>")
 def produto(produto):
-    conn = db.get_db()
-    with conn.cursor(row_factory=dict_row) as cur:
-        cur.execute("""
-            select id_acessorios, nome_acessorios, valor_acessorario,
-                   foto, descricao, status_exibicao
-            from bloome.vw_catalogo_publico
-            where id_acessorios = %s
-        """, (produto,))
-        linha = cur.fetchone()
+    item = dados.buscar_produto(produto)
 
-        if linha is None:
-            abort(404)
-
-        cur.execute("""
-            select cor, cor_hex, disponivel
-            from bloome.vw_variacoes_disponiveis
-            where id_acessorios = %s
-            order by ordem
-        """, (produto,))
-        cores = cur.fetchall()
-
-        cur.execute("""
-            select id_acessorios, nome_acessorios, valor_acessorario, foto
-            from bloome.vw_catalogo_publico
-            where id_acessorios <> %s
-            order by id_acessorios
-            limit 3
-        """, (produto,))
-        rel = cur.fetchall()
-
-    item = {
-        "id": linha["id_acessorios"],
-        "nome": linha["nome_acessorios"],
-        "preco": formatar_preco(linha["valor_acessorario"]),
-        "imagem": linha["foto"],
-        "descricao": linha["descricao"],
-        "status_exibicao": linha["status_exibicao"],
-        "cores": [
-            {"cor": c["cor"], "cor_hex": c["cor_hex"], "disponivel": c["disponivel"]}
-            for c in cores
-        ],
-    }
-    relacionados = [
-        {
-            "id": r["id_acessorios"],
-            "nome": r["nome_acessorios"],
-            "preco": formatar_preco(r["valor_acessorario"]),
-            "imagem": r["foto"],
-        }
-        for r in rel
-    ]
+    if item is None:
+        abort(404)
 
     return render_template(
         "produto.html",
         current="produtos",
         produto=item,
-        relacionados=relacionados,
+        relacionados=dados.listar_relacionados(produto),
     )
 
 
@@ -146,6 +86,10 @@ def conta():
 
 @app.route("/conta/entrar", methods=["POST"])
 def entrar():
+    if dados.modo_mock():
+        flash("Modo demonstração: entrar na conta exige o banco real.", "erro")
+        return redirect(url_for("conta"))
+
     email = request.form.get("email", "").strip().lower()
     senha = request.form.get("senha", "")
 
@@ -182,6 +126,10 @@ def sair():
 
 @app.route("/conta/criar", methods=["POST"])
 def criar_conta():
+    if dados.modo_mock():
+        flash("Modo demonstração: criar conta exige o banco real.", "erro")
+        return redirect(url_for("conta"))
+
     nome = request.form.get("nome", "").strip()
     email = request.form.get("email", "").strip().lower()
     whatsapp = request.form.get("whatsapp", "").strip()

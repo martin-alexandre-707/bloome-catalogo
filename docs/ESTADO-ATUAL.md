@@ -7,7 +7,7 @@
 > **Regra:** atualizar no fim de cada passo concluído. Manter curto — se
 > crescer além de ~60 linhas, resumir em vez de empilhar.
 
-**Última atualização:** 2026-11-25
+**Última atualização:** 2026-11-26
 
 ---
 
@@ -30,6 +30,10 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 | 4 | Checkout: `pedidos` + `itens_pedidos` em transação | ⬜ |
 | 5 | Mercado Pago + webhook idempotente e assinado | ⬜ |
 
+**Modo demonstração (ADR-024):** `dados.py` é a camada de dados; sem
+`DATABASE_URL` (ou com `MOCK=1`) o app serve o mock do `catalogo.py` e todas
+as páginas renderizam. Permite trabalhar no front sem credencial.
+
 Na sessão nova, basta: *"Bloome. Leia AGENTS.md, docs/DECISOES.md e
 docs/ESTADO-ATUAL.md. Continua o passo X."*
 
@@ -37,6 +41,10 @@ docs/ESTADO-ATUAL.md. Continua o passo X."*
 
 ## Pendências conhecidas (não bloqueiam o passo atual)
 
+- **A credencial do `.env` está falhando** (`password authentication failed`
+  em 2026-11-26). O `DATABASE_URL` parece antigo: a senha foi trocada ou o
+  projeto foi recriado. Enquanto isso, só o modo mock funciona. Reconferir no
+  painel do Supabase (Settings → Database → senha) antes do próximo passo.
 - Login real com conta no Supabase ainda **não** foi testado ponta a ponta
   (só com `test_client` e cursor falso).
 - `login_requerido` não consulta o banco por requisição: conta anonimizada
