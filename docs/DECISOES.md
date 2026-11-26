@@ -41,6 +41,7 @@
 | ADR-021 | 2026-11-25 | Processo | Aceita | Fim do "pare e espere meu ok" em instruções |
 | ADR-022 | 2026-11-25 | Auth | Aceita | Login, logout e `/painel` protegido por decorador; cookie HttpOnly/SameSite |
 | ADR-023 | 2026-11-25 | Processo | Aceita | Fim do Método da Lacuna: IA escreve o código e explica linha a linha |
+| ADR-024 | 2026-11-26 | Estrutura | Aceita | Modo demonstração (mock) e camada `dados.py`; sem `.env` o app roda |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -830,6 +831,46 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
   contexto). `docs/CONTEXTO-BLOOME-PARA-IA.md` é briefing histórico e pode
   continuar descrevendo o método antigo.
 - **Arquivos:** `AGENTS.md`
+
+---
+
+## ADR-024 — Modo demonstração (mock) e camada `dados.py`
+
+- **Data:** 2026-11-26
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Status:** Aceita
+- **Contexto:** quem clona o repositório não conseguia rodar o app: sem
+  `.env`, `app.py` estourava em `SECRET_KEY` e `db.py` tentava conectar com
+  `DSN = None`. Isso bloqueava o trabalho paralelo — o front precisava ver o
+  fluxo renderizado sem acesso ao Supabase — e impedia um avaliador de testar
+  o projeto localmente.
+- **Decisão:**
+  1. Criar `dados.py` como **camada de dados** entre rota e banco. As rotas do
+     catálogo passam a chamar `listar_produtos()`, `buscar_produto()` e
+     `listar_relacionados()` em vez de abrir cursor.
+  2. `dados.modo_mock()` decide a origem: `MOCK=1` força o mock; sem
+     `DATABASE_URL`, mock; com `DATABASE_URL`, Supabase.
+  3. O mock reaproveita `catalogo.py` (6 produtos) e devolve **as mesmas
+     chaves** que a view — o template não muda.
+  4. Sem `SECRET_KEY` e em modo mock, o app usa uma chave de demonstração
+     explicitamente insegura; sem `.env` mas com banco configurado, continua
+     levantando `RuntimeError`.
+  5. Em modo mock, `POST /conta/entrar` e `POST /conta/criar` respondem com
+     `flash` explicando que a conta exige o banco real, em vez de dar 500.
+- **Motivo técnico:** separa "de onde vem o dado" de "como o dado é exibido".
+  O mock fica em **um arquivo só**, nunca no template; trocar mock por dado
+  real é automático quando o `.env` existe. Permite que o front seja
+  desenvolvido em paralelo, na mesma branch, por quem não tem credencial.
+- **Alternativas consideradas:**
+  - Mandar `DATABASE_URL` para o colega — rejeitada: credencial de escrita em
+    histórico de conversa; e o backup do free tier é inexistente.
+  - PostgreSQL local com Docker — adiada: não se sabe se o SQL do Supabase roda
+    limpo em Postgres puro (grants/roles), e não resolve o clone sem instruções.
+  - Deploy público só (Render/Vercel) — insuficiente: não permite rodar local.
+- **Consequências:** dois caminhos de leitura no catálogo. O mock deve ficar
+  pequeno e restrito a leitura; telas novas seguem o mesmo padrão
+  (`dados.py` → aba `MOCK`). `README.md` e `.env.example` atualizados.
+- **Arquivos:** `dados.py`, `app.py`, `.env.example`, `README.md`
 
 ---
 
