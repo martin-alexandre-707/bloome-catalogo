@@ -964,8 +964,8 @@ p {
   display: grid;
   place-items: center;
   border-radius: var(--radius-full);
-  background: var(--color-rose-light);
-  color: var(--color-wine);
+  background: var(--color-success);
+  color: #ffffff;
 }
 
 .checkout-modal__icon svg {
