@@ -1,0 +1,66 @@
+{# Modal de detalhes do produto + toast de "item adicionado".
+   Exige `produtos` (lista de dicts com id, nome, preco, imagem,
+   descricao, status_exibicao e cores).
+   Detalhes de cada produto: <template> é conteúdo inerte (não renderiza);
+   o script copia o template do produto clicado para dentro do <dialog>.
+   Usado por /produtos e /favoritos (ver ADR-025). #}
+{% for produto in produtos %}
+<template data-produto="{{ produto.id }}">
+    {% if produto.imagem %}
+    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="{{ produto.nome }}" class="product-modal__image" loading="lazy" decoding="async">
+    {% endif %}
+    <h2 class="product-modal__title" id="titulo-modal-produto">{{ produto.nome }}</h2>
+    <span class="product-detail__price">{{ produto.preco }}</span>
+    {% if produto.cores %}
+    <div class="product-detail__colors">
+        {% for cor in produto.cores %}
+        <button type="button"
+                class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
+                style="background: {{ cor.cor_hex }}"
+                aria-pressed="false"
+                aria-label="{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}"
+                {% if not cor.disponivel %}disabled{% endif %}></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if produto.descricao %}<p class="product-detail__description">{{ produto.descricao }}</p>{% endif %}
+    {% if produto.status_exibicao == 'volta_em_breve' %}
+    <button type="button" class="btn product-modal__cta" disabled aria-disabled="true">Em breve</button>
+    {% else %}
+    <div class="qty" role="group" aria-label="Quantidade de {{ produto.nome }}">
+        <button type="button" class="qty__btn" data-qty="menos" aria-label="Diminuir quantidade">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+            </svg>
+        </button>
+        <output class="qty__valor">1</output>
+        <button type="button" class="qty__btn" data-qty="mais" aria-label="Aumentar quantidade">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+        </button>
+    </div>
+    <button type="button" class="btn product-modal__cta product-modal__add">Adicionar ao carrinho</button>
+    {% endif %}
+</template>
+{% endfor %}
+
+<dialog class="product-modal" id="modal-produto" aria-labelledby="titulo-modal-produto">
+    <button type="button" class="product-modal__close" aria-label="Fechar detalhes do produto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12"></path>
+        </svg>
+    </button>
+    <div class="product-modal__content" id="conteudo-modal-produto"></div>
+</dialog>
+
+<div class="toast" id="toast-adicionado" role="status" hidden>
+    <span class="toast__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+    </span>
+    <p class="toast__msg">Item adicionado com sucesso!</p>
+</div>
+
+<script src="{{ url_for('static', filename='js/modal-produto.js') }}"></script>

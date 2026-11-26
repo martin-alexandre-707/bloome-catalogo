@@ -42,6 +42,7 @@
 | ADR-022 | 2026-11-25 | Auth | Aceita | Login, logout e `/painel` protegido por decorador; cookie HttpOnly/SameSite |
 | ADR-023 | 2026-11-25 | Processo | Aceita | Fim do Método da Lacuna: IA escreve o código e explica linha a linha |
 | ADR-024 | 2026-11-26 | Estrutura | Aceita | Modo demonstração (mock) e camada `dados.py`; sem `.env` o app roda |
+| ADR-025 | 2026-11-26 | Estrutura | Aceita | Modal de produto vira parcial compartilhada + JS em `static/js/`; favoritos mock data-driven (3 primeiros do catálogo) |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -871,6 +872,53 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
   pequeno e restrito a leitura; telas novas seguem o mesmo padrão
   (`dados.py` → aba `MOCK`). `README.md` e `.env.example` atualizados.
 - **Arquivos:** `dados.py`, `app.py`, `.env.example`, `README.md`
+
+---
+
+## ADR-025 — Modal de produto compartilhado + favoritos data-driven
+
+- **Data:** 2026-11-26
+- **Autor:** Claude *(escreveu e registrou)* · Equipe Bloome *(solicitou)*
+- **Status:** Aceita
+- **Contexto:** o card com modal de detalhes existia só em `/produtos`, com
+  todo o HTML e o JS embutidos no template. A página `/favoritos` repetia
+  cards em HTML estático (nomes, preços e fotos hardcoded) — e os ids `1/3/6`
+  que os links apontavam não existem no banco real (ids 24–39), o que
+  geraria 404 ao rodar com `DATABASE_URL`. Pedido do time: "na aba
+  favoritos, faça as mesmas mudanças que fizemos na aba produtos".
+- **Decisão:**
+  1. Extrair `<template>`s + `<dialog>` + toast para a parcial
+     `templates/_modal-produto.html` e o script para
+     `static/js/modal-produto.js` (padrão do projeto: JS em `static/js/`).
+     `/produtos` e `/favoritos` dão `{% include %}` no mesmo bloco —
+     uma única fonte de verdade para o modal.
+  2. O JS deixa de buscar o card pela classe `.product` e passa a
+     resolver `gatilho.closest('article')`: qualquer card com
+     `data-abrir-produto` ganha o comportamento de "card clicável"
+     sem classe específica; links dentro do card (ex.: "Remover dos
+     favoritos") mantêm o próprio comportamento.
+  3. `/favoritos` passa a receber os **3 primeiros produtos do
+     catálogo** via `dados.listar_produtos()[:3]` (mock e real).
+     Enquanto a tabela de favoritos não existir, "favoritos" é um
+     mock visual alimentado pelos mesmos dados do catálogo.
+- **Motivo técnico:** duplicar ~120 linhas de HTML + JS em dois
+  templates obrigaria sincronizar qualquer ajuste futuro do modal em
+  dois lugares; e o mock hardcoded deixava a página quebrada (404) no
+  modo real. Dados vindos da camada `dados.py` garantem os mesmos
+  campos — incluindo `cores` — nos dois modos.
+- **Alternativas consideradas:**
+  - Manter favoritos estáticos e hardcodar cores nos `<template>`s —
+    rejeitada: dados inventados na UI e 404s no banco real.
+  - Ids fixos `1/3/6` com estado vazio no modo real — rejeitada: a
+    página esvaziaria silenciosamente ao ligar o banco; "3 primeiros"
+    funciona nos dois modos.
+- **Consequências:** o link "Remover dos favoritos" continua no-op
+  (sem persistência); a tabela de favoritos + rotas segue como
+  pendência do roadmap. Mudanças futuras no modal passam a ser feitas
+  em `static/js/modal-produto.js` / `_modal-produto.html`.
+- **Arquivos:** `static/js/modal-produto.js`, `templates/_modal-produto.html`,
+  `templates/produtos.html`, `templates/favoritos.html`, `app.py`,
+  `static/css/styles.css`
 
 ---
 

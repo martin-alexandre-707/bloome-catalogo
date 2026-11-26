@@ -567,6 +567,7 @@ p {
 }
 
 .product__open,
+.favorite__open,
 .favorite__link {
   display: block;
   border-radius: var(--radius-sm);
@@ -589,6 +590,7 @@ p {
 }
 
 .product__open:hover .product__image,
+.favorite__open:hover .favorite__image,
 .favorite__link:hover .favorite__image {
   transform: scale(1.03);
 }
@@ -638,6 +640,7 @@ p {
 }
 
 .product__open:focus-visible,
+.favorite__open:focus-visible,
 .favorite__link:focus-visible {
   outline: var(--focus-width) solid var(--color-wine);
   outline-offset: 2px;
@@ -2011,9 +2014,11 @@ p {
 }
 
 /* Botão que abre o modal de detalhes: ocupa a coluna da foto (em fluxo,
-   como o antigo .product__link). O restante do card também abre o modal
-   via listener no <article>; a via de teclado é este botão (aria-label). */
-.product__open {
+   como o antigo .product__link), nos cards de produto e de favorito.
+   O restante do card também abre o modal via listener no <article>;
+   a via de teclado é este botão (aria-label). */
+.product__open,
+.favorite__open {
   padding: 0;
   border: none;
   background: none;
