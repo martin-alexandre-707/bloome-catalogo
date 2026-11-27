@@ -162,4 +162,4 @@ impede o envio em requisições de outros sites.
 
 ## 12. Equipe
 
-Victor Xavier · Martin Alexandre · Anthonio Fon
+Anthonio Fon · Martin Alexandre · Victor Xavier
