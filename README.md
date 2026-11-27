@@ -10,6 +10,8 @@ Loja de acessórios artesanais da **Bloome**: catálogo, carrinho, favoritos, ca
 pedidos e painel do cliente. Feita em **Flask + PostgreSQL**, com interface em
 português e foco em **acessibilidade (WCAG 2.1 AA)**.
 
+**Site publicado:** <https://bloome-ztzp.onrender.com/>
+
 ![Catálogo da Bloome](docs/capturas/catalogo.png)
 
 > Guia detalhado para montar em outro computador (inclusive o do laboratório):
