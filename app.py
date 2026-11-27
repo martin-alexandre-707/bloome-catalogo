@@ -113,13 +113,7 @@ def adicionar_carrinho():
 
     session["carrinho"] = carrinho
 
-    total = sum(linha["quantidade"] for linha in carrinho)
-    unidade = "item" if total == 1 else "itens"
-    flash(
-        f"{item['nome']} ({cor['cor']}) foi para o carrinho. "
-        f"O carrinho tem {total} {unidade}.",
-        "sucesso",
-    )
+    flash(f"{item['nome']} ({cor['cor']}) foi para o carrinho.", "sucesso")
     return redirect(_url_de_volta(url_for("produto", produto=id_acessorios)))
 
 

@@ -22,12 +22,13 @@ def formatar_preco(valor):
 def _cores_por_acessorio(cur):
     """Agrupa as cores do catálogo inteiro, em uma consulta só.
 
-    Devolve {id_acessorio: [{cor, cor_hex, disponivel}, ...]} já na ordem
+    Devolve {id_acessorio: [{id_variacao, cor, cor_hex, disponivel}, ...]}
+    já na ordem
     da view (coluna `ordem`), para a bolinha certa vir primeiro.
     """
     cur.execute(
         """
-        select id_acessorios, cor, cor_hex, disponivel
+        select id_variacao, id_acessorios, cor, cor_hex, disponivel
         from bloome.vw_variacoes_disponiveis
         order by ordem
         """
@@ -36,6 +37,7 @@ def _cores_por_acessorio(cur):
     for linha in cur.fetchall():
         cores_por_id.setdefault(linha["id_acessorios"], []).append(
             {
+                "id_variacao": linha["id_variacao"],
                 "cor": linha["cor"],
                 "cor_hex": linha["cor_hex"],
                 "disponivel": linha["disponivel"],
