@@ -10,12 +10,14 @@
     <p class="subtitle">Confira os itens escolhidos e finalize seu pedido!</p>
 
     {% if itens %}
+    {# Região viva (discreta) para anunciar mudanças de quantidade #}
+    <p class="cart__avisos visually-hidden" role="status" aria-live="polite"></p>
     <div class="cart">
 
         <ul class="cart__list" aria-label="Itens do carrinho">
 
             {% for item in itens %}
-            <li class="cart__item cart__item--card">
+            <li class="cart__item cart__item--card" data-cart-item>
                 {% if item.imagem %}
                 <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}"
                      alt="" class="cart__item-img" loading="lazy" decoding="async">
@@ -44,9 +46,11 @@
                             <button type="button" class="cart__qty-btn" data-qty="mais"
                                     aria-label="Aumentar quantidade de {{ item.nome }}">+</button>
                         </div>
-                        <button type="submit" class="cart__qty-apply">Atualizar</button>
+                        {# Com JS, −/+ enviam via fetch e não há botão. Sem JS,
+                           este form POST normal e o botão são o fallback. #}
                         <noscript>
                             <p class="cart__qty-noscript">Digite a quantidade e clique em Atualizar.</p>
+                            <button type="submit" class="cart__qty-apply">Atualizar</button>
                         </noscript>
                     </form>
                 </div>
@@ -67,7 +71,7 @@
 
             <div class="cart__summary-row">
                 <span>Subtotal</span>
-                <strong>{{ subtotal }}</strong>
+                <strong data-resumo-subtotal>{{ subtotal }}</strong>
             </div>
 
             <div class="cart__summary-row">
@@ -77,7 +81,7 @@
 
             <div class="cart__summary-row cart__summary-row--total">
                 <span>Total</span>
-                <strong>{{ subtotal }}</strong>
+                <strong data-resumo-total>{{ subtotal }}</strong>
             </div>
 
             {# O checkout (entrega + pagamento) mora em /checkout, que pede
@@ -102,21 +106,108 @@
 
 {% block scripts %}
 <script>
-    // Os botões −/+ só ajustam o número; quem envia é o "Atualizar".
-    // Nada de envio automático: a página recarregaria e perderia o foco
-    // e a posição de rolagem.
+    // Quantidade por fetch: −/+ e o próprio input gravam via POST JSON e
+    // repintam o que o servidor devolver. SEM cálculo de dinheiro aqui:
+    // linha_total/subtotal/carrinho_qtd vêm prontos do backend.
+    const avisosCarrinho = document.querySelector('.cart__avisos');
+    const linkCarrinho = document.querySelector('.navbar__cart');
+
+    function anunciarCarrinho(texto) {
+        if (avisosCarrinho) avisosCarrinho.textContent = texto;
+    }
+
+    function atualizarBadge(qtd) {
+        if (!linkCarrinho) return;
+        let badge = linkCarrinho.querySelector('.navbar__cart-badge');
+        if (qtd > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'navbar__cart-badge';
+                badge.setAttribute('aria-hidden', 'true');
+                linkCarrinho.appendChild(badge);
+            }
+            badge.textContent = qtd;
+        } else if (badge) {
+            badge.remove();
+        }
+        linkCarrinho.setAttribute('aria-label',
+            qtd === 0 ? 'Carrinho, vazio'
+                : qtd === 1 ? 'Carrinho, 1 item'
+                    : 'Carrinho, ' + qtd + ' itens');
+    }
+
     document.querySelectorAll('[data-cart-qty]').forEach((grupo) => {
+        const form = grupo.closest('form');
+        const item = grupo.closest('[data-cart-item]');
         const input = grupo.querySelector('input[name="quantidade"]');
         const menos = grupo.querySelector('[data-qty="menos"]');
         const mais = grupo.querySelector('[data-qty="mais"]');
+        const precoLinha = item ? item.querySelector('.cart__item-price') : null;
+        let confirmada = Math.min(99, Math.max(1, parseInt(input.value, 10) || 1));
+        let enviando = false;
+        let temporizador = null;
 
-        function ajustar(delta) {
-            const atual = parseInt(input.value, 10) || 1;
-            input.value = Math.min(99, Math.max(1, atual + delta));
+        function sincronizarBotoes(qtd) {
+            if (menos) menos.disabled = qtd <= 1;
+            if (mais) mais.disabled = qtd >= 99;
         }
 
-        if (menos) menos.addEventListener('click', () => ajustar(-1));
-        if (mais) mais.addEventListener('click', () => ajustar(1));
+        function aplicar(dados) {
+            confirmada = dados.quantidade;
+            input.value = dados.quantidade;
+            sincronizarBotoes(dados.quantidade);
+            if (precoLinha) precoLinha.textContent = dados.linha_total;
+            document.querySelectorAll('[data-resumo-subtotal], [data-resumo-total]')
+                .forEach((el) => { el.textContent = dados.subtotal; });
+            atualizarBadge(dados.carrinho_qtd);
+            anunciarCarrinho('Quantidade ' + dados.quantidade + '. Subtotal ' + dados.subtotal + '.');
+        }
+
+        async function enviar(qtd) {
+            if (enviando) return;
+            enviando = true;
+            try {
+                const resposta = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json' },
+                    body: new URLSearchParams({ quantidade: String(qtd) }),
+                    credentials: 'same-origin'
+                });
+                if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+                aplicar(await resposta.json());
+            } catch (erro) {
+                input.value = confirmada;
+                sincronizarBotoes(confirmada);
+                anunciarCarrinho('Não foi possível atualizar a quantidade. O valor anterior foi mantido.');
+            } finally {
+                enviando = false;
+            }
+        }
+
+        function passo(delta) {
+            if (enviando) return;
+            const atual = parseInt(input.value, 10) || confirmada;
+            const proximo = Math.min(99, Math.max(1, atual + delta));
+            if (proximo === atual) return;
+            input.value = proximo;
+            enviar(proximo);
+        }
+
+        if (menos) menos.addEventListener('click', () => passo(-1));
+        if (mais) mais.addEventListener('click', () => passo(1));
+
+        // Digitar no campo também grava (com debounce curto).
+        input.addEventListener('change', () => {
+            clearTimeout(temporizador);
+            temporizador = setTimeout(() => {
+                const qtd = Math.min(99, Math.max(1, parseInt(input.value, 10) || confirmada));
+                input.value = qtd;
+                sincronizarBotoes(qtd);
+                if (qtd !== confirmada) enviar(qtd);
+            }, 400);
+        });
+
+        sincronizarBotoes(confirmada);
     });
 </script>
 {% endblock %}

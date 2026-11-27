@@ -23,9 +23,25 @@ app.secret_key = _chave
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
+    # Em produção (HTTPS), o cookie só trafega em conexão segura. O Render
+    # define RENDER=true; em localhost o cookie precisa seguir funcionando
+    # em HTTP, então o padrão é desligado.
+    SESSION_COOKIE_SECURE=bool(os.environ.get("RENDER"))
+    or os.environ.get("SESSION_COOKIE_SECURE") == "1",
 )
 
 db.init_app(app)
+
+
+def _subtotal_formatado(itens):
+    """Soma das linhas do carrinho, já formatada em reais.
+
+    Único lugar que multiplica preço por quantidade — rota, template e
+    resposta JSON do carrinho usam este total, nunca contas soltas.
+    """
+    return dados.formatar_preco(
+        sum(item["preco_valor"] * item["quantidade"] for item in itens)
+    )
 
 
 @app.context_processor
@@ -172,6 +188,23 @@ def atualizar_quantidade(id_variacao):
             linha["quantidade"] = max(1, min(quantidade, 99))
             break
     session["carrinho"] = carrinho
+
+    # Os botões −/+ do carrinho pedem JSON para atualizar a tela sem
+    # recarregar (e sem perder o foco). Todo valor em dinheiro continua
+    # sendo calculado aqui, no servidor; o JS só pinta o que recebe.
+    if request.accept_mimetypes.best == "application/json":
+        itens = dados.montar_carrinho(carrinho)
+        linha = next(
+            (item for item in itens if item["id_variacao"] == id_variacao), None
+        )
+        return {
+            "quantidade": linha["quantidade"] if linha else 0,
+            "linha_total": linha["linha_total"] if linha else "",
+            "subtotal": _subtotal_formatado(itens),
+            "carrinho_qtd": sum(i["quantidade"] for i in carrinho),
+            "vazio": not carrinho,
+        }
+
     return redirect(url_for("carrinho"))
 
 
@@ -265,14 +298,11 @@ def checkout():
 
     if request.method == "GET":
         itens = dados.montar_carrinho(linhas)
-        subtotal_valor = sum(
-            item["preco_valor"] * item["quantidade"] for item in itens
-        )
         return render_template(
             "checkout.html",
             current="carrinho",
             itens=itens,
-            subtotal=dados.formatar_preco(subtotal_valor),
+            subtotal=_subtotal_formatado(itens),
         )
 
     entrega = request.form.get("entrega", "")
@@ -554,6 +584,8 @@ def painel():
         current="painel",
         pedidos=pedidos,
         favoritos=dados.listar_favoritos(session["cliente_id"]),
+        # Dados reais da conta para o cartão "Meus dados" (antes: mock).
+        cliente=dados.buscar_cliente(session["cliente_id"]),
     )
 
 @app.errorhandler(404)

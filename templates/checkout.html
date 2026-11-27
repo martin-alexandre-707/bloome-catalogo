@@ -9,29 +9,30 @@
     <h1>Finalizar pedido</h1>
     <p class="subtitle">Confira os itens e escolha como receber e pagar.</p>
 
-    <div class="cart checkout">
+    <div class="checkout">
 
-        <ul class="cart__list" aria-label="Itens do pedido">
-
+        {# Itens em faixa de largura cheia, como um cartão compacto #}
+        <ul class="checkout__itens" aria-label="Itens do pedido">
             {% for item in itens %}
-            <li class="cart__item">
+            <li class="checkout__item">
                 {% if item.imagem %}
-                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="checkout__item-img" loading="lazy" decoding="async">
                 {% endif %}
-                <div>
-                    <h2 class="cart__item-name">{{ item.nome }}</h2>
-                    <p>{{ item.cor }} · {{ item.quantidade }}× {{ item.preco }}</p>
+                <div class="checkout__item-info">
+                    <h2 class="checkout__item-nome">{{ item.nome }}</h2>
+                    <p class="checkout__item-meta">{{ item.cor }} · {{ item.quantidade }}× {{ item.preco }}</p>
                 </div>
-                <span class="cart__item-price">{{ item.linha_total }}</span>
+                <span class="checkout__item-total">{{ item.linha_total }}</span>
             </li>
             {% endfor %}
-
         </ul>
+
+        <div class="checkout__grid">
 
         {# Um único form POST /checkout. As três etapas são seções do mesmo
            form: sem JS elas ficam todas visíveis (fallback); com JS o
            script liga o modo "checkout--js" e mostra uma por vez. #}
-        <form id="form-checkout" class="cart__form checkout__form" method="post"
+        <form id="form-checkout" class="checkout__form" method="post"
               action="{{ url_for('checkout') }}" aria-label="Finalizar pedido">
 
             <ol class="checkout__steps" aria-label="Etapas do pedido">
@@ -133,7 +134,7 @@
             </section>
         </form>
 
-        <aside class="cart__summary" aria-labelledby="resumo-titulo">
+        <aside class="cart__summary checkout__resumo" aria-labelledby="resumo-titulo">
             <h2 class="cart__summary-title" id="resumo-titulo">Resumo do pedido</h2>
 
             <div class="cart__summary-row">
@@ -153,6 +154,8 @@
 
             <a href="{{ url_for('carrinho') }}" class="cart__btn-continue">Voltar ao carrinho</a>
         </aside>
+
+        </div>{# /.checkout__grid #}
 
     </div>
 

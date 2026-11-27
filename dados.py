@@ -162,6 +162,25 @@ def listar_catalogos():
     ]
 
 
+def buscar_cliente(id_cliente):
+    """Nome, e-mail e telefone da conta, para o cartão "Meus dados".
+
+    Devolve None se a conta não existir ou estiver anonimizada (LGPD): o
+    painel então usa o que está na sessão e não mostra dados apagados.
+    """
+    conn = db.get_db()
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute(
+            """
+            select nome, email, telefone
+            from bloome.clientes
+            where id_cliente = %s and anonimizado_em is null
+            """,
+            (id_cliente,),
+        )
+        return cur.fetchone()
+
+
 def ids_favoritos(id_cliente):
     """Ids dos produtos favoritados (para desenhar o coração cheio)."""
     conn = db.get_db()

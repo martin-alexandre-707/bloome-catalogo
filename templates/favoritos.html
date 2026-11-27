@@ -9,6 +9,7 @@
     <h1>Favoritos</h1>
     <p class="subtitle">Os itens que você salvou para não perder de vista!</p>
 
+    {% if produtos %}
     <section class="favorites" data-reveal aria-label="Lista de favoritos">
         {% for produto in produtos %}
         <article class="favorite">
@@ -35,11 +36,18 @@
                 <button type="submit" class="favorite__remove" aria-label="Remover {{ produto.nome }} dos favoritos">Remover dos favoritos</button>
             </form>
         </article>
-        {% else %}
-        <p class="subtitle">Você ainda não favoritou nenhum item.
-            <a href="{{ url_for('index') }}#catalogo-bloome">Explore o catálogo</a>.</p>
         {% endfor %}
     </section>
+    {% else %}
+    <div class="estado-vazio">
+        <svg class="estado-vazio__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+        </svg>
+        <h2 class="estado-vazio__titulo">Nenhum favorito ainda</h2>
+        <p class="estado-vazio__texto">Toque no coração das peças que você ama e elas ficam aqui.</p>
+        <a href="{{ url_for('index') }}#catalogo-bloome" class="btn">Explorar o catálogo</a>
+    </div>
+    {% endif %}
 
 </main>
 {% endblock %}

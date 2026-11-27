@@ -53,13 +53,13 @@
                         </a>
                     </li>
                     {% if not session.get("cliente_id") %}
-                    <li><a href="{{ url_for('conta') }}">Entrar</a></li>
+                    <li><a href="{{ url_for('conta') }}"{% if current == "conta" %} aria-current="page"{% endif %}>Entrar</a></li>
                     {% endif %}
                 </ul>
                 {% if session.get("cliente_id") %}
                 {# Logado: o nome vira link do painel; "Sair" discreto ao lado. #}
                 <div class="navbar__user-box">
-                    <a class="navbar__user" href="{{ url_for('painel') }}"
+                    <a class="navbar__user" href="{{ url_for('painel') }}"{% if current == "painel" %} aria-current="page"{% endif %}
                        aria-label="Minha conta, painel de {{ session.get('cliente_nome') }}">{{ session.get("cliente_nome") }}</a>
                     <form method="post" action="{{ url_for('sair') }}">
                         <button type="submit" class="navbar__logout">Sair</button>
