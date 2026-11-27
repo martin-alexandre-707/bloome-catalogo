@@ -103,11 +103,11 @@ COLECOES_NOMES = {
 
 
 def listar_colecoes(limite=4):
-    """Agrupa o catálogo por categoria (home e /produtos).
+    """Agrupa o catálogo por tipo (Cordões, Colares, Chockers).
 
-    `limite=4` corta cada seção para a home; `limite=None` devolve todos,
-    que é o que a página de produtos usa. A ordem das seções segue a
-    primeira aparição de cada categoria no catálogo (ordenado por id).
+    Não é usada por nenhuma rota agora: home e /produtos usam
+    `listar_catalogos`. Fica aqui para o futuro filtro por tipo e para
+    voltar ao agrupamento antigo com uma linha (ADR-031).
     """
     colecoes = {}
     for produto in listar_produtos():

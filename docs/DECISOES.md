@@ -48,6 +48,7 @@
 | ADR-028 | 2026-11-27 | Estrutura | Aceita (pagamento revisto na ADR-029) | Checkout do MVP: login no clique, Correios "em breve", pedido em transação |
 | ADR-029 | 2026-11-27 | Estrutura | Aceita | Pagamento simulado no checkout: pedido nasce pago e "em preparação" |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | Home com os dois catálogos do PDF (Bloome e Cápsula Maré) e fotos reais |
+| ADR-031 | 2026-11-27 | Estrutura | Aceita | `/produtos` agrupada por catálogo; agrupamento por tipo fica pronto para voltar |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | URL do produto vira slug do nome (`/produtos/colar-inicial`); ID numérico sai |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
@@ -1151,6 +1152,40 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 - **Arquivos:** `dados.py`, `app.py`, `templates/index.html`,
   `static/css/styles.css`, `static/imgs/hero-bloome.jpg`,
   `static/imgs/capsula-mare.jpg`
+
+---
+
+## ADR-031 — `/produtos` agrupada por catálogo (com volta fácil)
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** a home passou a mostrar os dois catálogos do PDF
+  (ADR-030), mas `/produtos` continuava separada por tipo (Cordões,
+  Colares, Chockers). Duas lógicas para a mesma vitrine confundem — e o
+  PDF vende a Cápsula Maré como bloco, não diluída nos tipos.
+
+- **Decisão:**
+  1. `/produtos` passa a ter as mesmas seções da home: **Catálogo
+     Bloome** e **Cápsula Maré**, com todos os produtos e o mesmo modal
+     de visualizar.
+  2. `dados.listar_colecoes` (agrupamento por tipo) **fica no código**,
+     documentada, para o futuro filtro "Cordões · Colares · Chockers" e
+     para reverter o agrupamento com uma linha.
+  3. A troca foi feita em commit separado, depois de um checkpoint do
+     estado anterior.
+
+- **Alternativas consideradas:**
+  - Manter por tipo — rejeitada: inconsistente com a home.
+  - Filtro por tipo agora — adiado: 16 peças não justificam o custo;
+    volta como fileira de atalhos quando a vitrine crescer.
+
+- **Consequências:** para voltar ao agrupamento por tipo basta trocar
+  `catalogos=dados.listar_catalogos()` por
+  `colecoes=dados.listar_colecoes(limite=None)` na rota e o laço do
+  template; ou `git revert` do commit desta mudança.
+
+- **Arquivos:** `app.py`, `dados.py`, `templates/produtos.html`
 
 ---
 

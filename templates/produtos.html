@@ -9,12 +9,13 @@
     <h1>Produtos</h1>
     <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
 
-    {% for colecao in colecoes %}
-    <section class="produtos__colecao" aria-labelledby="colecao-produtos-{{ loop.index }}">
-        <h2 class="colecao__titulo" id="colecao-produtos-{{ loop.index }}">{{ colecao.titulo }}</h2>
+    {% for catalogo in catalogos %}
+    <section class="produtos__colecao" aria-labelledby="catalogo-produtos-{{ catalogo.chave }}">
+        <h2 class="colecao__titulo" id="catalogo-produtos-{{ catalogo.chave }}">{{ catalogo.titulo }}</h2>
+        <p class="catalogo__subtitulo">{{ catalogo.subtitulo }}</p>
 
-        <section class="products" aria-label="{{ colecao.titulo }}">
-            {% for produto in colecao.produtos %}
+        <section class="products" aria-label="{{ catalogo.titulo }}">
+            {% for produto in catalogo.produtos %}
             <article class="product">
                 <button type="button"
                         class="product__open"

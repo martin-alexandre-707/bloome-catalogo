@@ -55,9 +55,9 @@ def produtos():
         "produtos.html",
         current="produtos",
         produtos=lista,
-        # A lista plana alimenta os <template>s do modal; as coleções
+        # A lista plana alimenta os <template>s do modal; os catálogos
         # organizam os cards na tela, com todos os produtos.
-        colecoes=dados.listar_colecoes(limite=None),
+        catalogos=dados.listar_catalogos(),
     )
 
 
