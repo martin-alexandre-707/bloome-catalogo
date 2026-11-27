@@ -9,14 +9,7 @@
     <h1>Favoritos</h1>
     <p class="subtitle">Os itens que você salvou para não perder de vista!</p>
 
-    <section class="favorites" aria-label="Lista de favoritos">
-        {# Sem persistência ainda (sem tabela de favoritos): a rota passa
-           os 3 primeiros produtos do catálogo, com os mesmos dados de
-           /produtos (ver app.py / ADR-025). #}
-        {% if not produtos %}
-        <p class="subtitle">Nenhum item disponível no momento.
-            <a href="{{ url_for('produtos') }}">Explore o catálogo</a>.</p>
-        {% endif %}
+    <section class="favorites" data-reveal aria-label="Lista de favoritos">
         {% for produto in produtos %}
         <article class="favorite">
             <span class="favorite__heart" aria-hidden="true">&#9829;</span>
@@ -38,9 +31,14 @@
                 {% else %}
                 <button type="button" class="btn favorite__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
                 {% endif %}
-                <a href="{{ url_for('favoritos') }}" class="favorite__remove">Remover dos favoritos</a>
+                <form method="post" action="{{ url_for('alternar_favorito', id_acessorios=produto.id) }}">
+                    <button type="submit" class="favorite__remove">Remover dos favoritos</button>
+                </form>
             </div>
         </article>
+        {% else %}
+        <p class="subtitle">Você ainda não favoritou nenhum item.
+            <a href="{{ url_for('produtos') }}">Explore o catálogo</a>.</p>
         {% endfor %}
     </section>
 

@@ -73,6 +73,31 @@
             </form>
         </aside>
 
+        <section class="painel__pedidos" aria-labelledby="titulo-favoritos">
+            <h2 class="painel__titulo" id="titulo-favoritos">Meus favoritos</h2>
+
+            {% if favoritos %}
+            <div class="favorites">
+                {% for produto in favoritos[:4] %}
+                <a href="{{ url_for('produto', slug=produto.slug) }}" class="favorite">
+                    {% if produto.imagem %}
+                    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="favorite__image" loading="lazy" decoding="async">
+                    {% endif %}
+                    <div class="favorite__info">
+                        <h3 class="favorite__name">{{ produto.nome }}</h3>
+                        <span class="favorite__price">{{ produto.preco }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% if favoritos|length > 4 %}
+            <p><a href="{{ url_for('favoritos') }}" class="pedido__link">Ver todos os favoritos ({{ favoritos|length }})</a></p>
+            {% endif %}
+            {% else %}
+            <p>Você ainda não favoritou nada. <a href="{{ url_for('produtos') }}">Ver produtos</a></p>
+            {% endif %}
+        </section>
+
         <section class="painel__pedidos" aria-labelledby="titulo-pedidos">
             <h2 class="painel__titulo" id="titulo-pedidos">Meus pedidos</h2>
 

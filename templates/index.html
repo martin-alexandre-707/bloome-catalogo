@@ -19,7 +19,7 @@
     </section>
 
     {% for catalogo in catalogos %}
-    <section class="catalogo" aria-labelledby="catalogo-{{ catalogo.chave }}">
+    <section class="catalogo" data-reveal aria-labelledby="catalogo-{{ catalogo.chave }}">
         {% if catalogo.chave == "mare" %}
         {# A cápsula ganha banner próprio, com a foto do pôr do sol do PDF. #}
         <div class="catalogo__banner">

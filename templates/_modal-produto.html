@@ -1,4 +1,7 @@
 {# Modal de detalhes do produto.
+   `favoritos_ids` (opcional) vem da rota quando há cliente logado;
+   sem ela, o coração aparece vazio. #}
+{% set ids_favoritos = favoritos_ids if favoritos_ids is defined else [] %}
    Exige `produtos` (lista de dicts com id, nome, preco, imagem,
    descricao, status_exibicao e cores).
    O botão "Adicionar ao carrinho" é um submit real para
@@ -13,6 +16,16 @@
     {% endif %}
     <h2 class="product-modal__title" id="titulo-modal-produto">{{ produto.nome }}</h2>
     <span class="product-detail__price">{{ produto.preco }}</span>
+    {% if session.get("cliente_id") %}
+    <form method="post" action="{{ url_for('alternar_favorito', id_acessorios=produto.id) }}" class="fav-form">
+        <button type="submit"
+                class="fav-btn{% if produto.id in ids_favoritos %} is-fav{% endif %}"
+                aria-pressed="{{ 'true' if produto.id in ids_favoritos else 'false' }}"
+                aria-label="{{ 'Remover dos favoritos' if produto.id in ids_favoritos else 'Adicionar aos favoritos' }}">
+            <span class="fav-icone" aria-hidden="true">{{ '♥' if produto.id in ids_favoritos else '♡' }}</span>
+        </button>
+    </form>
+    {% endif %}
     {% if produto.cores %}
     <div class="product-detail__colors">
         {% for cor in produto.cores %}

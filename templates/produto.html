@@ -15,6 +15,17 @@
         <div class="product-detail__info">
             <h1 class="product-detail__name">{{ produto.nome }}</h1>
             <span class="product-detail__price">{{ produto.preco }}</span>
+            {% if session.get("cliente_id") %}
+            <form method="post" action="{{ url_for('alternar_favorito', id_acessorios=produto.id) }}" class="fav-form">
+                <button type="submit"
+                        class="fav-btn{% if favorito %} is-fav{% endif %}"
+                        aria-pressed="{{ 'true' if favorito else 'false' }}"
+                        aria-label="{{ 'Remover dos favoritos' if favorito else 'Adicionar aos favoritos' }}">
+                    <span class="fav-icone" aria-hidden="true">{{ '♥' if favorito else '♡' }}</span>
+                    <span>{{ 'Favoritado' if favorito else 'Favoritar' }}</span>
+                </button>
+            </form>
+            {% endif %}
             {% if produto.descricao %}<p class="product-detail__description">{{ produto.descricao }}</p>{% endif %}
             {% if produto.status_exibicao == 'volta_em_breve' %}
             <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>

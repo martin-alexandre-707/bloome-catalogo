@@ -611,6 +611,48 @@ p {
   font-weight: var(--weight-bold);
 }
 
+/* O cabeçalho desce junto com o herói na entrada da página. */
+.site-header {
+  animation: header-down 500ms var(--ease-out) both;
+}
+
+@keyframes header-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Revelação ao rolar: só esconde quando o reveal.js marcou o <html>;
+   sem JS, todo o conteúdo fica visível. */
+.com-reveal [data-reveal] {
+  opacity: 0;
+  translate: 0 1.5rem;
+  transition: opacity 600ms var(--ease-out), translate 600ms var(--ease-out);
+}
+
+.com-reveal [data-reveal].is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.com-reveal [data-reveal] .colecao__card {
+  opacity: 0;
+  translate: 0 1rem;
+  transition:
+    opacity 500ms var(--ease-out),
+    translate 500ms var(--ease-out),
+    transform var(--dur-fast) var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.com-reveal [data-reveal].is-visible .colecao__card {
+  opacity: 1;
+  translate: 0 0;
+}
+
 /* ==========================================================================
    6. Conteúdo de página
    ========================================================================== */
@@ -897,6 +939,17 @@ p {
   border-radius: var(--radius-sm);
 }
 
+/* Card de favorito usado como link (seção do painel) */
+a.favorite {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+a.favorite:hover {
+  box-shadow: var(--shadow-2);
+  transform: translateY(-2px);
+}
+
 .favorite__info {
   padding-top: var(--space-4);
   text-align: center;
@@ -947,6 +1000,62 @@ p {
 .favorite__remove:hover {
   color: var(--color-wine);
   text-decoration: underline;
+}
+
+/* O "Remover dos favoritos" virou <button> (form POST), não link */
+button.favorite__remove {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Botão de favorito (coração) */
+.fav-form {
+  margin: var(--space-3) 0 0;
+}
+
+.fav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-wine);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.fav-btn:hover {
+  background: rgba(224, 174, 182, 0.28);
+}
+
+.fav-btn:focus-visible {
+  outline: var(--focus-width) solid var(--color-wine);
+  outline-offset: 2px;
+}
+
+.fav-btn.is-fav {
+  background: var(--color-wine);
+  border-color: var(--color-wine);
+  color: var(--color-cream);
+}
+
+.fav-btn.is-fav:hover {
+  background: var(--color-wine-deep);
+}
+
+.fav-icone {
+  font-size: 1.15em;
+  line-height: 1;
 }
 
 /* ==========================================================================

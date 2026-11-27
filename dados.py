@@ -162,6 +162,65 @@ def listar_catalogos():
     ]
 
 
+def ids_favoritos(id_cliente):
+    """Ids dos produtos favoritados (para desenhar o coração cheio)."""
+    conn = db.get_db()
+    with conn.cursor() as cur:
+        cur.execute(
+            "select id_acessorios from bloome.favoritos where id_cliente = %s",
+            (id_cliente,),
+        )
+        return {linha[0] for linha in cur.fetchall()}
+
+
+def listar_favoritos(id_cliente):
+    """Produtos favoritados, com as cores — o modal precisa delas."""
+    ids = ids_favoritos(id_cliente)
+    if not ids:
+        return []
+    return [produto for produto in listar_produtos() if produto["id"] in ids]
+
+
+def alternar_favorito(id_cliente, id_acessorios):
+    """Favorita/desfavorita e devolve True se ficou favoritado.
+
+    Devolve None se o produto não existir (a rota responde 404). A
+    alternância é um único caminho: já era favorito → remove; não era →
+    insere (o `on conflict` cobre duplo clique).
+    """
+    conn = db.get_db()
+    with conn.cursor() as cur:
+        cur.execute(
+            "select 1 from bloome.vw_catalogo_publico where id_acessorios = %s",
+            (id_acessorios,),
+        )
+        if cur.fetchone() is None:
+            return None
+
+        cur.execute(
+            """
+            delete from bloome.favoritos
+            where id_cliente = %s and id_acessorios = %s
+            returning id_acessorios
+            """,
+            (id_cliente, id_acessorios),
+        )
+        if cur.fetchone() is not None:
+            conn.commit()
+            return False
+
+        cur.execute(
+            """
+            insert into bloome.favoritos (id_cliente, id_acessorios)
+            values (%s, %s)
+            on conflict do nothing
+            """,
+            (id_cliente, id_acessorios),
+        )
+    conn.commit()
+    return True
+
+
 def buscar_produto(slug):
     """Devolve o produto cujo `slug` (nome na URL) casa, ou None.
 

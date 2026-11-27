@@ -58,6 +58,12 @@ def produtos():
         # A lista plana alimenta os <template>s do modal; os catálogos
         # organizam os cards na tela, com todos os produtos.
         catalogos=dados.listar_catalogos(),
+        # O modal mostra o coração cheio nos favoritos de quem está logado.
+        favoritos_ids=(
+            dados.ids_favoritos(session["cliente_id"])
+            if "cliente_id" in session
+            else set()
+        ),
     )
 
 
@@ -73,6 +79,10 @@ def produto(slug):
         current="produtos",
         produto=item,
         relacionados=dados.listar_relacionados(item["id"]),
+        favorito=(
+            "cliente_id" in session
+            and item["id"] in dados.ids_favoritos(session["cliente_id"])
+        ),
     )
 
 def _url_de_volta(fallback):
@@ -336,13 +346,31 @@ def pedido_detalhe(codigo):
 
 
 @app.route("/favoritos")
+@login_requerido
 def favoritos():
-    # Favoritos ainda não persistem (sem tabela): a página exibe os
-    # 3 primeiros produtos do catálogo, com os mesmos dados de /produtos.
-    lista = dados.listar_produtos()
+    lista = dados.listar_favoritos(session["cliente_id"])
     return render_template(
-        "favoritos.html", current="favoritos", produtos=lista[:3]
+        "favoritos.html",
+        current="favoritos",
+        produtos=lista,
+        favoritos_ids={produto["id"] for produto in lista},
     )
+
+
+@app.route("/favoritos/<int:id_acessorios>", methods=["POST"])
+@login_requerido
+def alternar_favorito(id_acessorios):
+    ficou_favorito = dados.alternar_favorito(
+        session["cliente_id"], id_acessorios
+    )
+    if ficou_favorito is None:
+        abort(404)
+
+    flash(
+        "Adicionado aos favoritos." if ficou_favorito else "Removido dos favoritos.",
+        "sucesso",
+    )
+    return redirect(_url_de_volta(url_for("favoritos")))
 
 @app.route("/sobre")
 def sobre():
@@ -487,7 +515,12 @@ def painel():
         _pedido_para_template(pedido)
         for pedido in dados.listar_pedidos_cliente(session["cliente_id"])
     ]
-    return render_template("painel.html", current="painel", pedidos=pedidos)
+    return render_template(
+        "painel.html",
+        current="painel",
+        pedidos=pedidos,
+        favoritos=dados.listar_favoritos(session["cliente_id"]),
+    )
 
 @app.errorhandler(404)
 def pagina_nao_encontrada(erro):

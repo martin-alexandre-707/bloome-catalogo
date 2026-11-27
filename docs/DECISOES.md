@@ -49,6 +49,7 @@
 | ADR-029 | 2026-11-27 | Estrutura | Aceita | Pagamento simulado no checkout: pedido nasce pago e "em preparação" |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | Home com os dois catálogos do PDF (Bloome e Cápsula Maré) e fotos reais |
 | ADR-031 | 2026-11-27 | Estrutura | Aceita | `/produtos` agrupada por catálogo; agrupamento por tipo fica pronto para voltar |
+| ADR-032 | 2026-11-27 | Banco | Aceita | Favoritos persistentes: tabela `bloome.favoritos`, login obrigatório e seção no painel |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | URL do produto vira slug do nome (`/produtos/colar-inicial`); ID numérico sai |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
@@ -1186,6 +1187,45 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
   template; ou `git revert` do commit desta mudança.
 
 - **Arquivos:** `app.py`, `dados.py`, `templates/produtos.html`
+
+---
+
+## ADR-032 — Favoritos persistentes, com login e seção no painel
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** favoritos eram mock (3 primeiros do catálogo, ADR-025).
+  O time pediu favoritos de verdade e fáceis de ver no painel.
+
+- **Decisão:**
+  1. Nova tabela `bloome.favoritos` (`id_cliente` + `id_acessorios`,
+     chave composta, FKs, `criado_em`) em `db/08_favoritos.sql`.
+  2. Favoritar **exige login**: sem sessão, `302 /conta?next=...` e
+     volta para a página de origem (o coração já enviado não se perde
+     porque o redirect é POST-Redirect-GET).
+  3. `POST /favoritos/<id>` **alterna** (insere ou remove, com
+     `on conflict do nothing`) e devolve para o referrer validado.
+  4. Coração na página do produto e no modal de visualizar; estado
+     `aria-pressed` e rótulo "Adicionar/Remover dos favoritos".
+  5. `/painel` mostra até 4 favoritos + link para a lista completa.
+  6. `/favoritos` passa a exigir login e lista os favoritos reais.
+
+- **Alternativas consideradas:**
+  - Favoritar na sessão (sem conta) e migrar no login — adiada: mais
+    código e casos de borda sem ganho no MVP.
+  - Coração em todo card — rejeitada: conflita com o clique que abre o
+    modal e pede CSS extra; detalhe + modal cobrem o uso.
+
+- **Consequências:** favoritos só existem para contas. A migration é
+  idempotente (`if not exists`) e foi aplicada com script avulso, porque
+  `db/aplicar.py` aborta em schema existente (ADR-014). Remover o
+  favorito não apaga produto nem conta (FKs sem cascade).
+
+- **Arquivos:** `db/08_favoritos.sql`, `dados.py`, `app.py`,
+  `templates/_modal-produto.html`, `templates/produto.html`,
+  `templates/favoritos.html`, `templates/painel.html`,
+  `static/css/styles.css`
 
 ---
 

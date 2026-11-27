@@ -10,7 +10,7 @@
     <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
 
     {% for catalogo in catalogos %}
-    <section class="produtos__colecao" aria-labelledby="catalogo-produtos-{{ catalogo.chave }}">
+    <section class="produtos__colecao" data-reveal aria-labelledby="catalogo-produtos-{{ catalogo.chave }}">
         <h2 class="colecao__titulo" id="catalogo-produtos-{{ catalogo.chave }}">{{ catalogo.titulo }}</h2>
         <p class="catalogo__subtitulo">{{ catalogo.subtitulo }}</p>
 
