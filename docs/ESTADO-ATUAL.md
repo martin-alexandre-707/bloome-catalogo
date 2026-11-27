@@ -7,7 +7,7 @@
 > **Regra:** atualizar no fim de cada passo concluído. Manter curto — se
 > crescer além de ~60 linhas, resumir em vez de empilhar.
 
-**Última atualização:** 2026-11-26
+**Última atualização:** 2026-11-27
 
 ---
 
@@ -27,8 +27,8 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 | 1d | Login, logout, `/painel` protegido e header dinâmico (ADR-022) | ✅ |
 | 1e | Feedback de formulário: flash global, aba de origem preservada, e-mail com `pattern` | ✅ |
 | 2 | Escolher cor no detalhe + `POST /carrinho/adicionar` (session) | ✅ |
-| 3 | Carrinho real: session + banco, total calculado no backend | ⏳ próximo |
-| 4 | Checkout: `pedidos` + `itens_pedidos` em transação | ⬜ |
+| 3 | Carrinho real: session + banco, total calculado no backend | ✅ |
+| 4 | Checkout: `pedidos` + `itens_pedidos` em transação | ⏳ próximo |
 | 5 | Mercado Pago + webhook idempotente e assinado | ⬜ |
 
 **Banco real conectado** (2026-11-26). O problema era o `.env`: prefixo
@@ -42,8 +42,10 @@ modo demonstração nem `catalogo.py`.
 **Merge com o trabalho do amigo (ADR-025):** o modal de produto
 (`_modal-produto.html` + `static/js/modal-produto.js`), o seletor de
 quantidade, o toast e os favoritos data-driven vieram da `origin/main`. O
-botão "Adicionar ao carrinho" do modal ainda é só visual (fecha + toast);
-ligá-lo à rota `POST /carrinho/adicionar` é pendência do passo 3.
+botão "Adicionar ao carrinho" do modal já é um submit real para
+`POST /carrinho/adicionar`. Em 2026-11-27 foi corrigido um bug em que a
+consulta de cores do catálogo (`_cores_por_acessorio`) não trazia
+`id_variacao`, e o modal enviava a cor vazia.
 
 Na sessão nova, basta: *"Bloome. Leia AGENTS.md, docs/DECISOES.md e
 docs/ESTADO-ATUAL.md. Continua o passo X."*
