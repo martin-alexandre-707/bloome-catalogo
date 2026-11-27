@@ -23,9 +23,6 @@ app.secret_key = _chave
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    # Em produção (HTTPS), o cookie só trafega em conexão segura. O Render
-    # define RENDER=true; em localhost o cookie precisa seguir funcionando
-    # em HTTP, então o padrão é desligado.
     SESSION_COOKIE_SECURE=bool(os.environ.get("RENDER"))
     or os.environ.get("SESSION_COOKIE_SECURE") == "1",
 )
@@ -57,8 +54,6 @@ def login_requerido(view):
     def protegida(*args, **kwargs):
         if "cliente_id" not in session:
             flash("Entre na sua conta para continuar.", "erro")
-            # `next` devolve a pessoa para a página que ela tentou abrir
-            # (ex.: /checkout) depois de entrar ou criar conta.
             return redirect(url_for("conta", next=request.path))
         return view(*args, **kwargs)
 
@@ -194,9 +189,6 @@ def atualizar_quantidade(id_variacao):
             break
     session["carrinho"] = carrinho
 
-    # Os botões −/+ do carrinho pedem JSON para atualizar a tela sem
-    # recarregar (e sem perder o foco). Todo valor em dinheiro continua
-    # sendo calculado aqui, no servidor; o JS só pinta o que recebe.
     if request.accept_mimetypes.best == "application/json":
         itens = dados.montar_carrinho(carrinho)
         linha = next(
@@ -225,10 +217,6 @@ def remover_do_carrinho(id_variacao):
     return redirect(url_for("carrinho"))
 
 
-# Valor do rádio no carrinho -> (tipo_entrega, frete_pago_por) do banco.
-# O CHECK de bloome.pedidos só aceita esses nomes e essas combinações de
-# frete (§4 do VALIDACAO-REGRAS.md); o formulário usa apelidos (unima etc.),
-# então a tradução mora aqui, no servidor.
 ENTREGAS = {
     "unima": ("retirada", "loja"),
     "ponta-verde": ("retirada", "loja"),
@@ -237,7 +225,6 @@ ENTREGAS = {
 
 PAGAMENTOS = {"pix", "debito", "credito"}
 
-# Status do banco -> (rótulo na tela, sufixo da classe CSS).
 STATUS_PEDIDO = {
     "aguardando_pagamento": ("Aguardando pagamento", "aguardando"),
     "pago": ("Pago", "pago"),
@@ -312,7 +299,6 @@ def checkout():
 
     entrega = request.form.get("entrega", "")
     if entrega == "correios":
-        # Correios pede endereço completo e API de frete: MVP deixa "em breve".
         flash("Envio pelos Correios estará disponível em breve. Escolha retirada ou Uber Flash.", "erro")
         return redirect(url_for("carrinho"))
 
@@ -334,8 +320,6 @@ def checkout():
 
     try:
         with conn.cursor() as cur:
-            # 1) O pedido nasce "aguardando_pagamento"; preço e total vêm
-            #    dos triggers a partir dos itens, nunca do formulário.
             cur.execute(
                 """
                 insert into bloome.pedidos
@@ -347,8 +331,6 @@ def checkout():
             )
             id_pedido, codigo = cur.fetchone()
 
-            # 2) Os itens disparam validar_item_vendavel (cor esgotada,
-            #    produto indisponível) e recalcular_pedido (subtotal).
             for linha in linhas:
                 cur.execute(
                     """
@@ -359,8 +341,6 @@ def checkout():
                     (id_pedido, linha["id_variacao"], linha["quantidade"]),
                 )
 
-            # 3) Estoque dos insumos: se algum não cobre o pedido, desfaz
-            #    TUDO (pedido e itens) antes de qualquer commit.
             cur.execute(
                 """
                 select nome
@@ -374,10 +354,6 @@ def checkout():
                 flash("Alguns itens ficaram sem estoque. Ajuste o carrinho e tente de novo.", "erro")
                 return redirect(url_for("carrinho"))
 
-            # 4) SIMULAÇÃO de pagamento aprovado, até o Mercado Pago (passo 5).
-            #    confirmar_pagamento é a função do banco para confirmação
-            #    manual: recheca estoque, baixa os insumos e marca o pedido
-            #    como pago — o mesmo caminho que o webhook usará depois.
             cur.execute(
                 "select bloome.confirmar_pagamento(%s, null, null)",
                 (id_pedido,),
@@ -387,7 +363,6 @@ def checkout():
                 flash("O estoque acabou enquanto fechávamos seu pedido. Tente de novo.", "erro")
                 return redirect(url_for("carrinho"))
 
-            # 5) Pago -> fila de produção ("Em preparação" na tela).
             cur.execute(
                 "update bloome.pedidos set status = 'em_producao' where id_pedidos = %s",
                 (id_pedido,),
@@ -395,8 +370,6 @@ def checkout():
 
         conn.commit()
     except psycopg.Error:
-        # Triggers do banco (cor esgotou, produto saiu de linha) chegam aqui:
-        # a transação inteira volta atrás, o carrinho fica intacto.
         conn.rollback()
         flash("Um item ficou indisponível enquanto você finalizava. Confira o carrinho.", "erro")
         return redirect(url_for("carrinho"))
@@ -502,8 +475,6 @@ def entrar():
         flash("E-mail ou senha inválidos.", "erro")
         return redirect(url_for("conta", next=destino))
 
-    # O carrinho mora na sessão; limpar a sessão (anti-fixação) não pode
-    # levar o carrinho junto quando o login acontece no checkout.
     carrinho = session.get("carrinho")
     session.clear()
     session["cliente_id"] = cliente["id_cliente"]
@@ -549,8 +520,6 @@ def criar_conta():
     destino = _destino_seguro(url_for("painel"))
 
     if not valido:
-        # Volta para a aba "Criar conta", não para "Entrar", sem perder
-        # o destino (ex.: voltar ao carrinho depois de se cadastrar).
         return redirect(url_for("conta", aba="criar", next=destino))
 
     hash_senha = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
@@ -577,7 +546,6 @@ def criar_conta():
         flash("Não foi possível criar a conta agora. Tente de novo.", "erro")
         return redirect(url_for("conta", aba="criar", next=destino))
 
-    # Mesma regra do login: preserva o carrinho ao trocar de sessão.
     carrinho = session.get("carrinho")
     session.clear()
     session["cliente_id"] = id_cliente
@@ -600,7 +568,6 @@ def painel():
         current="painel",
         pedidos=pedidos,
         favoritos=dados.listar_favoritos(session["cliente_id"]),
-        # Dados reais da conta para o cartão "Meus dados" (antes: mock).
         cliente=dados.buscar_cliente(session["cliente_id"]),
     )
 

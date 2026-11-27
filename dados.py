@@ -29,11 +29,6 @@ def _slug(nome):
     return re.sub(r"[^a-z0-9]+", "-", sem_acento.lower()).strip("-")
 
 
-# ---------------------------------------------------------------------------
-# Cores de todos os produtos em uma consulta só (usado pelo catálogo/modal).
-# ---------------------------------------------------------------------------
-
-
 def _cores_por_acessorio(cur):
     """Agrupa as cores do catálogo inteiro, em uma consulta só.
 
@@ -59,11 +54,6 @@ def _cores_por_acessorio(cur):
             }
         )
     return cores_por_id
-
-
-# ---------------------------------------------------------------------------
-# API usada pelas rotas.
-# ---------------------------------------------------------------------------
 
 
 def listar_produtos():
@@ -94,7 +84,6 @@ def listar_produtos():
     ]
 
 
-# Nome da coletânea na home; categorias desconhecidas caem no fallback + "s".
 COLECOES_NOMES = {
     "Cordão": "Cordões",
     "Colar": "Colares",
@@ -116,16 +105,12 @@ def listar_colecoes(limite=4):
     return [
         {
             "titulo": COLECOES_NOMES.get(nome, nome + "s"),
-            "produtos": produtos[:limite],  # None = todos (fatiar com None é seguro)
+            "produtos": produtos[:limite],
         }
         for nome, produtos in colecoes.items()
     ]
 
 
-# O catálogo do PDF tem dois volumes: o Catálogo Bloome (principal) e a
-# Cápsula Maré. O banco ainda não tem coluna de coleção, então a separação
-# mora aqui, pelos nomes do PDF. Produto novo cai no Catálogo Bloome; quando
-# virar coluna em bloome.acessorios, esta lista some.
 CAPSULA_MARE = {
     "Cordão Sol Médio",
     "Colar Peixe Colorido",

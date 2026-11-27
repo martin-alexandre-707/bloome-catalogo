@@ -1,9 +1,3 @@
-// Revela os blocos com [data-reveal] quando eles entram na tela,
-// dando a sensação de "descida" animada ao rolar a página.
-//
-// Sem JS nada desaparece: as regras de esconder só valem depois que este
-// script marca o <html> com .com-reveal — então o conteúdo continua
-// acessível se o script falhar ou o navegador for antigo.
 (function () {
     if (!('IntersectionObserver' in window)) return;
 
@@ -24,7 +18,6 @@
     );
 
     alvos.forEach((alvo) => {
-        // Cards da grade entram em cascata (limite de 8 para não demorar).
         alvo.querySelectorAll('.colecao__card').forEach((card, indice) => {
             card.style.setProperty('--reveal-delay', `${Math.min(indice, 7) * 70}ms`);
         });
