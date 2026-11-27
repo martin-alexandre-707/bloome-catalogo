@@ -12,7 +12,6 @@ venv/
 
 # Backups locais
 *.bak
-.agents/
 
 # Documentos internos de trabalho (fora do repositorio)
 _interno/

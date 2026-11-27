@@ -18,7 +18,9 @@
                produto (o form "Remover" fica fora, como irmão do link). #}
             <a class="favorite__link" href="{{ url_for('produto', slug=produto.slug) }}">
                 {% if produto.imagem %}
-                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="favorite__image" loading="lazy" decoding="async">
+                <span class="favorite__foto">
+                    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="favorite__image" loading="lazy" decoding="async">
+                </span>
                 {% endif %}
                 <div class="favorite__info">
                     <h2 class="favorite__name">{{ produto.nome }}</h2>

@@ -41,7 +41,9 @@
                 {% if produto.imagem %}
                 {# O nome está logo abaixo: alt vazio evita o leitor de tela
                    repetir o produto duas vezes no mesmo link. #}
-                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" loading="lazy" decoding="async">
+                <span class="colecao__foto">
+                    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" loading="lazy" decoding="async">
+                </span>
                 {% endif %}
                 <span class="colecao__nome">{{ produto.nome }}</span>
                 <span class="colecao__preco">{{ produto.preco }}</span>

@@ -1,8 +1,16 @@
 # Bloome
 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Jinja2](https://img.shields.io/badge/Jinja2-templates-B41717)](https://jinja.palletsprojects.com/)
+[![WCAG 2.1 AA](https://img.shields.io/badge/WCAG-2.1%20AA-2E7D32)](https://www.w3.org/WAI/WCAG21/quickref/)
+
 Loja de acessórios artesanais da **Bloome**: catálogo, carrinho, favoritos, cadastro,
 pedidos e painel do cliente. Feita em **Flask + PostgreSQL**, com interface em
 português e foco em **acessibilidade (WCAG 2.1 AA)**.
+
+![Catálogo da Bloome](docs/capturas/catalogo.png)
 
 > Guia detalhado para montar em outro computador (inclusive o do laboratório):
 > **[COMO-RODAR.md](COMO-RODAR.md)**.
@@ -67,6 +75,17 @@ favoritos, checkout e painel (o pedido é finalizado com pagamento simulado).
 
 `/produtos` redireciona (301) para a home, onde o catálogo vive.
 
+## Documentação
+
+| Documento | Conteúdo |
+| --- | --- |
+| [docs/PRD.md](docs/PRD.md) | Requisitos do produto: visão, personas, funcionalidades, regras e critérios de aceite |
+| [docs/AUTENTICACAO.md](docs/AUTENTICACAO.md) | Sessões e cookies: como o login funciona e por quê |
+| [docs/VALIDACAO-REGRAS.md](docs/VALIDACAO-REGRAS.md) | Regras de negócio validadas (fonte da verdade) |
+| [docs/DECISOES.md](docs/DECISOES.md) | Decisões de arquitetura (ADR) com data e motivo |
+| [COMO-RODAR.md](COMO-RODAR.md) | Instalação do zero em outra máquina |
+| [AGENTS.md](AGENTS.md) | Regras de trabalho e uso de IA no desenvolvimento |
+
 ## Como o banco é montado
 
 Todos os arquivos ficam em `db/` e são aplicados por `db/aplicar.py`:
@@ -94,7 +113,8 @@ db.py            conexão psycopg
 db/              SQL versionado + aplicar.py
 templates/       Jinja (base, home, produto, carrinho, checkout, conta, painel)
 static/          CSS, JavaScript e fotos
-docs/            DECISOES.md (ADR) e VALIDACAO-REGRAS.md
+docs/            PRD, autenticação, regras (ADR) e capturas
+.agents/         skills de desenvolvimento usadas com IA
 ```
 
 ## Desenvolvimento com apoio de IA
@@ -104,11 +124,39 @@ trabalho ficam versionadas:
 
 - `AGENTS.md` / `CLAUDE.md` — convenções do time: método de trabalho, regras de
   negócio, o que nunca pode quebrar (cálculo de dinheiro no servidor, WCAG, segredos).
-- `.claude/skills/acessibilidade` — skill de auditoria WCAG 2.1 AA dos templates.
+- `.claude/skills/acessibilidade` e `.agents/skills/acessibilidade` — skill de
+  auditoria WCAG 2.1 AA dos templates.
 - `.claude/agents/auditor-wcag` — agente que revisa HTML/CSS e aponta violações.
+- `.agents/skills/` — skills de desenvolvimento usadas (acessibilidade e boas
+  práticas de PostgreSQL/Supabase).
 - `docs/DECISOES.md` — registro de arquitetura (ADR), com data e motivo de cada escolha.
 
 Cada decisão de banco, autenticação ou estrutura foi registrada antes de virar código.
+
+## Front integrado ao back (Jinja2)
+
+O HTML não é estático: cada página é um template Jinja renderizado pelo Flask
+com os dados já prontos.
+
+```python
+# app.py
+@app.route("/produtos/<slug>")
+def produto(slug):
+    return render_template("produto.html", produto=dados.buscar_produto(slug))
+```
+
+```jinja
+{# templates/produto.html #}
+<h1>{{ produto.nome }}</h1>
+<span class="preco">{{ produto.preco }}</span>
+<a href="{{ url_for('carrinho') }}">Carrinho</a>
+```
+
+- `dados.py` faz a consulta; a rota entrega o dicionário pronto.
+- O template usa `{{ }}` para exibir e `{% %}` para laços/condições.
+- `url_for()` gera os endereços, então mudar uma rota não quebra links.
+- Formulários enviam `POST` para o Flask; o servidor valida, grava e redireciona
+  (padrão POST-Redirect-GET), sem cálculo de dinheiro no navegador.
 
 ## Acessibilidade
 

@@ -23,7 +23,9 @@
                 {% for item in pedido.itens %}
                 <li class="pedido__item">
                     {% if item.imagem %}
-                    <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
+                    <span class="pedido__foto">
+                        <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
+                    </span>
                     {% endif %}
                     <span class="pedido__item-nome">{{ item.nome }} ({{ item.cor }}){% if item.quantidade > 1 %} · {{ item.quantidade }}×{% endif %}</span>
                     <span class="pedido__item-preco">{{ item.preco_fmt }}</span>
