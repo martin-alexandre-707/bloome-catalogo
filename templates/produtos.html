@@ -16,34 +16,27 @@
 
         <section class="products" aria-label="{{ catalogo.titulo }}">
             {% for produto in catalogo.produtos %}
-            <article class="product">
-                <button type="button"
-                        class="product__open"
-                        data-abrir-produto="{{ produto.id }}"
-                        aria-label="Ver detalhes de {{ produto.nome }}">
-                    {% if produto.imagem %}
-                    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="product__image" loading="lazy" decoding="async">
-                    {% endif %}
-                </button>
+            {# O card inteiro é um link para a página do produto (a imagem
+               entra com alt="" porque o nome já está no texto do link). #}
+            <a class="product" href="{{ url_for('produto', slug=produto.slug) }}">
+                {% if produto.imagem %}
+                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="product__image" loading="lazy" decoding="async">
+                {% endif %}
                 <div class="product__info">
                     <h3 class="product__name">{{ produto.nome }}</h3>
                     <p class="product__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
                     <hr class="product__divider">
                     <span class="product__price">{{ produto.preco }}</span>
                     {% if produto.status_exibicao == 'volta_em_breve' %}
-                    <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
+                    <span class="product__tag">Em breve</span>
                     {% else %}
-                    <button type="button" class="btn product__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
+                    <span class="btn product__btn-visualizar">Visualizar</span>
                     {% endif %}
                 </div>
-            </article>
+            </a>
             {% endfor %}
         </section>
     </section>
     {% endfor %}
-
-    {# Modal de detalhes + toast: parcial compartilhada com /favoritos
-       (<template>s, <dialog>, toast e o script em static/js/ — ADR-025). #}
-    {% include "_modal-produto.html" %}
 </main>
 {% endblock %}

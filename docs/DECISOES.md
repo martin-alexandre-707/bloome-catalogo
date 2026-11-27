@@ -42,15 +42,17 @@
 | ADR-022 | 2026-11-25 | Auth | Aceita | Login, logout e `/painel` protegido por decorador; cookie HttpOnly/SameSite |
 | ADR-023 | 2026-11-25 | Processo | Aceita | Fim do Método da Lacuna: IA escreve o código e explica linha a linha |
 | ADR-024 | 2026-11-26 | Estrutura | Substituída por ADR-026 | Modo demonstração (mock) e camada `dados.py`; sem `.env` o app roda |
-| ADR-025 | 2026-11-26 | Estrutura | Aceita | Modal de produto vira parcial compartilhada + JS em `static/js/`; favoritos mock data-driven (3 primeiros do catálogo) |
+| ADR-025 | 2026-11-26 | Estrutura | Substituída por ADR-033 | Modal de produto vira parcial compartilhada + JS em `static/js/`; favoritos mock data-driven (3 primeiros do catálogo) |
 | ADR-026 | 2026-11-26 | Estrutura | Aceita | Sem mock: toda consulta vai ao Supabase; `catalogo.py` removido |
 | ADR-027 | 2026-11-26 | Estrutura | Aceita | Carrinho na sessão guarda só variação + quantidade; preço nunca vai ao cookie |
 | ADR-028 | 2026-11-27 | Estrutura | Aceita (pagamento revisto na ADR-029) | Checkout do MVP: login no clique, Correios "em breve", pedido em transação |
 | ADR-029 | 2026-11-27 | Estrutura | Aceita | Pagamento simulado no checkout: pedido nasce pago e "em preparação" |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | Home com os dois catálogos do PDF (Bloome e Cápsula Maré) e fotos reais |
-| ADR-031 | 2026-11-27 | Estrutura | Aceita | `/produtos` agrupada por catálogo; agrupamento por tipo fica pronto para voltar |
+| ADR-031 | 2026-11-27 | Estrutura | Substituída por ADR-034 | `/produtos` agrupada por catálogo; agrupamento por tipo fica pronto para voltar |
 | ADR-032 | 2026-11-27 | Banco | Aceita | Favoritos persistentes: tabela `bloome.favoritos`, login obrigatório e seção no painel |
 | ADR-030 | 2026-11-27 | Estrutura | Aceita | URL do produto vira slug do nome (`/produtos/colar-inicial`); ID numérico sai |
+| ADR-033 | 2026-11-27 | Estrutura | Aceita | Modal de produto aposentado; o card leva à página `/produtos/<slug>` (substitui ADR-025) |
+| ADR-034 | 2026-11-27 | Estrutura | Aceita | Catálogo completo só na home; `/produtos` vira 301 para `/#catalogo-bloome` (substitui ADR-031) |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -1226,6 +1228,64 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
   `templates/_modal-produto.html`, `templates/produto.html`,
   `templates/favoritos.html`, `templates/painel.html`,
   `static/css/styles.css`
+
+---
+
+## ADR-033 — Modal de produto aposentado: card leva à página grande
+
+- **Data:** 2026-11-27
+- **Autor:** mentor (IA), a pedido do dono do projeto
+- **Status:** Aceita — substitui a ADR-025
+- **Contexto:** duas formas de ver o mesmo produto (modal no catálogo e
+  página `/produtos/<slug>`) com comportamentos diferentes. O modal é
+  `<dialog>` preenchido por `<template>` + JS, não tem URL própria (não
+  dá para compartilhar), e o dono o considerou visualmente ruim.
+- **Decisão:** existe **uma** forma de ver produto — a página
+  `/produtos/<slug>`. O card inteiro é o link (o "Visualizar" é um
+  `span` estilizado de botão, para não aninhar link em link). O seletor
+  de quantidade, que só existia no modal, passa a viver na página do
+  produto.
+- **Alternativas consideradas:**
+  - Manter modal + página — rejeitada: dois padrões para a mesma coisa,
+    e o modal não tem endereço próprio.
+  - Modal só para "olhar rápido" — rejeitada: duplica markup e JS.
+- **Consequências:** `_modal-produto.html` e `modal-produto.js` ficam no
+  repositório **sem uso** (mantidos para rollback barato: basta voltar a
+  incluir o parcial). Como o navegador "volta" para a página em que a
+  pessoa estava, a posição de rolagem é restaurada — não é preciso JS.
+  Favoritos continuam: o coração vive no card das páginas e na página do
+  produto.
+- **Arquivos:** `templates/produtos.html`, `templates/favoritos.html`,
+  `templates/produto.html`, `templates/_modal-produto.html`,
+  `static/js/modal-produto.js`
+
+---
+
+## ADR-034 — Catálogo completo mora só na home; `/produtos` vira redirect
+
+- **Data:** 2026-11-27
+- **Autor:** mentor (IA), a pedido do dono do projeto
+- **Status:** Aceita — substitui a ADR-031
+- **Contexto:** a home já renderiza os dois catálogos com todas as 16
+  peças e a mesma grade de cards de `/produtos`. Manter uma segunda
+  página com o mesmo conteúdo obrigava a pessoa a ir e voltar para
+  comparar, e duplicava manutenção de template.
+- **Decisão:** a home é o catálogo. O botão "Ver catálogo completo" do
+  hero é âncora (`#catalogo-bloome`) e desce a página com o header fixo
+  acompanhando. `GET /produtos` responde **301** para
+  `/#catalogo-bloome`: link antigo (favorito do navegador, mensagem no
+  WhatsApp) continua funcionando e o navegador passa a ir direto na
+  próxima vez.
+- **Alternativas consideradas:**
+  - Apagar a rota e deixar 404 — rejeitada: quebra link compartilhado.
+  - Manter as duas páginas — rejeitada pelo dono: experiência duplicada.
+- **Consequências:** `templates/produtos.html` fica no repositório sem
+  uso (rollback = devolver o `render_template` na rota). `/produtos/<slug>`
+  (página do produto) **não muda**. `listar_colecoes` segue parada,
+  disponível para um futuro filtro por tipo na home.
+- **Arquivos:** `app.py`, `templates/index.html`, `templates/base.html`,
+  `templates/carrinho.html`, `templates/favoritos.html`,
+  `templates/produto.html`, `static/css/styles.css`
 
 ---
 

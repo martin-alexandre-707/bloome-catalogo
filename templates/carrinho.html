@@ -8,24 +8,55 @@
 <main id="conteudo" tabindex="-1" class="page-content">
     <h1>Carrinho</h1>
     <p class="subtitle">Confira os itens escolhidos e finalize seu pedido!</p>
+
+    {% if itens %}
     <div class="cart">
 
-        <ul class="cart__list">
+        <ul class="cart__list" aria-label="Itens do carrinho">
 
             {% for item in itens %}
-            <li class="cart__item">
+            <li class="cart__item cart__item--card">
                 {% if item.imagem %}
-                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}"
+                     alt="" class="cart__item-img" loading="lazy" decoding="async">
                 {% endif %}
-                <div>
+
+                <div class="cart__item-body">
                     <h2 class="cart__item-name">{{ item.nome }}</h2>
-                    <p>{{ item.cor }} · {{ item.quantidade }}× {{ item.preco }}{% if not item.disponivel %} — <strong>esgotado</strong>{% endif %}</p>
+                    <p class="cart__item-meta">
+                        Cor: {{ item.cor }}
+                        {% if not item.disponivel %} · <strong class="cart__item-alert">Esgotado</strong>{% endif %}
+                    </p>
+                    <p class="cart__item-unit">Preço unitário: {{ item.preco }}</p>
+
+                    {# Um único form por item. O servidor recorta a quantidade
+                       para 1–99; nenhum cálculo de dinheiro mora aqui. #}
+                    <form class="cart__qty-form" method="post"
+                          action="{{ url_for('atualizar_quantidade', id_variacao=item.id_variacao) }}">
+                        <label class="cart__qty-label" for="qtd-{{ item.id_variacao }}">Quantidade</label>
+                        <div class="cart__qty" data-cart-qty>
+                            <button type="button" class="cart__qty-btn" data-qty="menos"
+                                    aria-label="Diminuir quantidade de {{ item.nome }}"
+                                    {% if item.quantidade <= 1 %}disabled{% endif %}>−</button>
+                            <input class="cart__qty-input" id="qtd-{{ item.id_variacao }}"
+                                   name="quantidade" type="number" inputmode="numeric"
+                                   min="1" max="99" value="{{ item.quantidade }}">
+                            <button type="button" class="cart__qty-btn" data-qty="mais"
+                                    aria-label="Aumentar quantidade de {{ item.nome }}">+</button>
+                        </div>
+                        <button type="submit" class="cart__qty-apply">Atualizar</button>
+                        <noscript>
+                            <p class="cart__qty-noscript">Digite a quantidade e clique em Atualizar.</p>
+                        </noscript>
+                    </form>
                 </div>
-                <span class="cart__item-price">{{ item.linha_total }}</span>
-            </li>
-            {% else %}
-            <li class="cart__item">
-                <p>Seu carrinho está vazio. <a href="{{ url_for('produtos') }}">Ver produtos</a></p>
+
+                <div class="cart__item-side">
+                    <span class="cart__item-price">{{ item.linha_total }}</span>
+                    <form method="post" action="{{ url_for('remover_do_carrinho', id_variacao=item.id_variacao) }}">
+                        <button type="submit" class="cart__item-remove" aria-label="Remover {{ item.nome }}">Remover</button>
+                    </form>
+                </div>
             </li>
             {% endfor %}
 
@@ -51,15 +82,41 @@
 
             {# O checkout (entrega + pagamento) mora em /checkout, que pede
                login e devolve a pessoa para cá depois de entrar. #}
-            {% if itens %}
             <a href="{{ url_for('checkout') }}" class="btn cart__btn-checkout">Finalizar compra</a>
-            {% else %}
-            <button type="button" class="btn cart__btn-checkout" disabled aria-disabled="true">Finalizar compra</button>
-            {% endif %}
-            <a href="{{ url_for('produtos') }}" class="cart__btn-continue">Continuar comprando</a>
+            <a href="{{ url_for('index') }}#catalogo-bloome" class="cart__btn-continue">Continuar comprando</a>
         </aside>
 
     </div>
+    {% else %}
+    <div class="cart">
+        <div class="cart__empty">
+            <p class="cart__empty-title">Seu carrinho está vazio.</p>
+            <p>Que tal escolher uma joia para chamar de sua?</p>
+            <a href="{{ url_for('index') }}#catalogo-bloome" class="btn">Ver produtos</a>
+        </div>
+    </div>
+    {% endif %}
 
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Os botões −/+ só ajustam o número; quem envia é o "Atualizar".
+    // Nada de envio automático: a página recarregaria e perderia o foco
+    // e a posição de rolagem.
+    document.querySelectorAll('[data-cart-qty]').forEach((grupo) => {
+        const input = grupo.querySelector('input[name="quantidade"]');
+        const menos = grupo.querySelector('[data-qty="menos"]');
+        const mais = grupo.querySelector('[data-qty="mais"]');
+
+        function ajustar(delta) {
+            const atual = parseInt(input.value, 10) || 1;
+            input.value = Math.min(99, Math.max(1, atual + delta));
+        }
+
+        if (menos) menos.addEventListener('click', () => ajustar(-1));
+        if (mais) mais.addEventListener('click', () => ajustar(1));
+    });
+</script>
 {% endblock %}

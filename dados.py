@@ -298,6 +298,12 @@ def buscar_produto_por_id(id_acessorio):
 
 
 def listar_relacionados(id_acessorio, limite=3):
+    """Sugestões para "Você também vai amar".
+
+    Prioriza a mesma categoria (Cordão puxa Cordão) e sorteia dentro do
+    grupo; se faltar, completa com peças aleatórias do catálogo. Assim a
+    vitrine muda a cada visita em vez de repetir os 3 primeiros ids.
+    """
     conn = db.get_db()
     with conn.cursor(row_factory=dict_row) as cur:
         cur.execute(
@@ -305,10 +311,15 @@ def listar_relacionados(id_acessorio, limite=3):
             select id_acessorios, nome_acessorios, valor_acessorario, foto
             from bloome.vw_catalogo_publico
             where id_acessorios <> %s
-            order by id_acessorios
-            limit 3
+            order by (categoria_acessorio = (
+                         select categoria_acessorio
+                         from bloome.vw_catalogo_publico
+                         where id_acessorios = %s
+                     )) desc,
+                     random()
+            limit %s
             """,
-            (id_acessorio,),
+            (id_acessorio, id_acessorio, limite),
         )
         linhas = cur.fetchall()
 

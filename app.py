@@ -28,6 +28,14 @@ app.config.update(
 db.init_app(app)
 
 
+@app.context_processor
+def _contador_do_carrinho():
+    """Deixa `carrinho_qtd` disponível em todos os templates (badge do
+    ícone do carrinho no cabeçalho). Soma quantidades, não linhas."""
+    linhas = session.get("carrinho", [])
+    return {"carrinho_qtd": sum(linha["quantidade"] for linha in linhas)}
+
+
 def login_requerido(view):
     @wraps(view)
     def protegida(*args, **kwargs):
@@ -50,21 +58,14 @@ def index():
 
 @app.route("/produtos")
 def produtos():
-    lista = dados.listar_produtos()
-    return render_template(
-        "produtos.html",
-        current="produtos",
-        produtos=lista,
-        # A lista plana alimenta os <template>s do modal; os catálogos
-        # organizam os cards na tela, com todos os produtos.
-        catalogos=dados.listar_catalogos(),
-        # O modal mostra o coração cheio nos favoritos de quem está logado.
-        favoritos_ids=(
-            dados.ids_favoritos(session["cliente_id"])
-            if "cliente_id" in session
-            else set()
-        ),
-    )
+    """O catálogo completo agora mora na home (ADR-034).
+
+    A rota fica como redirecionamento permanente para não quebrar links
+    antigos (favoritos do navegador, WhatsApp, `url_for('produtos')` em
+    template). 301 diz ao navegador "mudou de endereço de vez": ele passa
+    a ir direto na próxima vez, sem passar por aqui.
+    """
+    return redirect(url_for("index") + "#catalogo-bloome", code=301)
 
 
 @app.route("/produtos/<slug>")
@@ -151,6 +152,39 @@ def adicionar_carrinho():
 
     flash(f"{item['nome']} ({cor['cor']}) foi para o carrinho.", "sucesso")
     return redirect(_url_de_volta(url_for("produto", slug=item["slug"])))
+
+
+@app.route("/carrinho/<int:id_variacao>/quantidade", methods=["POST"])
+def atualizar_quantidade(id_variacao):
+    """Troca a quantidade de um item que já está no carrinho.
+
+    Regras de dinheiro/limite ficam aqui: 1 a 99, e item inexistente
+    é simplesmente ignorado (a página recarrega igual)."""
+    try:
+        quantidade = int(request.form.get("quantidade", ""))
+    except ValueError:
+        flash("Quantidade inválida.", "erro")
+        return redirect(url_for("carrinho"))
+
+    carrinho = session.get("carrinho", [])
+    for linha in carrinho:
+        if linha["id_variacao"] == id_variacao:
+            linha["quantidade"] = max(1, min(quantidade, 99))
+            break
+    session["carrinho"] = carrinho
+    return redirect(url_for("carrinho"))
+
+
+@app.route("/carrinho/<int:id_variacao>/remover", methods=["POST"])
+def remover_do_carrinho(id_variacao):
+    carrinho = [
+        linha
+        for linha in session.get("carrinho", [])
+        if linha["id_variacao"] != id_variacao
+    ]
+    session["carrinho"] = carrinho
+    flash("Item removido do carrinho.", "sucesso")
+    return redirect(url_for("carrinho"))
 
 
 # Valor do rádio no carrinho -> (tipo_entrega, frete_pago_por) do banco.
@@ -329,7 +363,7 @@ def checkout():
 
     session.pop("carrinho", None)
     flash(f"Pedido {codigo} criado! Guarde o código para acompanhar.", "sucesso")
-    return redirect(url_for("pedido_detalhe", codigo=codigo))
+    return redirect(url_for("painel"))
 
 
 @app.route("/pedido/<codigo>")

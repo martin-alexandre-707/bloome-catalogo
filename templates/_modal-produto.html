@@ -1,14 +1,15 @@
 {# Modal de detalhes do produto.
-   `favoritos_ids` (opcional) vem da rota quando há cliente logado;
-   sem ela, o coração aparece vazio. #}
-{% set ids_favoritos = favoritos_ids if favoritos_ids is defined else [] %}
    Exige `produtos` (lista de dicts com id, nome, preco, imagem,
    descricao, status_exibicao e cores).
    O botão "Adicionar ao carrinho" é um submit real para
-   POST /carrinho/adicionar; a confirmação é o flash do servidor.
+   POST /carrinho/adicionar; a confirmação é o toast do servidor.
    Detalhes de cada produto: <template> é conteúdo inerte (não renderiza);
    o script copia o template do produto clicado para dentro do <dialog>.
    Usado por /produtos e /favoritos (ver ADR-025). #}
+{# `favoritos_ids` (opcional) vem da rota quando há cliente logado;
+   sem ela, o coração aparece vazio. O set PRECISA ficar fora do comentário
+   Jinja, senão ids_favoritos fica indefinido e o estado nunca aparece. #}
+{% set ids_favoritos = favoritos_ids if favoritos_ids is defined else [] %}
 {% for produto in produtos %}
 <template data-produto="{{ produto.id }}">
     {% if produto.imagem %}

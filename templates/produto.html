@@ -6,7 +6,7 @@
 
 {% block content %}
 <main id="conteudo" tabindex="-1" class="page-content">
-    <a href="{{ url_for('produtos') }}" class="back-link">← Voltar para o catálogo</a>
+    <a href="{{ url_for('index') }}#catalogo-bloome" class="back-link">← Voltar para o catálogo</a>
 
     <article class="product-detail">
         {% if produto.imagem %}
@@ -41,13 +41,25 @@
                                    {% if cor.disponivel %}required{% else %}disabled{% endif %}>
                             <span class="color-dot{% if not cor.disponivel %} color-dot--off{% endif %}"
                                   style="background: {{ cor.cor_hex }}" aria-hidden="true"></span>
-                            <span class="visually-hidden">{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}</span>
+                            {# Nome da cor visível: não depender só da matiz (WCAG 1.4.1) #}
+                            <span class="color-option__nome">{{ cor.cor }}{% if not cor.disponivel %} (esgotada){% endif %}</span>
                         </label>
                         {% endfor %}
                     </div>
                 </fieldset>
                 {% endif %}
                 <input type="hidden" name="id_acessorios" value="{{ produto.id }}">
+                {# Seletor de quantidade: o input escondido é o que vai no
+                   POST; o −/+ só ajusta o número (sem cálculo de dinheiro). #}
+                <div class="qty" role="group" aria-label="Quantidade de {{ produto.nome }}" data-qty-group>
+                    <button type="button" class="qty__btn" data-qty="menos" aria-label="Diminuir quantidade" disabled>−</button>
+                    <output class="qty__valor" aria-live="polite">1</output>
+                    <input type="hidden" name="quantidade" value="1">
+                    <button type="button" class="qty__btn" data-qty="mais" aria-label="Aumentar quantidade">+</button>
+                </div>
+                <noscript>
+                    <p class="cart__qty-noscript">Sem JavaScript a quantidade fica em 1.</p>
+                </noscript>
                 <button type="submit" class="btn">Adicionar ao carrinho</button>
             </form>
             {% endif %}
@@ -71,4 +83,28 @@
         </div>
     </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // −/+ ajustam o número e o input escondido `quantidade`.
+    // Mínimo 1; sem teto (o estoque é validado pelo backend no checkout).
+    document.querySelectorAll('[data-qty-group]').forEach((grupo) => {
+        const valor = grupo.querySelector('.qty__valor');
+        const campo = grupo.querySelector('input[name="quantidade"]');
+        const menos = grupo.querySelector('[data-qty="menos"]');
+        const mais = grupo.querySelector('[data-qty="mais"]');
+
+        function atualizar(novo) {
+            const n = Math.max(1, novo);
+            valor.textContent = n;
+            campo.value = n;
+            menos.disabled = n <= 1;
+        }
+
+        menos.addEventListener('click', () => atualizar(parseInt(valor.textContent, 10) - 1));
+        mais.addEventListener('click', () => atualizar(parseInt(valor.textContent, 10) + 1));
+        atualizar(1);
+    });
+</script>
 {% endblock %}

@@ -9,7 +9,7 @@
     <h1>Finalizar pedido</h1>
     <p class="subtitle">Confira os itens e escolha como receber e pagar.</p>
 
-    <div class="cart">
+    <div class="cart checkout">
 
         <ul class="cart__list" aria-label="Itens do pedido">
 
@@ -28,10 +28,27 @@
 
         </ul>
 
-        <form id="form-checkout" class="cart__form" method="post" action="{{ url_for('checkout') }}" aria-label="Forma de entrega e pagamento">
-            <section class="form-section" aria-labelledby="titulo-entrega">
-                <h2 class="form-section__title" id="titulo-entrega">1. Forma de Entrega / Retirada</h2>
-                <div class="form-options">
+        {# Um único form POST /checkout. As três etapas são seções do mesmo
+           form: sem JS elas ficam todas visíveis (fallback); com JS o
+           script liga o modo "checkout--js" e mostra uma por vez. #}
+        <form id="form-checkout" class="cart__form checkout__form" method="post"
+              action="{{ url_for('checkout') }}" aria-label="Finalizar pedido">
+
+            <ol class="checkout__steps" aria-label="Etapas do pedido">
+                <li class="checkout__step is-atual" data-step-marcador="entrega" aria-current="step">
+                    <span class="checkout__step-num" aria-hidden="true">1</span> Entrega
+                </li>
+                <li class="checkout__step" data-step-marcador="pagamento">
+                    <span class="checkout__step-num" aria-hidden="true">2</span> Pagamento
+                </li>
+                <li class="checkout__step" data-step-marcador="confirmacao">
+                    <span class="checkout__step-num" aria-hidden="true">3</span> Confirmação
+                </li>
+            </ol>
+
+            <section class="form-section checkout__panel" data-step="entrega" aria-labelledby="titulo-entrega">
+                <h2 class="form-section__title" id="titulo-entrega" tabindex="-1">1. Forma de entrega / retirada</h2>
+                <div class="form-options" role="group" aria-label="Forma de entrega" aria-describedby="erro-entrega">
                     <label class="radio-option">
                         <input type="radio" name="entrega" value="unima" checked>
                         <span class="radio-option__label">
@@ -63,11 +80,18 @@
                         </span>
                     </label>
                 </div>
+                <p class="checkout__status checkout__status--aviso" role="status" data-correios-aviso hidden></p>
+                <p class="checkout__erro" id="erro-entrega" data-erro role="alert" hidden>
+                    Escolha uma forma de entrega para continuar.
+                </p>
+                <div class="checkout__nav">
+                    <button type="button" class="btn" data-proximo>Continuar</button>
+                </div>
             </section>
 
-            <section class="form-section" aria-labelledby="titulo-pagamento">
-                <h2 class="form-section__title" id="titulo-pagamento">2. Forma de Pagamento</h2>
-                <div class="form-options form-options--inline">
+            <section class="form-section checkout__panel" data-step="pagamento" aria-labelledby="titulo-pagamento">
+                <h2 class="form-section__title" id="titulo-pagamento" tabindex="-1">2. Forma de pagamento</h2>
+                <div class="form-options form-options--inline" role="group" aria-label="Forma de pagamento" aria-describedby="erro-pagamento">
                     <label class="radio-option">
                         <input type="radio" name="pagamento" value="pix" checked>
                         <span class="radio-option__label">Pix</span>
@@ -84,6 +108,28 @@
                     </label>
                 </div>
                 <p class="cart__account">Ao confirmar, seu pedido entra na fila de preparação.</p>
+                <p class="checkout__erro" id="erro-pagamento" data-erro role="alert" hidden>
+                    Escolha uma forma de pagamento para continuar.
+                </p>
+                <div class="checkout__nav">
+                    <button type="button" class="btn btn--secundario" data-voltar>Voltar</button>
+                    <button type="button" class="btn" data-proximo>Continuar</button>
+                </div>
+            </section>
+
+            <section class="form-section checkout__panel" data-step="confirmacao" aria-labelledby="titulo-confirmacao">
+                <h2 class="form-section__title" id="titulo-confirmacao" tabindex="-1">3. Confirmação</h2>
+                <p class="checkout__resumo-linha">Entrega: <strong data-resumo-entrega>—</strong></p>
+                <p class="checkout__resumo-linha">Pagamento: <strong data-resumo-pagamento>—</strong></p>
+                {# Estado de pagamento simulado: puramente visual. Nenhum QR de
+                   Pix real é gerado; o pedido é criado pelo backend. #}
+                <p class="checkout__status" data-status role="status" aria-live="polite">
+                    Revise as escolhas e confirme o pedido.
+                </p>
+                <div class="checkout__nav">
+                    <button type="button" class="btn btn--secundario" data-voltar>Voltar</button>
+                    <button type="submit" class="btn" data-finalizar>Confirmar pedido</button>
+                </div>
             </section>
         </form>
 
@@ -105,7 +151,6 @@
                 <strong>{{ subtotal }}</strong>
             </div>
 
-            <button type="submit" form="form-checkout" class="btn cart__btn-checkout">Confirmar pedido</button>
             <a href="{{ url_for('carrinho') }}" class="cart__btn-continue">Voltar ao carrinho</a>
         </aside>
 
@@ -120,6 +165,7 @@
     // Se for marcado (clique ou seta do teclado), desmarca e devolve a
     // escolha anterior.
     const correios = document.querySelector('input[name="entrega"][value="correios"]');
+    const avisoCorreios = document.querySelector('[data-correios-aviso]');
     if (correios) {
         let escolhaAnterior = document.querySelector('input[name="entrega"]:checked');
         document.querySelectorAll('input[name="entrega"]').forEach((radio) => {
@@ -129,6 +175,97 @@
         correios.addEventListener('change', () => {
             correios.checked = false;
             if (escolhaAnterior) escolhaAnterior.checked = true;
+            // Diz por que a opção foi revertida (anunciado via role=status).
+            if (avisoCorreios) {
+                avisoCorreios.textContent = 'Correios estará disponível em breve.';
+                avisoCorreios.hidden = false;
+            }
+        });
+    }
+
+    // Etapas do checkout (só front). Sem JS tudo fica visível e o botão
+    // "Confirmar pedido" da etapa 3 submete o form normalmente.
+    const formCheckout = document.getElementById('form-checkout');
+    if (formCheckout) {
+        const checkout = formCheckout.closest('.checkout');
+        const passos = Array.from(formCheckout.querySelectorAll('[data-step]'));
+        const marcadores = Array.from(document.querySelectorAll('[data-step-marcador]'));
+        let atual = 0;
+        let simulando = false;
+
+        checkout.classList.add('checkout--js');
+        passos.forEach((passo, indice) => { passo.hidden = indice !== 0; });
+
+        function rotuloMarcado(passo, nome) {
+            const marcado = passo.querySelector('input[name="' + nome + '"]:checked');
+            if (!marcado) return '—';
+            const label = marcado.closest('label');
+            const texto = label && label.querySelector('.radio-option__label');
+            return texto ? texto.textContent.trim().replace(/\s+/g, ' ') : marcado.value;
+        }
+
+        function atualizarResumo() {
+            const passoEntrega = passos.find((p) => p.dataset.step === 'entrega');
+            const passoPagamento = passos.find((p) => p.dataset.step === 'pagamento');
+            formCheckout.querySelector('[data-resumo-entrega]').textContent =
+                rotuloMarcado(passoEntrega, 'entrega');
+            formCheckout.querySelector('[data-resumo-pagamento]').textContent =
+                rotuloMarcado(passoPagamento, 'pagamento');
+        }
+
+        function simularPagamento() {
+            const status = formCheckout.querySelector('[data-status]');
+            if (!status || simulando) return;
+            simulando = true;
+            status.textContent = 'Processando pagamento…';
+            setTimeout(() => {
+                if (!simulando) return; // voltou antes de concluir
+                // Só mostra o estado; o envio fica com o botão "Confirmar
+                // pedido" para a pessoa revisar antes (nada de auto-submit).
+                status.textContent =
+                    'Pagamento aprovado (simulado). Confirme o pedido para finalizar.';
+            }, 1200);
+        }
+
+        function mostrarPasso(indice) {
+            atual = indice;
+            passos.forEach((passo, i) => { passo.hidden = i !== indice; });
+            marcadores.forEach((marcador, i) => {
+                const ativo = i === indice;
+                marcador.classList.toggle('is-atual', ativo);
+                if (ativo) marcador.setAttribute('aria-current', 'step');
+                else marcador.removeAttribute('aria-current');
+            });
+            if (passos[indice].dataset.step === 'confirmacao') {
+                atualizarResumo();
+                simularPagamento();
+            } else {
+                simulando = false;
+            }
+            const titulo = passos[indice].querySelector('h2');
+            if (titulo) titulo.focus();
+        }
+
+        function validar(passo) {
+            const erro = passo.querySelector('[data-erro]');
+            const radios = passo.querySelectorAll('input[type="radio"]');
+            if (!radios.length) return true;
+            if (passo.querySelector('input[type="radio"]:checked')) {
+                if (erro) erro.hidden = true;
+                return true;
+            }
+            if (erro) erro.hidden = false;
+            return false;
+        }
+
+        formCheckout.querySelectorAll('[data-proximo]').forEach((botao) => {
+            botao.addEventListener('click', () => {
+                if (validar(passos[atual])) mostrarPasso(atual + 1);
+            });
+        });
+
+        formCheckout.querySelectorAll('[data-voltar]').forEach((botao) => {
+            botao.addEventListener('click', () => mostrarPasso(atual - 1));
         });
     }
 </script>

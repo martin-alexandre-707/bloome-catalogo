@@ -29,6 +29,8 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 | 2 | Escolher cor no detalhe + `POST /carrinho/adicionar` (session) | ✅ |
 | 3 | Carrinho real: session + banco, total calculado no backend | ✅ |
 | 4 | Checkout: `pedidos` + `itens_pedidos` em transação, pagamento simulado e "Em preparação" (ADR-029) | ✅ |
+| 4b | Favoritos persistentes (ADR-032), toast acessível, carrinho em cartões, checkout em 3 etapas | ✅ |
+| 4c | Catálogo completo só na home; `/produtos` → 301; modal aposentado; header fixo e enxuto (ADR-033/034) | ✅ |
 | 5 | Mercado Pago + webhook idempotente e assinado | ⏳ próximo |
 
 **Banco real conectado** (2026-11-26). O problema era o `.env`: prefixo
@@ -39,13 +41,16 @@ sempre esteve certa. O app roda contra o Supabase pelo pooler (porta 5432).
 Sem `DATABASE_URL` ou `SECRET_KEY` no `.env` o app não inicia — não há mais
 modo demonstração nem `catalogo.py`.
 
-**Merge com o trabalho do amigo (ADR-025):** o modal de produto
-(`_modal-produto.html` + `static/js/modal-produto.js`), o seletor de
-quantidade, o toast e os favoritos data-driven vieram da `origin/main`. O
-botão "Adicionar ao carrinho" do modal já é um submit real para
-`POST /carrinho/adicionar`. Em 2026-11-27 foi corrigido um bug em que a
-consulta de cores do catálogo (`_cores_por_acessorio`) não trazia
-`id_variacao`, e o modal enviava a cor vazia.
+**Modal aposentado (ADR-033):** existe uma única forma de ver o produto,
+a página `/produtos/<slug>`. `_modal-produto.html` e
+`static/js/modal-produto.js` permanecem no repositório sem uso, para
+rollback barato. O seletor de quantidade vive na página do produto.
+
+**Catálogo = home (ADR-034):** a home mostra os dois catálogos completos
+(16 peças) com o mesmo card de produto. `GET /produtos` responde 301 para
+`/#catalogo-bloome`; `templates/produtos.html` fica parado, sem rota que
+o renderize. O header é sticky (`--header-h` medido em
+`static/js/header-offset.js`) e as âncoras usam `scroll-margin-top`.
 
 Na sessão nova, basta: *"Bloome. Leia AGENTS.md, docs/DECISOES.md e
 docs/ESTADO-ATUAL.md. Continua o passo X."*
@@ -61,7 +66,8 @@ docs/ESTADO-ATUAL.md. Continua o passo X."*
   durante a sessão continua logada até o cookie sumir.
 - Ainda **sem token CSRF**; `SameSite=Lax` cobre o caso cross-site comum, mas
   não é equivalente.
-- Pedidos e cartão "Meus dados" do painel continuam fictícios.
+- O cartão "Meus dados" do painel ainda é fictício; os **pedidos** já vêm
+  do banco (`listar_pedidos_cliente`).
 - Contas de teste não podem ser apagadas (`trg_clientes_sem_delete`);
   usar `bloome.anonimizar_cliente(id)`.
 - Dados de estoque/receita são **fictícios** (ADR-017) — remover com

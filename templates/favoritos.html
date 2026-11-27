@@ -13,37 +13,33 @@
         {% for produto in produtos %}
         <article class="favorite">
             <span class="favorite__heart" aria-hidden="true">&#9829;</span>
-            <button type="button"
-                    class="favorite__open"
-                    data-abrir-produto="{{ produto.id }}"
-                    aria-label="Ver detalhes de {{ produto.nome }}">
+            {# Imagem + informações formam um único link para a página do
+               produto (o form "Remover" fica fora, como irmão do link). #}
+            <a class="favorite__link" href="{{ url_for('produto', slug=produto.slug) }}">
                 {% if produto.imagem %}
                 <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="favorite__image" loading="lazy" decoding="async">
                 {% endif %}
-            </button>
-            <div class="favorite__info">
-                <h2 class="favorite__name">{{ produto.nome }}</h2>
-                <p class="favorite__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
-                <hr class="favorite__divider">
-                <span class="favorite__price">{{ produto.preco }}</span>
-                {% if produto.status_exibicao == 'volta_em_breve' %}
-                <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
-                {% else %}
-                <button type="button" class="btn favorite__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
-                {% endif %}
-                <form method="post" action="{{ url_for('alternar_favorito', id_acessorios=produto.id) }}">
-                    <button type="submit" class="favorite__remove">Remover dos favoritos</button>
-                </form>
-            </div>
+                <div class="favorite__info">
+                    <h2 class="favorite__name">{{ produto.nome }}</h2>
+                    <p class="favorite__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
+                    <hr class="favorite__divider">
+                    <span class="favorite__price">{{ produto.preco }}</span>
+                    {% if produto.status_exibicao == 'volta_em_breve' %}
+                    <span class="favorite__tag">Em breve</span>
+                    {% else %}
+                    <span class="btn favorite__btn-visualizar">Visualizar</span>
+                    {% endif %}
+                </div>
+            </a>
+            <form method="post" action="{{ url_for('alternar_favorito', id_acessorios=produto.id) }}">
+                <button type="submit" class="favorite__remove" aria-label="Remover {{ produto.nome }} dos favoritos">Remover dos favoritos</button>
+            </form>
         </article>
         {% else %}
         <p class="subtitle">Você ainda não favoritou nenhum item.
-            <a href="{{ url_for('produtos') }}">Explore o catálogo</a>.</p>
+            <a href="{{ url_for('index') }}#catalogo-bloome">Explore o catálogo</a>.</p>
         {% endfor %}
     </section>
-
-    {# Modal de detalhes + toast: mesma parcial de /produtos (ADR-025). #}
-    {% include "_modal-produto.html" %}
 
 </main>
 {% endblock %}
