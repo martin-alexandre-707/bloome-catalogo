@@ -9,35 +9,40 @@
     <h1>Produtos</h1>
     <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
 
-    <section class="products" aria-label="Lista de produtos">
-        {% for produto in produtos %}
-        <article class="product">
-            <button type="button"
-                    class="product__open"
-                    data-abrir-produto="{{ produto.id }}"
-                    aria-label="Ver detalhes de {{ produto.nome }}">
-                {% if produto.imagem %}
-                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="product__image" loading="lazy" decoding="async">
-                {% endif %}
-            </button>
-            <div class="product__info">
-                <h2 class="product__name">{{ produto.nome }}</h2>
-                <p class="product__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
-                <hr class="product__divider">
-                <span class="product__price">{{ produto.preco }}</span>
-                {% if produto.status_exibicao == 'volta_em_breve' %}
-                <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
-                {% else %}
-                <button type="button" class="btn product__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
-                {% endif %}
-            </div>
-        </article>
-        {% endfor %}
+    {% for colecao in colecoes %}
+    <section class="produtos__colecao" aria-labelledby="colecao-produtos-{{ loop.index }}">
+        <h2 class="colecao__titulo" id="colecao-produtos-{{ loop.index }}">{{ colecao.titulo }}</h2>
+
+        <section class="products" aria-label="{{ colecao.titulo }}">
+            {% for produto in colecao.produtos %}
+            <article class="product">
+                <button type="button"
+                        class="product__open"
+                        data-abrir-produto="{{ produto.id }}"
+                        aria-label="Ver detalhes de {{ produto.nome }}">
+                    {% if produto.imagem %}
+                    <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" class="product__image" loading="lazy" decoding="async">
+                    {% endif %}
+                </button>
+                <div class="product__info">
+                    <h3 class="product__name">{{ produto.nome }}</h3>
+                    <p class="product__description">{{ produto.descricao or 'Detalhes em breve' }}</p>
+                    <hr class="product__divider">
+                    <span class="product__price">{{ produto.preco }}</span>
+                    {% if produto.status_exibicao == 'volta_em_breve' %}
+                    <button type="button" class="btn" disabled aria-disabled="true">Em breve</button>
+                    {% else %}
+                    <button type="button" class="btn product__btn-visualizar" data-abrir-produto="{{ produto.id }}">Visualizar</button>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </section>
     </section>
+    {% endfor %}
 
     {# Modal de detalhes + toast: parcial compartilhada com /favoritos
        (<template>s, <dialog>, toast e o script em static/js/ — ADR-025). #}
     {% include "_modal-produto.html" %}
-
 </main>
 {% endblock %}

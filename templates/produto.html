@@ -47,7 +47,7 @@
         <h2 class="product-detail__related-title">Você também vai amar</h2>
         <div class="favorites">
             {% for item in relacionados %}
-            <a href="{{ url_for('produto', produto=item.id) }}" class="favorite">
+            <a href="{{ url_for('produto', slug=item.slug) }}" class="favorite">
                 {% if item.imagem %}
                 <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="{{ item.nome }}" class="favorite__image" loading="lazy" decoding="async">
                 {% endif %}

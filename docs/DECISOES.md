@@ -45,6 +45,10 @@
 | ADR-025 | 2026-11-26 | Estrutura | Aceita | Modal de produto vira parcial compartilhada + JS em `static/js/`; favoritos mock data-driven (3 primeiros do catálogo) |
 | ADR-026 | 2026-11-26 | Estrutura | Aceita | Sem mock: toda consulta vai ao Supabase; `catalogo.py` removido |
 | ADR-027 | 2026-11-26 | Estrutura | Aceita | Carrinho na sessão guarda só variação + quantidade; preço nunca vai ao cookie |
+| ADR-028 | 2026-11-27 | Estrutura | Aceita (pagamento revisto na ADR-029) | Checkout do MVP: login no clique, Correios "em breve", pedido em transação |
+| ADR-029 | 2026-11-27 | Estrutura | Aceita | Pagamento simulado no checkout: pedido nasce pago e "em preparação" |
+| ADR-030 | 2026-11-27 | Estrutura | Aceita | Home com os dois catálogos do PDF (Bloome e Cápsula Maré) e fotos reais |
+| ADR-030 | 2026-11-27 | Estrutura | Aceita | URL do produto vira slug do nome (`/produtos/colar-inicial`); ID numérico sai |
 
 > **Como ler:** as entradas estão em ordem cronológica. As mais recentes ficam
 > no fim. Use o índice acima para navegar.
@@ -994,6 +998,159 @@ Depois de escrever a entrada, adicione uma linha no **Índice**.
 
 - **Arquivos:** `app.py`, `dados.py`, `templates/produto.html`,
   `static/css/styles.css`
+
+---
+
+## ADR-028 — Checkout do MVP: login no clique, Correios "em breve", pedido em transação
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** passo 4. O schema exige `id_cliente` em `pedidos`, e o
+  `CHECK ck_pedidos_endereco` exige endereço completo quando `tipo_entrega =
+  'correios'`. O MVP não tem API dos Correios nem gateway de pagamento — o
+  objetivo é o fluxo funcionando de ponta a ponta.
+
+- **Decisão:**
+  1. `POST /carrinho/finalizar` exige conta. Sem sessão, responde `302` para
+     `/conta?next=/carrinho`; entrar ou criar conta **preserva o carrinho** e
+     volta para o `next` (validado como caminho interno, contra open redirect).
+  2. O rádio dos Correios continua visível, mas `disabled` e marcado
+     **"em breve"**. O servidor também recusa se o valor chegar.
+  3. O pedido nasce numa **transação única**: `INSERT` em `pedidos` →
+     `INSERT` nos `itens_pedidos` (triggers de preço/custo/validade) →
+     `verificar_estoque_pedido`. Qualquer falha → `rollback` e carrinho
+     intacto; sucesso → `commit`, carrinho esvaziado e `302` para
+     `/carrinho?pedido=#BLO-XXXX`.
+  4. Preço e custo vêm dos triggers do banco; o formulário envia só
+     `id_variacao` e `quantidade`.
+  5. Os campos Nome e WhatsApp saem do carrinho: os dados vêm da conta.
+
+- **Alternativas consideradas:**
+  - Exigir login antes de montar o carrinho — rejeitada: atrito desnecessário.
+  - Criar conta dentro do checkout — adiada: `/conta` já tem as abas e o
+    `next` resolve o retorno com menos código.
+  - Coletar endereço dos Correios agora — adiada: sem API de frete, no MVP o
+    envio fica "em breve" e o contato é pelo WhatsApp.
+
+- **Consequências:** status fica `aguardando_pagamento` até o passo 5
+  (Mercado Pago). Ainda sem token de idempotência explícito no formulário:
+  o POST-Redirect-GET e o carrinho esvaziado cobrem o caso comum de
+  duplo clique. O passo dos Correios precisará de endereço + frete.
+
+- **Arquivos:** `app.py`, `templates/carrinho.html`, `templates/conta.html`,
+  `static/css/styles.css`
+
+---
+
+## ADR-029 — Pagamento simulado no checkout: pedido nasce pago e "em preparação"
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** a ADR-028 deixava o pedido em `aguardando_pagamento` até o
+  Mercado Pago (passo 5). O time decidiu que, no MVP de portfólio, o fluxo
+  precisa dar a sensação de compra concluída: nada de "pague pelo WhatsApp".
+
+- **Decisão:**
+  1. Depois de criar o pedido e validar o estoque, o checkout chama
+     `bloome.confirmar_pagamento(id, null, null)` — a função que o banco já
+     tem para **confirmação manual**: recheca estoque, baixa os insumos e
+     marca o pedido como `pago`.
+  2. Em seguida o pedido vai para `em_producao`; a tela mostra
+     **"Em preparação"** e **"Pagamento aprovado"**.
+  3. Removidos os textos de pagamento por WhatsApp do checkout e da
+     página do pedido.
+
+- **Alternativas consideradas:**
+  - Mostrar "Aguardando pagamento" — rejeitada pelo time: quebra a sensação
+    de MVP real.
+  - Gerar QR Pix falso — rejeitada: QR de pagamento que não funciona é pior
+    que não ter QR.
+  - Só esconder o status na tela — rejeitada: o banco diria uma coisa e a
+    tela outra; a simulação usa o caminho real de confirmação.
+
+- **Consequências:** pedidos feitos no MVP **baixam estoque de verdade**;
+  `cancelar_pedido` devolve os insumos. O passo 5 (Mercado Pago) deve
+  remover a chamada de simulação e deixar o webhook assinar a confirmação.
+
+---
+
+## ADR-030 — URL do produto: slug do nome no lugar do ID numérico
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(implementação e registro)*
+- **Contexto:** o detalhe do produto era `/produtos/<int:produto>`
+  (`/produtos/1`, `/produtos/3`…). ID na URL não diz nada a quem lê nem a
+  buscadores, e o time pediu o nome da peça no endereço.
+
+- **Decisão:**
+  1. A rota passa a `@app.route("/produtos/<slug>")`: `/produtos/colar-inicial`.
+  2. O **slug** é derivado do `nome_acessorios` por `dados._slug` — NFKD
+     separa o acento, o filtro `combining` descarta, `re.sub` troca o resto
+     por hífen. (`"Cordão Lua"` → `"cordao-lua"`.)
+  3. O slug **não existe no banco**; é calculado na leitura e anexado a todo
+     produto que sai de `dados.py` (`listar_produtos`, `buscar_produto`,
+     `listar_relacionados`).
+  4. `buscar_produto(slug)` resolve slug → id comparando em Python (o catálogo
+     é pequeno) e então chama `buscar_produto_por_id`, que continua sendo a
+     consulta por ID usada pelo carrinho.
+  5. URLs de ID deixam de existir: `/produtos/1` responde **404**, sem
+     redirect de compatibilidade — não há fluxo antigo para preservar.
+
+- **Alternativas consideradas:**
+  - Coluna `slug` no banco — rejeitada por ora: exige DDL e migration para um
+    dado totalmente derivável do nome; pode virar ADR própria se o catálogo
+    crescer e a busca em Python pesar.
+  - Manter as duas rotas (`<int>` e `<slug>`) — rejeitada: dois endereços
+    para a mesma página confundem SEO e criam conteúdo duplicado.
+
+- **Risco conhecido:** dois produtos com o mesmo nome geram o mesmo slug (o
+  primeiro na ordem do catálogo vence). No catálogo atual não há duplicados;
+  se aparecer, adicionar sufixo (`-2`) ou coluna `slug` no banco.
+
+- **Arquivos:** `dados.py`, `app.py`, `templates/index.html`,
+  `templates/produto.html`, `docs/DECISOES.md`
+  Pedidos criados nesta fase ficam com `gateway_payment_id` nulo.
+
+- **Arquivos:** `app.py`, `templates/pedido.html`, `templates/checkout.html`
+
+---
+
+## ADR-030 — Home com os dois catálogos do PDF e fotos reais
+
+- **Data:** 2026-11-27
+- **Status:** Aceita
+- **Autor:** Equipe Bloome *(decisão)* · Claude *(registro)*
+- **Contexto:** o PDF `docs/referencias/Catalogo-BLOOME.pdf` tem dois
+  volumes: o **Catálogo Bloome** (12 peças) e a **Cápsula Maré** (4 peças).
+  O banco não tem coluna de coleção — só `categoria_acessorio`
+  (Cordão/Colar/Chocker), que atravessa os dois.
+
+- **Decisão:**
+  1. A home mostra o herói com a foto de capa do PDF
+     (`hero-bloome.jpg`) e, descendo, os dois catálogos: **Catálogo
+     Bloome** e **Cápsula Maré** (esta com banner `capsula-mare.jpg`).
+  2. A separação Cápsula Maré ↔ resto fica em `dados.CAPSULA_MARE`, por
+     **nome de produto**, até existir uma coluna em `bloome.acessorios`.
+  3. As fotos do herói e do banner foram extraídas do próprio PDF.
+  4. A página `/produtos` continua agrupada por **tipo** (Cordões,
+     Colares, Chockers), não por catálogo.
+
+- **Alternativas consideradas:**
+  - Criar `acessorios.colecao` agora — adiada: exige migração, ADR de
+    banco e ajuste das views; o MVP prioriza o fluxo.
+  - Home com as categorias como antes — rejeitada: não refletia o PDF.
+
+- **Consequências:** produto novo entra no Catálogo Bloome até a coluna
+  existir; renomear um produto da cápsula o move para o catálogo
+  principal silenciosamente (a lista é por nome). O véu do herói é só
+  no lado do texto para a foto continuar viva.
+
+- **Arquivos:** `dados.py`, `app.py`, `templates/index.html`,
+  `static/css/styles.css`, `static/imgs/hero-bloome.jpg`,
+  `static/imgs/capsula-mare.jpg`
 
 ---
 

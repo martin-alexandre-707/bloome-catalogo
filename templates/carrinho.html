@@ -31,74 +31,6 @@
 
         </ul>
 
-        <form id="form-checkout" class="cart__form" aria-label="Informações de entrega e pagamento">
-            <section class="form-section" aria-labelledby="titulo-dados">
-                <h2 class="form-section__title" id="titulo-dados">1. Seus Dados</h2>
-                <div class="form-field">
-                    <label for="cliente-nome">Nome completo:</label>
-                    <input type="text" id="cliente-nome" name="nome" placeholder="Digite seu nome" required>
-                </div>
-                <div class="form-field">
-                    <label for="cliente-whats">WhatsApp com DDD:</label>
-                    <input type="tel" id="cliente-whats" name="whatsapp" inputmode="numeric" placeholder="(82) 99999-9999" required>
-                    <p class="form-field__aviso" id="aviso-whatsapp" role="alert" hidden>Digite apenas números.</p>
-                </div>
-            </section>
-
-            <section class="form-section" aria-labelledby="titulo-entrega">
-                <h2 class="form-section__title" id="titulo-entrega">2. Forma de Entrega / Retirada</h2>
-                <div class="form-options">
-                    <label class="radio-option">
-                        <input type="radio" name="entrega" value="unima" checked>
-                        <span class="radio-option__label">
-                            <strong>Retirada gratuita:</strong> UNIMA - Cruz das Almas
-                        </span>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="entrega" value="ponta-verde">
-                        <span class="radio-option__label">
-                            <strong>Retirada gratuita:</strong> Ponta Verde
-                        </span>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="entrega" value="uber-flash">
-                        <span class="radio-option__label">
-                            <strong>Entrega rápida:</strong> Uber Flash (frete a combinar)
-                        </span>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="entrega" value="correios">
-                        <span class="radio-option__label">
-                            <strong>Envio:</strong> Correios (frete a calcular)
-                        </span>
-                    </label>
-                </div>
-            </section>
-
-            <section class="form-section" aria-labelledby="titulo-pagamento">
-                <h2 class="form-section__title" id="titulo-pagamento">3. Forma de Pagamento</h2>
-                <div class="form-options form-options--inline">
-                    <label class="radio-option">
-                        <input type="radio" name="pagamento" value="pix" checked>
-                        <span class="radio-option__label">Pix</span>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="pagamento" value="debito">
-                        <span class="radio-option__label">Cartão de Débito</span>
-                    </label>
-
-                    <label class="radio-option">
-                        <input type="radio" name="pagamento" value="credito">
-                        <span class="radio-option__label">Cartão de Crédito</span>
-                    </label>
-                </div>
-            </section>
-        </form>
-
         <aside class="cart__summary" aria-labelledby="resumo-titulo">
             <h2 class="cart__summary-title" id="resumo-titulo">Resumo do pedido</h2>
 
@@ -117,61 +49,17 @@
                 <strong>{{ subtotal }}</strong>
             </div>
 
-            <button type="submit" form="form-checkout" class="btn cart__btn-checkout">Finalizar compra</button>
+            {# O checkout (entrega + pagamento) mora em /checkout, que pede
+               login e devolve a pessoa para cá depois de entrar. #}
+            {% if itens %}
+            <a href="{{ url_for('checkout') }}" class="btn cart__btn-checkout">Finalizar compra</a>
+            {% else %}
+            <button type="button" class="btn cart__btn-checkout" disabled aria-disabled="true">Finalizar compra</button>
+            {% endif %}
             <a href="{{ url_for('produtos') }}" class="cart__btn-continue">Continuar comprando</a>
         </aside>
 
     </div>
 
 </main>
-
-<dialog id="modal-compra" class="checkout-modal" aria-labelledby="titulo-compra-finalizada">
-    <span class="checkout-modal__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-    </span>
-    <p class="checkout-modal__brand">Bloome</p>
-    <h2 class="checkout-modal__title" id="titulo-compra-finalizada">Compra finalizada!</h2>
-    <p class="checkout-modal__message">Obrigado pela sua escolha! Em breve entraremos em contato para combinar a entrega ou retirada do seu pedido.</p>
-    <a href="{{ url_for('index') }}" class="btn checkout-modal__btn">Voltar ao início</a>
-</dialog>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    const formCheckout = document.getElementById('form-checkout');
-    const modalCompra = document.getElementById('modal-compra');
-    const btnCheckout = document.querySelector('.cart__btn-checkout');
-
-    formCheckout.addEventListener('submit', (evento) => {
-        evento.preventDefault();
-        modalCompra.showModal();
-    });
-
-    // WhatsApp: aceita apenas números — filtra ao digitar, colar ou
-    // autocompletar (colou "(82) 99999-9999" vira "82999999999").
-    // Caractere inválido aciona o aviso "Digite apenas números"
-    const campoWhats = document.getElementById('cliente-whats');
-    const avisoWhats = document.getElementById('aviso-whatsapp');
-    let avisoTimer = null;
-
-    campoWhats.addEventListener('input', () => {
-        const temInvalido = /\D/.test(campoWhats.value);
-        campoWhats.value = campoWhats.value.replace(/\D+/g, '');
-        if (temInvalido) {
-            campoWhats.setAttribute('aria-invalid', 'true');
-            avisoWhats.hidden = false;
-            if (avisoTimer) clearTimeout(avisoTimer);
-            avisoTimer = setTimeout(() => {
-                avisoWhats.hidden = true;
-                campoWhats.removeAttribute('aria-invalid');
-            }, 2500);
-        }
-    });
-
-    modalCompra.addEventListener('close', () => {
-        btnCheckout.focus();
-    });
-</script>
 {% endblock %}

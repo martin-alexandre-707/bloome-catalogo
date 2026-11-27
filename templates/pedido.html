@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido {{ pedido.codigo }}{% endblock %}
+
+{% block description %}Detalhes do pedido {{ pedido.codigo }} na Bloome.{% endblock %}
+
+{% block content %}
+<main id="conteudo" tabindex="-1" class="page-content">
+    <h1>Pedido {{ pedido.codigo }}</h1>
+    <p class="subtitle">Pedido confirmado! Já estamos preparando tudo. Guarde este código para acompanhar.</p>
+
+    <section class="painel__pedidos" aria-label="Itens do pedido">
+        <div class="pedido">
+            <header class="pedido__header">
+                <div class="pedido__identificacao">
+                    <span class="pedido__numero">{{ pedido.codigo }}</span>
+                    <time class="pedido__data" datetime="{{ pedido.criado_em.isoformat() }}">{{ pedido.data }}</time>
+                </div>
+                <span class="pedido__status pedido__status--{{ pedido.status_classe }}">{{ pedido.status_rotulo }}</span>
+            </header>
+
+            <ul class="pedido__itens">
+                {% for item in pedido.itens %}
+                <li class="pedido__item">
+                    {% if item.imagem %}
+                    <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
+                    {% endif %}
+                    <span class="pedido__item-nome">{{ item.nome }} ({{ item.cor }}){% if item.quantidade > 1 %} · {{ item.quantidade }}×{% endif %}</span>
+                    <span class="pedido__item-preco">{{ item.preco_fmt }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <footer class="pedido__footer">
+                <span class="pedido__entrega">{{ pedido.entrega_rotulo }}</span>
+                <span class="pedido__total">Total: <strong>{{ pedido.total_fmt }}</strong></span>
+            </footer>
+        </div>
+    </section>
+
+    <p>Pagamento aprovado · <strong>{{ pedido.pagamento_rotulo }}</strong></p>
+
+    <div class="pedido__acoes">
+        <a href="{{ url_for('painel') }}" class="btn">Ver meus pedidos</a>
+        <a href="{{ url_for('produtos') }}" class="pedido__link">Continuar comprando</a>
+    </div>
+</main>
+{% endblock %}

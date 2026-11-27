@@ -436,6 +436,181 @@ p {
   line-height: var(--leading-relaxed);
 }
 
+/* Herói com foto: a imagem cobre a seção e um véu vinho por cima
+   garante o contraste do texto (o mesmo vinho do herói de texto). */
+.hero--foto {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  align-items: flex-start;
+  text-align: left;
+  min-height: 72vh;
+  padding-left: max(var(--gutter), 7vw);
+}
+
+.hero__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  z-index: -2;
+}
+
+/* Véu só do lado do texto: a foto continua visível e viva à direita,
+   em vez de uma camada escura cobrindo tudo. */
+.hero--foto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    rgba(48, 22, 28, 0.72) 0%,
+    rgba(48, 22, 28, 0.38) 45%,
+    rgba(48, 22, 28, 0.04) 78%
+  );
+}
+
+.hero__conteudo {
+  max-width: 34rem;
+}
+
+.hero--foto .hero__subtitle {
+  margin: 0 0 var(--space-8);
+}
+
+/* Catálogos da home: Bloome (principal) e Cápsula Maré */
+.catalogo {
+  max-width: var(--container);
+  margin: var(--space-16) auto 0;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.catalogo .colecao__titulo {
+  margin-bottom: var(--space-2);
+}
+
+.catalogo__subtitulo {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.catalogo__banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22rem;
+  margin-bottom: var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--color-cream);
+}
+
+.catalogo__banner-foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  z-index: -2;
+}
+
+.catalogo__banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(48, 22, 28, 0.06),
+    rgba(48, 22, 28, 0.62)
+  );
+}
+
+.catalogo__banner-texto {
+  padding: var(--space-8) var(--gutter);
+}
+
+.catalogo__banner .colecao__titulo {
+  color: var(--color-cream);
+  margin-bottom: var(--space-2);
+}
+
+.catalogo__banner .catalogo__subtitulo {
+  color: var(--color-cream);
+  margin-bottom: 0;
+}
+
+/* Seções de coleção da home */
+.colecao {
+  max-width: var(--container);
+  margin: var(--space-12) auto;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.colecao__titulo {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  color: var(--color-wine);
+  margin-bottom: var(--space-6);
+}
+
+.colecao__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+}
+
+.colecao__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.colecao__card:hover {
+  transform: translateY(-2px);
+}
+
+.colecao__card:focus-visible {
+  outline: var(--focus-width) solid var(--color-wine);
+  outline-offset: 3px;
+}
+
+.colecao__card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.colecao__nome {
+  font-weight: var(--weight-semibold);
+}
+
+.colecao__card:hover .colecao__nome {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.colecao__preco {
+  color: var(--color-wine);
+  font-weight: var(--weight-bold);
+}
+
 /* ==========================================================================
    6. Conteúdo de página
    ========================================================================== */
@@ -548,6 +723,19 @@ p {
   margin: var(--space-16) auto var(--space-20);
   padding-inline: var(--gutter);
   text-align: left;
+}
+
+/* Página de produtos: uma seção por coleção, cada uma com seu grid */
+.produtos__colecao {
+  max-width: var(--container-narrow);
+  margin: var(--space-12) auto 0;
+  padding-inline: var(--gutter);
+}
+
+.produtos__colecao .products {
+  margin: var(--space-6) 0 var(--space-10);
+  padding-inline: 0;
+  max-width: none;
 }
 
 .product {
@@ -1167,6 +1355,34 @@ p {
   box-shadow: inset 0 0 0 1px var(--color-wine);
 }
 
+/* Opção ainda indisponível (ex.: Correios "em breve"). A bolinha fica
+   apagada, mas o texto NÃO: opacidade no container derrubaria o contraste
+   para ~2,8:1. O tom taupe mantém 6,52:1 sobre o branco. */
+.radio-option:has(input[aria-disabled="true"]) {
+  cursor: not-allowed;
+}
+
+.radio-option:has(input[aria-disabled="true"]) input {
+  opacity: 0.6;
+}
+
+.radio-option:has(input[aria-disabled="true"]) .radio-option__label,
+.radio-option:has(input[aria-disabled="true"]) .radio-option__label strong {
+  color: var(--color-taupe);
+}
+
+.radio-option:has(input[aria-disabled="true"]):hover {
+  background: rgba(232, 222, 220, 0.25);
+  border-color: transparent;
+}
+
+/* Linha "finalizando como..." no carrinho */
+.cart__account {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
 .radio-option__label {
   font-size: var(--text-sm);
   line-height: var(--leading-snug);
@@ -1604,6 +1820,61 @@ p {
   color: #5f5142; /* 6,32:1 — era 4,30:1 antes da iteração */
 }
 
+/* Status novos (pago/em produção/enviado/cancelado). Os três originais
+   (pronto, aguardando, entregue) continuam valendo. */
+.pedido__status--pago,
+.pedido__status--producao {
+  background: rgba(138, 154, 123, 0.20);
+  color: #55684a;
+}
+
+.pedido__status--enviado {
+  background: rgba(122, 106, 89, 0.15);
+  color: #5f5142;
+}
+
+.pedido__status--cancelado {
+  background: rgba(119, 46, 63, 0.12);
+  color: var(--color-wine);
+}
+
+/* O número do pedido no painel vira link para os detalhes. */
+a.pedido__numero {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.pedido__numero:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Ações da página de detalhe do pedido */
+.pedido__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 17.5rem;
+  margin: var(--space-6) auto 0;
+}
+
+.pedido__acoes .btn {
+  display: flex;
+  width: 100%;
+}
+
+.pedido__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
+  color: var(--color-wine);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .pedido__itens {
   list-style: none;
   display: flex;
@@ -1756,6 +2027,10 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .colecao__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .favorites {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1813,6 +2088,35 @@ p {
     grid-template-columns: 1fr;
     margin: var(--space-12) auto var(--space-16);
     gap: var(--space-6);
+  }
+
+  .colecao__grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* No celular o texto do herói volta ao centro, com véu de baixo para
+     cima (a foto é vertical; o gradiente lateral não segura o contraste). */
+  .hero--foto {
+    align-items: center;
+    text-align: center;
+    min-height: 62vh;
+    padding: var(--space-16) var(--gutter) var(--space-20);
+  }
+
+  .hero--foto::after {
+    background: linear-gradient(
+      180deg,
+      rgba(48, 22, 28, 0.28),
+      rgba(48, 22, 28, 0.74)
+    );
+  }
+
+  .hero--foto .hero__subtitle {
+    margin: 0 auto var(--space-8);
+  }
+
+  .catalogo__banner {
+    min-height: 16rem;
   }
 
   .product-detail {

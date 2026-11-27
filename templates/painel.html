@@ -78,26 +78,38 @@
 
             <ul class="painel__lista-pedidos">
 
+                {% for pedido in pedidos %}
                 <li class="pedido">
                     <header class="pedido__header">
                         <div class="pedido__identificacao">
-                            <span class="pedido__numero">#BLO-0042</span>
-                            <time class="pedido__data" datetime="2026-10-10">10/10/2026</time>
+                            <a class="pedido__numero" href="{{ url_for('pedido_detalhe', codigo=pedido.codigo) }}">{{ pedido.codigo }}</a>
+                            <time class="pedido__data" datetime="{{ pedido.criado_em.isoformat() }}">{{ pedido.data }}</time>
                         </div>
-                        <span class="pedido__status pedido__status--pronto">Pronto para retirada</span>
+                        <span class="pedido__status pedido__status--{{ pedido.status_classe }}">{{ pedido.status_rotulo }}</span>
                     </header>
                     <ul class="pedido__itens">
+                        {% for item in pedido.itens %}
                         <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
-                            <span class="pedido__item-nome">Cordão Coração</span>
-                            <span class="pedido__item-preco">R$ 45,00</span>
+                            {% if item.imagem %}
+                            <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
+                            {% endif %}
+                            <span class="pedido__item-nome">{{ item.nome }} ({{ item.cor }}){% if item.quantidade > 1 %} · {{ item.quantidade }}×{% endif %}</span>
+                            <span class="pedido__item-preco">{{ item.preco_fmt }}</span>
                         </li>
-                        <li class="pedido__item">
-                            <img src="{{ url_for('static', filename='imgs/cordao_bento.png') }}" alt="" class="pedido__item-img" loading="lazy" decoding="async">
-                            <span class="pedido__item-nome">Colar São Bento</span>
-                            <span class="pedido__item-preco">R$ 30,00</span>
-                        </li>
+                        {% endfor %}
                     </ul>
+                    <footer class="pedido__footer">
+                        <span class="pedido__entrega">{{ pedido.entrega_rotulo }}</span>
+                        <span class="pedido__total">Total: <strong>{{ pedido.total_fmt }}</strong></span>
+                    </footer>
+                </li>
+                {% else %}
+                <li class="pedido">
+                    <p>Você ainda não tem pedidos. <a href="{{ url_for('produtos') }}">Ver produtos</a></p>
+                </li>
+                {% endfor %}
+
+            </ul>
                     <footer class="pedido__footer">
                         <span class="pedido__entrega">Retirada — UNIMA, Cruz das Almas</span>
                         <span class="pedido__total">Total: <strong>R$ 75,00</strong></span>

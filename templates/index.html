@@ -6,11 +6,49 @@
 
 {% block content %}
 <main id="conteudo" tabindex="-1">
-    <section class="hero">
-        <p class="hero__script">Catálogo</p>
-        <h1 class="hero__title">BLOOME</h1>
-        <p class="hero__subtitle">Joias e acessórios artesanais, feitos para combinar com você.</p>
-        <a href="{{ url_for('produtos') }}" class="btn">Ver catálogo completo</a>
+    <section class="hero hero--foto">
+        {# Foto de capa do catálogo (duas modelos). Decorativa: o h1 já
+           nomeia a marca, então alt vazio. #}
+        <img src="{{ url_for('static', filename='imgs/hero-bloome.jpg') }}" alt="" class="hero__foto" fetchpriority="high" decoding="async">
+        <div class="hero__conteudo">
+            <p class="hero__script">Catálogo</p>
+            <h1 class="hero__title">BLOOME</h1>
+            <p class="hero__subtitle">Joias e acessórios artesanais, feitos para combinar com você.</p>
+            <a href="{{ url_for('produtos') }}" class="btn">Ver catálogo completo</a>
+        </div>
     </section>
+
+    {% for catalogo in catalogos %}
+    <section class="catalogo" aria-labelledby="catalogo-{{ catalogo.chave }}">
+        {% if catalogo.chave == "mare" %}
+        {# A cápsula ganha banner próprio, com a foto do pôr do sol do PDF. #}
+        <div class="catalogo__banner">
+            <img src="{{ url_for('static', filename='imgs/capsula-mare.jpg') }}" alt="" class="catalogo__banner-foto" loading="lazy" decoding="async">
+            <div class="catalogo__banner-texto">
+                <p class="hero__script">Coleção cápsula</p>
+                <h2 class="colecao__titulo" id="catalogo-{{ catalogo.chave }}">{{ catalogo.titulo }}</h2>
+                <p class="catalogo__subtitulo">{{ catalogo.subtitulo }}</p>
+            </div>
+        </div>
+        {% else %}
+        <h2 class="colecao__titulo" id="catalogo-{{ catalogo.chave }}">{{ catalogo.titulo }}</h2>
+        <p class="catalogo__subtitulo">{{ catalogo.subtitulo }}</p>
+        {% endif %}
+
+        <div class="colecao__grid">
+            {% for produto in catalogo.produtos %}
+            <a href="{{ url_for('produto', slug=produto.slug) }}" class="colecao__card">
+                {% if produto.imagem %}
+                {# O nome está logo abaixo: alt vazio evita o leitor de tela
+                   repetir o produto duas vezes no mesmo link. #}
+                <img src="{{ url_for('static', filename='imgs/' + produto.imagem) }}" alt="" loading="lazy" decoding="async">
+                {% endif %}
+                <span class="colecao__nome">{{ produto.nome }}</span>
+                <span class="colecao__preco">{{ produto.preco }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
 </main>
 {% endblock %}

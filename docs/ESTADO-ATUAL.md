@@ -18,7 +18,7 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 
 | # | Passo | Status |
 |---|-------|--------|
-| 0 | Catálogo lendo as views do banco (`/produtos`, `/produtos/<id>`) | ✅ |
+| 0 | Catálogo lendo as views do banco (`/produtos`, `/produtos/<slug>`) | ✅ |
 | 0b | Fotos reais + descrições (ADR-016) e dados fictícios de estoque (ADR-017) | ✅ |
 | 0c | Botão "Em breve" no card e no detalhe do produto | ✅ |
 | 1 | Formulário de cadastro chega ao servidor (`POST /conta/criar`) | ✅ |
@@ -28,8 +28,8 @@ O que o amigo pediu, em uma frase: **registrar → ver o produto → escolher co
 | 1e | Feedback de formulário: flash global, aba de origem preservada, e-mail com `pattern` | ✅ |
 | 2 | Escolher cor no detalhe + `POST /carrinho/adicionar` (session) | ✅ |
 | 3 | Carrinho real: session + banco, total calculado no backend | ✅ |
-| 4 | Checkout: `pedidos` + `itens_pedidos` em transação | ⏳ próximo |
-| 5 | Mercado Pago + webhook idempotente e assinado | ⬜ |
+| 4 | Checkout: `pedidos` + `itens_pedidos` em transação, pagamento simulado e "Em preparação" (ADR-029) | ✅ |
+| 5 | Mercado Pago + webhook idempotente e assinado | ⏳ próximo |
 
 **Banco real conectado** (2026-11-26). O problema era o `.env`: prefixo
 `DATABASE_URL=` duplicado e ref do projeto errado por uma letra — a senha

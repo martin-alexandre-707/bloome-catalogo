@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar pedido{% endblock %}
+
+{% block description %}Finalize o pedido da Bloome: escolha a forma de entrega e o pagamento.{% endblock %}
+
+{% block content %}
+<main id="conteudo" tabindex="-1" class="page-content">
+    <h1>Finalizar pedido</h1>
+    <p class="subtitle">Confira os itens e escolha como receber e pagar.</p>
+
+    <div class="cart">
+
+        <ul class="cart__list" aria-label="Itens do pedido">
+
+            {% for item in itens %}
+            <li class="cart__item">
+                {% if item.imagem %}
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
+                {% endif %}
+                <div>
+                    <h2 class="cart__item-name">{{ item.nome }}</h2>
+                    <p>{{ item.cor }} · {{ item.quantidade }}× {{ item.preco }}</p>
+                </div>
+                <span class="cart__item-price">{{ item.linha_total }}</span>
+            </li>
+            {% endfor %}
+
+        </ul>
+
+        <form id="form-checkout" class="cart__form" method="post" action="{{ url_for('checkout') }}" aria-label="Forma de entrega e pagamento">
+            <section class="form-section" aria-labelledby="titulo-entrega">
+                <h2 class="form-section__title" id="titulo-entrega">1. Forma de Entrega / Retirada</h2>
+                <div class="form-options">
+                    <label class="radio-option">
+                        <input type="radio" name="entrega" value="unima" checked>
+                        <span class="radio-option__label">
+                            <strong>Retirada gratuita:</strong> UNIMA - Cruz das Almas
+                        </span>
+                    </label>
+
+                    <label class="radio-option">
+                        <input type="radio" name="entrega" value="ponta-verde">
+                        <span class="radio-option__label">
+                            <strong>Retirada gratuita:</strong> Ponta Verde
+                        </span>
+                    </label>
+
+                    <label class="radio-option">
+                        <input type="radio" name="entrega" value="uber-flash">
+                        <span class="radio-option__label">
+                            <strong>Entrega rápida:</strong> Uber Flash (frete a combinar)
+                        </span>
+                    </label>
+
+                    {# aria-disabled em vez de disabled: continua alcançável por
+                       Tab e anunciado pelo leitor de tela; o JS impede a
+                       seleção. O servidor também recusa se chegar. #}
+                    <label class="radio-option">
+                        <input type="radio" name="entrega" value="correios" aria-disabled="true">
+                        <span class="radio-option__label">
+                            <strong>Envio:</strong> Correios (em breve)
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="form-section" aria-labelledby="titulo-pagamento">
+                <h2 class="form-section__title" id="titulo-pagamento">2. Forma de Pagamento</h2>
+                <div class="form-options form-options--inline">
+                    <label class="radio-option">
+                        <input type="radio" name="pagamento" value="pix" checked>
+                        <span class="radio-option__label">Pix</span>
+                    </label>
+
+                    <label class="radio-option">
+                        <input type="radio" name="pagamento" value="debito">
+                        <span class="radio-option__label">Cartão de Débito</span>
+                    </label>
+
+                    <label class="radio-option">
+                        <input type="radio" name="pagamento" value="credito">
+                        <span class="radio-option__label">Cartão de Crédito</span>
+                    </label>
+                </div>
+                <p class="cart__account">Ao confirmar, seu pedido entra na fila de preparação.</p>
+            </section>
+        </form>
+
+        <aside class="cart__summary" aria-labelledby="resumo-titulo">
+            <h2 class="cart__summary-title" id="resumo-titulo">Resumo do pedido</h2>
+
+            <div class="cart__summary-row">
+                <span>Subtotal</span>
+                <strong>{{ subtotal }}</strong>
+            </div>
+
+            <div class="cart__summary-row">
+                <span>Frete</span>
+                <strong>A calcular</strong>
+            </div>
+
+            <div class="cart__summary-row cart__summary-row--total">
+                <span>Total</span>
+                <strong>{{ subtotal }}</strong>
+            </div>
+
+            <button type="submit" form="form-checkout" class="btn cart__btn-checkout">Confirmar pedido</button>
+            <a href="{{ url_for('carrinho') }}" class="cart__btn-continue">Voltar ao carrinho</a>
+        </aside>
+
+    </div>
+
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Correios "em breve": aria-disabled não bloqueia seleção sozinho.
+    // Se for marcado (clique ou seta do teclado), desmarca e devolve a
+    // escolha anterior.
+    const correios = document.querySelector('input[name="entrega"][value="correios"]');
+    if (correios) {
+        let escolhaAnterior = document.querySelector('input[name="entrega"]:checked');
+        document.querySelectorAll('input[name="entrega"]').forEach((radio) => {
+            if (radio === correios) return;
+            radio.addEventListener('change', () => { escolhaAnterior = radio; });
+        });
+        correios.addEventListener('change', () => {
+            correios.checked = false;
+            if (escolhaAnterior) escolhaAnterior.checked = true;
+        });
+    }
+</script>
+{% endblock %}
