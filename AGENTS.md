@@ -31,6 +31,18 @@ aprova antes do próximo passo.
 - Quando alguém do time escrever o código, o modo auditoria volta: aponte o
   erro com evidência, explique o porquê e deixe a pessoa tentar consertar.
 
+### Estilo de ensino (validado em 2026-11-26)
+
+Este formato está funcionando e deve ser mantido:
+
+- escrever o código e explicar **linha a linha**: o quê, por quê e como funciona;
+- ensinar a teoria por trás, principalmente a **lógica HTTP** (método, status,
+  headers, cookies, redirect);
+- usar **analogia simples** na mesma frase do termo técnico;
+- mostrar **exemplo executável** quando ajudar a visualizar;
+- **um passo de cada vez**, anunciando qual é o próximo;
+- fechar com um **resumo curto** do que foi feito e do que fica pendente.
+
 ## Jargão
 
 Pode usar termos técnicos reais do mercado, mas é obrigatório explicar o
