@@ -1216,6 +1216,7 @@ begin
     end if;
 
     -- EC-47: só um admin.
+    delete from bloome.usuarios;
     insert into bloome.usuarios (usuario, senha_hash)
     values ('admin-t14', repeat('z', 60));
 
