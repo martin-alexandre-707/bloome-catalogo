@@ -4,13 +4,13 @@ Catálogo web de acessórios artesanais. Projeto de portfólio, interface em por
 
 ## Stack
 
-- **Backend:** Python + Flask (stack em avaliação — ver `docs/VALIDACAO-REGRAS.md` §0)
-- **Banco:** Supabase (PostgreSQL na nuvem) — **o mesmo em desenvolvimento e
-  produção. Não existe PostgreSQL local.**
+- **Backend:** Python 3.11+ + Flask 3
+- **Banco:** PostgreSQL (Supabase na nuvem ou PostgreSQL local — os SQLs de `db/`
+  são PostgreSQL puro e rodam nos dois)
 - **Frontend:** HTML, CSS e JavaScript em `static/js/`
-- **Deploy:** Vercel (a decidir depois do teste Django; Render/Railway são opções)
-- **Conexão:** `DATABASE_URL` no `.env`. Porta **6543** = pooler (produção);
-  **5432** = conexão direta.
+- **Deploy:** serviço WSGI (Render/Railway); a decidir
+- **Conexão:** `DATABASE_URL` no `.env` (porta 5432; no Supabase, o pooler
+  também usa 5432)
 
 ## Como rodar
 
@@ -60,11 +60,10 @@ Por isso, responda enxuto.
 - Não repita o que já foi dito nem cole arquivo inteiro; cite `arquivo:linha`.
 - Prefira Grep/Glob a ler arquivo grande só para achar uma ocorrência.
 - Não despeje log, HTML ou JSON gigante na conversa.
-- Arquivo grande (> ~10 KB, ou gerado em `entregaveis/`, ou `DECISOES.md`):
-  nunca `Read` inteiro. Use `Grep` para achar a ocorrência e `Read` com
-  `offset`/`limit` no trecho.
-- Varredura ampla em `docs/` ou `entregaveis/`: delegue a um subagente e receba
-  só a conclusão, não o arquivo.
+- Arquivo grande (> ~10 KB, ou `DECISOES.md`): nunca `Read` inteiro. Use
+  `Grep` para achar a ocorrência e `Read` com `offset`/`limit` no trecho.
+- Varredura ampla em `docs/`: delegue a um subagente e receba só a conclusão,
+  não o arquivo.
 - Antes de ler, decida: preciso do **arquivo** ou da **ocorrência**?
 - Encerre em vez de encher linguiça. Ensino não muda.
 
@@ -125,9 +124,9 @@ Alterne conforme eu pedir:
 ## Onde está o resto
 
 - `docs/VALIDACAO-REGRAS.md` — regras de negócio validadas (fonte da verdade).
-- `docs/CONTEXTO-BLOOME-PARA-IA.md` — briefing histórico: perfil, decisões e estado
-  auditado do código (pode estar desatualizado).
 - `docs/DECISOES.md` — decisões de arquitetura com data, autor e motivo.
+- `COMO-RODAR.md` — instalação do zero em outra máquina.
+- `README.md` — visão geral, rotas e estrutura.
 
 ## Não faça sem pedir
 
