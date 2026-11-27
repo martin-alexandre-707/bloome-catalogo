@@ -83,7 +83,6 @@ favoritos, checkout e painel (o pedido é finalizado com pagamento simulado).
 | [docs/AUTENTICACAO.md](docs/AUTENTICACAO.md) | Sessões e cookies: como o login funciona e por quê |
 | [docs/VALIDACAO-REGRAS.md](docs/VALIDACAO-REGRAS.md) | Regras de negócio validadas (fonte da verdade) |
 | [docs/DECISOES.md](docs/DECISOES.md) | Decisões de arquitetura (ADR) com data e motivo |
-| [docs/ux/PORTFOLIO-UX.md](docs/ux/PORTFOLIO-UX.md) · [docs/ux/AVALIACAO-3.md](docs/ux/AVALIACAO-3.md) | Portfólio de UX e 3ª avaliação de UX (evidências e roteiros) |
 | [COMO-RODAR.md](COMO-RODAR.md) | Instalação do zero em outra máquina |
 | [AGENTS.md](AGENTS.md) | Regras de trabalho e uso de IA no desenvolvimento |
 

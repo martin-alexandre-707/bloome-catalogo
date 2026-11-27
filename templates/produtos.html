@@ -2,12 +2,12 @@
 
 {% block title %}Produtos{% endblock %}
 
-{% block description %}Confira o catálogo de joias e acessórios artesanais da Bloome.{% endblock %}
+{% block description %}Confira o catálogo de acessórios artesanais da Bloome.{% endblock %}
 
 {% block content %}
 <main id="conteudo" tabindex="-1" class="page-content">
     <h1>Produtos</h1>
-    <p class="subtitle">Confira nossa seleção de joias e acessórios artesanais!</p>
+    <p class="subtitle">Confira nossa seleção de acessórios artesanais!</p>
 
     {% for catalogo in catalogos %}
     <section class="produtos__colecao" data-reveal aria-labelledby="catalogo-produtos-{{ catalogo.chave }}">
