@@ -115,6 +115,7 @@ def _url_de_volta(fallback):
             partes.netloc == request.host
             and caminho.startswith("/")
             and not caminho.startswith("//")
+            and "\\" not in caminho
         ):
             return caminho
     return fallback
@@ -128,14 +129,18 @@ def _destino_seguro(padrao):
     redirect). Sem `next` válido, usa o padrão.
     """
     destino = request.values.get("next", "")
-    if destino.startswith("/") and not destino.startswith("//"):
+    if (
+        destino.startswith("/")
+        and not destino.startswith("//")
+        and "\\" not in destino
+    ):
         return destino
     return padrao
 
 
 @app.route("/carrinho/adicionar", methods=["POST"])
 def adicionar_carrinho():
-    voltar = _url_de_volta(url_for("produtos"))
+    voltar = _url_de_volta(url_for("index"))
 
     try:
         id_acessorios = int(request.form.get("id_acessorios", ""))
@@ -321,7 +326,12 @@ def checkout():
         flash("Escolha uma forma de pagamento.", "erro")
         return redirect(url_for("carrinho"))
 
-    conn = db.get_db()
+    try:
+        conn = db.get_db()
+    except psycopg.Error:
+        flash("Banco indisponível no momento. Tente de novo em instantes.", "erro")
+        return redirect(url_for("carrinho"))
+
     try:
         with conn.cursor() as cur:
             # 1) O pedido nasce "aguardando_pagamento"; preço e total vêm
@@ -444,12 +454,11 @@ def sobre():
 def carrinho():
     linhas = session.get("carrinho", [])
     itens = dados.montar_carrinho(linhas)
-    subtotal_valor = sum(item["preco_valor"] * item["quantidade"] for item in itens)
     return render_template(
         "carrinho.html",
         current="carrinho",
         itens=itens,
-        subtotal=dados.formatar_preco(subtotal_valor),
+        subtotal=_subtotal_formatado(itens),
     )
 
 
@@ -480,9 +489,16 @@ def entrar():
 
     destino = _destino_seguro(url_for("painel"))
 
-    if cliente is None or not bcrypt.checkpw(
-        senha.encode("utf-8"), cliente["senha_hash"].encode("utf-8")
-    ):
+    senha_ok = False
+    if cliente is not None:
+        try:
+            senha_ok = bcrypt.checkpw(
+                senha.encode("utf-8"), cliente["senha_hash"].encode("utf-8")
+            )
+        except ValueError:
+            senha_ok = False
+
+    if not senha_ok:
         flash("E-mail ou senha inválidos.", "erro")
         return redirect(url_for("conta", next=destino))
 

@@ -47,10 +47,11 @@ function configurarQuantidade(scope) {
     const campoQuantidade = scope.querySelector('input[name="quantidade"]');
 
     function atualizar(novo) {
-        const n = Math.max(1, novo);
+        const n = Math.min(99, Math.max(1, novo));
         valor.textContent = n;
         campoQuantidade.value = n;
         menos.disabled = n <= 1;
+        mais.disabled = n >= 99;
     }
 
     menos.addEventListener('click', () => atualizar(+valor.textContent - 1));
