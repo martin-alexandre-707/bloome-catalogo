@@ -165,25 +165,6 @@ def produto(slug):
 - Navegação por teclado, `aria-current`, `aria-live` para avisos
 - Respeito a `prefers-reduced-motion`
 
-## Publicação (Render)
-
-O projeto já vem com `Procfile`, `render.yaml` e `gunicorn` configurados.
-
-1. Crie uma conta em <https://render.com> e conecte o repositório do GitHub.
-2. **New → Web Service**, escolha o repositório. O Render lê o `render.yaml`.
-3. Em **Environment**, preencha:
-   - `DATABASE_URL` — a string do PostgreSQL (no Supabase: *Project Settings →
-     Database → Connection string*, modo **Session pooler**).
-   - `SECRET_KEY` — gerada automaticamente pelo blueprint; se criar o serviço
-     à mão, use `python -c "import secrets; print(secrets.token_hex(32))"`.
-4. **Deploy**. O endereço fica `https://<nome>.onrender.com`.
-
-No plano gratuito o serviço dorme após ~15 minutos sem visitas e leva cerca de
-um minuto para acordar na primeira visita.
-
-O banco precisa estar montado antes: aponte o `DATABASE_URL` local para o
-Supabase e rode `python db/aplicar.py --aplicar` e `--dados --teste` uma vez.
-
 ## Equipe
 
 - **Victor Xavier** — [GitHub](https://github.com/victorxavier01) · [LinkedIn](https://www.linkedin.com/in/victor-xavier-89a339378/)
