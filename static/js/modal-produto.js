@@ -7,30 +7,17 @@ const conteudo = document.getElementById('conteudo-modal-produto');
 const botaoFechar = modal.querySelector('.product-modal__close');
 let ultimoGatilho = null;
 
-const toast = document.getElementById('toast-adicionado');
-let toastTimer = null;
-
-function mostrarToast() {
-    toast.hidden = false;
-    // remover + reflow + adicionar: o fade in dispara de novo mesmo
-    // se o toast já estiver aberto (ou fechando)
-    toast.classList.remove("is-abierto");
-    void toast.offsetWidth;
-    toast.classList.add("is-abierto");
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-        toast.classList.remove("is-abierto"); // fade out (200ms)
-        setTimeout(() => { toast.hidden = true; }, 250);
-    }, 4000);
-}
-
 function selecionarCores(scope) {
     // Bolinhas de cor: comportamento de rádio (uma cor por vez).
+    // A escolhida vai para o input escondido id_variacao do formulário;
+    // sem escolha, o input fica vazio e o servidor recusa com flash.
     const bolinhas = scope.querySelectorAll('.color-dot');
+    const campoVariacao = scope.querySelector('input[name="id_variacao"]');
     bolinhas.forEach((bolinha) => {
         bolinha.addEventListener('click', () => {
             bolinhas.forEach((outra) => outra.setAttribute('aria-pressed', 'false'));
             bolinha.setAttribute('aria-pressed', 'true');
+            campoVariacao.value = bolinha.dataset.idVariacao;
         });
     });
 }
@@ -42,14 +29,6 @@ function abrirDetalhes(idProduto, gatilho) {
     conteudo.replaceChildren(template.content.cloneNode(true));
     selecionarCores(conteudo);
     configurarQuantidade(conteudo);
-
-    const adicionar = conteudo.querySelector('.product-modal__add');
-    if (adicionar) {
-        adicionar.addEventListener('click', () => {
-            modal.close(); // o evento "close" devolve o foco ao gatilho
-            mostrarToast();
-        });
-    }
 
     ultimoGatilho = gatilho;
     modal.showModal();
@@ -65,10 +44,12 @@ function configurarQuantidade(scope) {
 
     const menos = scope.querySelector('[data-qty="menos"]');
     const mais = scope.querySelector('[data-qty="mais"]');
+    const campoQuantidade = scope.querySelector('input[name="quantidade"]');
 
     function atualizar(novo) {
         const n = Math.max(1, novo);
         valor.textContent = n;
+        campoQuantidade.value = n;
         menos.disabled = n <= 1;
     }
 

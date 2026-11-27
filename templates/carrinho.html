@@ -12,23 +12,22 @@
 
         <ul class="cart__list">
 
+            {% for item in itens %}
             <li class="cart__item">
-                <img src="{{ url_for('static', filename='imgs/cordao_amarracao.png') }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
-                <h2 class="cart__item-name">Cordão de Amarração</h2>
-                <span class="cart__item-price">R$ 30,00</span>
+                {% if item.imagem %}
+                <img src="{{ url_for('static', filename='imgs/' + item.imagem) }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
+                {% endif %}
+                <div>
+                    <h2 class="cart__item-name">{{ item.nome }}</h2>
+                    <p>{{ item.cor }} · {{ item.quantidade }}× {{ item.preco }}{% if not item.disponivel %} — <strong>esgotado</strong>{% endif %}</p>
+                </div>
+                <span class="cart__item-price">{{ item.linha_total }}</span>
             </li>
-
+            {% else %}
             <li class="cart__item">
-                <img src="{{ url_for('static', filename='imgs/cordao_coracao.png') }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
-                <h2 class="cart__item-name">Cordão Coração</h2>
-                <span class="cart__item-price">R$ 45,00</span>
+                <p>Seu carrinho está vazio. <a href="{{ url_for('produtos') }}">Ver produtos</a></p>
             </li>
-
-            <li class="cart__item">
-                <img src="{{ url_for('static', filename='imgs/cordao_gota.png') }}" alt="" class="cart__item-img" loading="lazy" decoding="async">
-                <h2 class="cart__item-name">Cordão Gota</h2>
-                <span class="cart__item-price">R$ 45,00</span>
-            </li>
+            {% endfor %}
 
         </ul>
 
@@ -105,7 +104,7 @@
 
             <div class="cart__summary-row">
                 <span>Subtotal</span>
-                <strong>R$ 120,00</strong>
+                <strong>{{ subtotal }}</strong>
             </div>
 
             <div class="cart__summary-row">
@@ -115,7 +114,7 @@
 
             <div class="cart__summary-row cart__summary-row--total">
                 <span>Total</span>
-                <strong>R$ 120,00</strong>
+                <strong>{{ subtotal }}</strong>
             </div>
 
             <button type="submit" form="form-checkout" class="btn cart__btn-checkout">Finalizar compra</button>

@@ -1,5 +1,6 @@
 import os
 from functools import wraps
+from urllib.parse import urlparse
 
 import bcrypt
 import psycopg
@@ -61,14 +62,37 @@ def produto(produto):
         relacionados=dados.listar_relacionados(produto),
     )
 
+def _url_de_volta(fallback):
+    """Devolve o caminho da página que enviou o formulário, se for do
+    próprio site; senão, o fallback. Evita redirecionar para fora
+    (open redirect) e mantém o cliente no catálogo quando ele adiciona
+    pelo modal."""
+    origem = request.referrer
+    if origem:
+        partes = urlparse(origem)
+        caminho = partes.path
+        if (
+            partes.netloc == request.host
+            and caminho.startswith("/")
+            and not caminho.startswith("//")
+        ):
+            return caminho
+    return fallback
+
+
 @app.route("/carrinho/adicionar", methods=["POST"])
 def adicionar_carrinho():
+    voltar = _url_de_volta(url_for("produtos"))
+
     try:
         id_acessorios = int(request.form.get("id_acessorios", ""))
         id_variacao = int(request.form.get("id_variacao", ""))
+        quantidade = int(request.form.get("quantidade", "1"))
     except ValueError:
         flash("Escolha uma cor para adicionar ao carrinho.", "erro")
-        return redirect(url_for("produtos"))
+        return redirect(voltar)
+
+    quantidade = max(1, min(quantidade, 99))
 
     item = dados.buscar_produto(id_acessorios)
     if item is None:
@@ -77,20 +101,26 @@ def adicionar_carrinho():
     cor = next((c for c in item["cores"] if c["id_variacao"] == id_variacao), None)
     if cor is None or not cor["disponivel"]:
         flash("Essa cor não está disponível. Escolha outra.", "erro")
-        return redirect(url_for("produto", produto=id_acessorios))
+        return redirect(_url_de_volta(url_for("produto", produto=id_acessorios)))
 
     carrinho = session.get("carrinho", [])
     for linha in carrinho:
         if linha["id_variacao"] == id_variacao:
-            linha["quantidade"] += 1
+            linha["quantidade"] = min(linha["quantidade"] + quantidade, 99)
             break
     else:
-        carrinho.append({"id_variacao": id_variacao, "quantidade": 1})
+        carrinho.append({"id_variacao": id_variacao, "quantidade": quantidade})
 
     session["carrinho"] = carrinho
 
-    flash(f"{item['nome']} ({cor['cor']}) foi para o carrinho.", "sucesso")
-    return redirect(url_for("produto", produto=id_acessorios))
+    total = sum(linha["quantidade"] for linha in carrinho)
+    unidade = "item" if total == 1 else "itens"
+    flash(
+        f"{item['nome']} ({cor['cor']}) foi para o carrinho. "
+        f"O carrinho tem {total} {unidade}.",
+        "sucesso",
+    )
+    return redirect(_url_de_volta(url_for("produto", produto=id_acessorios)))
 
 
 @app.route("/favoritos")
@@ -108,7 +138,15 @@ def sobre():
 
 @app.route("/carrinho")
 def carrinho():
-    return render_template("carrinho.html", current="carrinho")
+    linhas = session.get("carrinho", [])
+    itens = dados.montar_carrinho(linhas)
+    subtotal_valor = sum(item["preco_valor"] * item["quantidade"] for item in itens)
+    return render_template(
+        "carrinho.html",
+        current="carrinho",
+        itens=itens,
+        subtotal=dados.formatar_preco(subtotal_valor),
+    )
 
 @app.route("/conta")
 def conta():

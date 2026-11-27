@@ -147,3 +147,54 @@ def listar_relacionados(id_acessorio, limite=3):
         }
         for linha in linhas
     ]
+
+
+def montar_carrinho(linhas):
+    """Recebe [{"id_variacao", "quantidade"}] da sessão e devolve os itens
+    com nome, cor, preço e imagem atuais do banco."""
+    if not linhas:
+        return []
+
+    ids = [linha["id_variacao"] for linha in linhas]
+
+    conn = db.get_db()
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute(
+            """
+            select v.id_variacao, v.id_acessorios, v.nome_acessorios,
+                   v.cor, v.cor_hex, v.disponivel,
+                   c.valor_acessorario, c.foto
+            from bloome.vw_variacoes_disponiveis v
+            join bloome.vw_catalogo_publico c
+              on c.id_acessorios = v.id_acessorios
+            where v.id_variacao = any(%s)
+            """,
+            (ids,),
+        )
+        por_id = {linha["id_variacao"]: linha for linha in cur.fetchall()}
+
+    itens = []
+    for linha in linhas:
+        do_banco = por_id.get(linha["id_variacao"])
+        if do_banco is None:
+            continue
+
+        preco = do_banco["valor_acessorario"]
+        quantidade = linha["quantidade"]
+
+        itens.append(
+            {
+                "id_variacao": linha["id_variacao"],
+                "nome": do_banco["nome_acessorios"],
+                "cor": do_banco["cor"],
+                "cor_hex": do_banco["cor_hex"],
+                "imagem": do_banco["foto"],
+                "disponivel": do_banco["disponivel"],
+                "quantidade": quantidade,
+                "preco": formatar_preco(preco),
+                "preco_valor": preco,
+                "linha_total": formatar_preco(preco * quantidade),
+            }
+        )
+
+    return itens
